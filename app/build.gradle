@@ -48,5 +48,7 @@ dependencies {
     //logger
     implementation "com.orhanobut:logger:$versions.orhanobut"
 
-    implementation "com.chesire:lifecyklelog:$versions.lifecyklelog"
+    //Progress bar
+    implementation "com.github.skydoves:progressview:1.0.7"
+
 }

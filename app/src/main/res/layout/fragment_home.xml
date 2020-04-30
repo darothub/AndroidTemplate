@@ -1,14 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<androidx.core.widget.NestedScrollView
     android:layout_height="match_parent"
-    tools:context=".ui.HomeFragment">
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    android:background="@drawable/gradient_background"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
+    tools:context=".ui.HomeFragment"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
 
-</FrameLayout>
+       >
+
+        <!-- TODO: Update blank fragment layout -->
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="50dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toTopOf="@id/anap"
+            app:layout_constraintEnd_toEndOf="@id/anap"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@id/anap"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/home_logo" />
+
+        <TextView
+            android:id="@+id/anap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/anap"
+            android:textSize="55sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/logo"
+            android:textColor="@color/colorAccent"
+            />
+
+
+        <TextView
+            android:id="@+id/foundation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:letterSpacing="0.6"
+            android:text="@string/foundation"
+            android:textColor="@color/colorAccent"
+            android:textSize="12sp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="@id/anap"
+            app:layout_constraintTop_toBottomOf="@id/anap" />
+
+        <TextView
+            android:id="@+id/themeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/themeText"
+            android:textSize="45sp"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            android:textColor="@color/colorAccent"
+            app:layout_constraintVertical_bias="0.3"
+            app:layout_constraintTop_toBottomOf="@id/foundation"
+            app:layout_constraintBottom_toTopOf="@id/progressView1"
+            />
+
+        <com.skydoves.progressview.ProgressView
+            android:id="@+id/progressView1"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            app:progressView_autoAnimate="true"
+            app:progressView_colorBackground="@color/progressBackground"
+            app:progressView_colorProgress="@color/progressColor"
+            app:progressView_max="100"
+            app:progressView_min="15"
+            app:progressView_padding="0dp"
+            app:progressView_progress="40"
+            app:progressView_radius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
