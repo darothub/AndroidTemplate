@@ -46,7 +46,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             android:textStyle="bold"
             app:layout_constraintTop_toBottomOf="@id/logo"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorNeutral"
             />
 
 
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:letterSpacing="0.6"
             android:text="@string/foundation"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorNeutral"
             android:textSize="12sp"
             android:textStyle="bold"
             app:layout_constraintHorizontal_bias="0.0"
@@ -74,7 +74,7 @@
             app:layout_constraintRight_toRightOf="parent"
             android:textStyle="normal"
             android:lineHeight="50dp"
-            android:textColor="@color/colorAccent"
+            android:textColor="@color/colorNeutral"
             app:layout_constraintVertical_bias="0.3"
             app:layout_constraintTop_toBottomOf="@id/foundation"
             app:layout_constraintBottom_toTopOf="@id/progressView1"

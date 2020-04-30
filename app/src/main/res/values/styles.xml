@@ -13,7 +13,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:fitsSystemWindows">true</item>
-        <item name="android:statusBarColor">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorNeutral</item>
         <item name="android:textViewStyle">@style/PoppinsTextViewStyle</item>
         <item name="android:buttonStyle">@style/PoppinsButtonStyle</item>
         <item name="android:actionBarStyle">@style/MyActionBar</item>
@@ -28,7 +28,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:fitsSystemWindows">true</item>
-        <item name="android:statusBarColor">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorNeutral</item>
         <item name="android:textViewStyle">@style/PoppinsTextViewStyle</item>
         <item name="android:buttonStyle">@style/PoppinsButtonStyle</item>
     </style>
