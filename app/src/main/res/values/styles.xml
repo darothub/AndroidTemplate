@@ -16,6 +16,11 @@
         <item name="android:statusBarColor">@color/colorAccent</item>
         <item name="android:textViewStyle">@style/PoppinsTextViewStyle</item>
         <item name="android:buttonStyle">@style/PoppinsButtonStyle</item>
+        <item name="android:actionBarStyle">@style/MyActionBar</item>
+    </style>
+
+    <style name="MyActionBar" parent="@android:style/Widget.Holo.Light.ActionBar">
+        <item name="android:background">@color/colorAccent</item>
     </style>
 
     <style name="AppThemeActivity" parent="AppTheme.NoActionBar">
@@ -23,7 +28,7 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="android:fitsSystemWindows">true</item>
-        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:statusBarColor">@color/colorAccent</item>
         <item name="android:textViewStyle">@style/PoppinsTextViewStyle</item>
         <item name="android:buttonStyle">@style/PoppinsButtonStyle</item>
     </style>
