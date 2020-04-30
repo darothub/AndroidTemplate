@@ -28,6 +28,7 @@ fun SpannableString.enableClickOnSubstring(start:Int, end:Int, action:() -> Unit
     var clickableSpan = object : ClickableSpan(){
         override fun onClick(widget: View) {
             action.invoke()
+
         }
 
     }
