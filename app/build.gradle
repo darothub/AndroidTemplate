@@ -51,4 +51,5 @@ dependencies {
     //Progress bar
     implementation "com.github.skydoves:progressview:1.0.7"
 
+
 }

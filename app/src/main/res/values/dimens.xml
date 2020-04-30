@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="bold">30sp</dimen>
+    <dimen name="smallest_font_size">12sp</dimen>
+    <dimen name="medium_font_size">14sp</dimen>
+    <dimen name="large_font_size">18sp</dimen>
+    <dimen name="vlarge_font_size">32sp</dimen>
 </resources>
