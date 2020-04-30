@@ -51,4 +51,8 @@ dependencies {
     //Progress bar
     implementation "com.github.skydoves:progressview:1.0.7"
 
+    //EditText
+    implementation "ss.anoop:awesome-textinput-layout:$versions.textinput"
+
+
 }
