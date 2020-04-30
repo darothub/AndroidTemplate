@@ -13,4 +13,10 @@
     <string name="remember_me">Remember me</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="signin_text">Sign in</string>
+    <string name="register">Register</string>
+    <string name="signin_link">Already have an account? Sign in</string>
+    <string name="full_name_hint">Full name</string>
+    <string name="terms_and_conditions">I agree to all terms and conditions</string>
+    <string name="signup_text">Sign up</string>
+    <string name="cpassword_hint_text">Confirm password</string>
 </resources>

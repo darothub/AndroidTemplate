@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:paddingStart="30dp"
+    android:paddingEnd="30dp"
+    tools:context=".ui.SignupFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/layout_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="@string/register"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/vlarge_font_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/signin_link"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/signin_link"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/medium_font_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layout_title" />
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/fullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:borderColor="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/emailFieldForSignUp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            android:layout_marginTop="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/signin_link"
+            app:layout_constraintVertical_bias="0">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:hint="@string/full_name_hint" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/emailFieldForSignUp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:borderColor="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/passwordField"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/fullName"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:hint="@string/email_hint_text" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/passwordFieldForSignup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:borderColor="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/checkbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/emailFieldForSignUp"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:hint="@string/password_hint_text" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/cpasswordField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:borderColor="@android:color/darker_gray"
+            app:layout_constraintBottom_toTopOf="@+id/checkboxForSignup"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/passwordFieldForSignup"
+            app:layout_constraintVertical_chainStyle="packed">
+
+            <EditText
+                android:id="@+id/cpasswordEditTextField"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:hint="@string/cpassword_hint_text" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <CheckBox
+            android:id="@+id/checkboxForSignup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:checked="true"
+            android:text="@string/terms_and_conditions"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/medium_font_size"
+            android:textStyle="normal"
+            android:singleLine="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cpasswordField"
+
+            />
+
+        <Button
+            android:id="@+id/sigin_btn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/rounded_button"
+            android:text="@string/signup_text"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/checkboxForSignup"
+            app:layout_constraintVertical_bias="0.23" />
+
+        <com.skydoves.progressview.ProgressView
+            android:id="@+id/progressView1"
+            android:layout_width="0dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/sigin_btn"
+            app:layout_constraintVertical_bias=".98"
+            app:progressView_colorBackground="@color/progressBackground"
+            app:progressView_colorProgress="@color/progressColor"
+            app:progressView_max="500"
+            app:progressView_min="0"
+            app:progressView_padding="0dp"
+            app:progressView_radius="12dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -1,62 +1,53 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
-import android.graphics.Paint
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableString
-import android.text.Spanned
 import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import kotlinx.android.synthetic.main.fragment_signin.*
+import kotlinx.android.synthetic.main.fragment_signup.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class SigninFragment : Fragment() {
+class SignupFragment : Fragment() {
 
     val title:String by lazy {
         getName()
     }
-    val signupText:String by lazy {
-        requireContext().localized(R.string.signup_link)
+    val signinText:String by lazy {
+        requireContext().localized(R.string.signin_link)
     }
-    val spannableString:SpannableString by lazy {
-        signupText.setAsSpannable()
+    val spannableString: SpannableString by lazy {
+        signinText.setAsSpannable()
     }
     val color:Int by lazy {
         resources.getColor(R.color.colorPrimary)
     }
-
-    private val textLen:Int by lazy {
-        signupText.length
+    val textLen:Int by lazy {
+        signinText.length
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
         showStatusBar()
-        return inflater.inflate(R.layout.fragment_signin, container, false)
+        return inflater.inflate(R.layout.fragment_signup, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
-        setupSignUpLink()
-
-        passwordEditField.setOnKeyListener { view, keyCode, keyEvent ->
+        setupSignInLink()
+        cpasswordEditTextField.setOnKeyListener { view, keyCode, keyEvent ->
             if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 
                 hideKeyboard()
@@ -64,20 +55,17 @@ class SigninFragment : Fragment() {
             }
             return@setOnKeyListener false
         }
-
     }
 
-    fun setupSignUpLink(){
-        val start = 23
+    private fun setupSignInLink() {
+        val start = 25
         val end = textLen
         spannableString.enableClickOnSubstring(start, end){
-            findNavController().navigate(R.id.signupFragment)
+            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
         }
         spannableString.setColorToSubstring(color, start, end)
         spannableString.removeUnderLine(start, end)
-        signup_link.text = spannableString
-        signup_link.movementMethod = LinkMovementMethod.getInstance()
+        signin_link.text = spannableString
+        signin_link.movementMethod = LinkMovementMethod.getInstance()
     }
-
-
 }
