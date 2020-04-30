@@ -22,16 +22,16 @@
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="120dp"
+            android:layout_width="80dp"
             android:layout_height="60dp"
             android:layout_marginTop="50dp"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toTopOf="@id/anap"
             app:layout_constraintEnd_toEndOf="@id/anap"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="@id/anap"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/home_logo" />
+            app:srcCompat="@drawable/logo_blue" />
 
         <TextView
             android:id="@+id/anap"
@@ -80,9 +80,9 @@
             app:progressView_colorBackground="@color/progressBackground"
             app:progressView_colorProgress="@color/progressColor"
             app:progressView_max="100"
-            app:progressView_min="15"
+            app:progressView_min="0"
             app:progressView_padding="0dp"
-            app:progressView_progress="40"
+            app:progressView_progress="100"
             app:progressView_radius="12dp"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginBottom="30dp"
