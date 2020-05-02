@@ -6,4 +6,5 @@ ext.versions = [
         lifecyklelog                  : '3.0.0',
         orhanobut                     : "2.2.0",
         textinput                     : "1.0.3",
+        powerspinner                  : "1.0.7",
 ]

@@ -31,6 +31,10 @@
         <item name="android:statusBarColor">@color/colorNeutral</item>
         <item name="android:textViewStyle">@style/PoppinsTextViewStyle</item>
         <item name="android:buttonStyle">@style/PoppinsButtonStyle</item>
+        <item name="editTextStyle">@style/CustomEditTextStyle</item>
+    </style>
+    <style name="CustomEditTextStyle">
+
     </style>
 
     <style name="PoppinsTextViewStyle" parent="Widget.AppCompat.TextView">

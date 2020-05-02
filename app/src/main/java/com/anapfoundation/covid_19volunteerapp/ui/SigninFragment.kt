@@ -1,19 +1,13 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
-import android.graphics.Paint
 import android.os.Bundle
-import android.text.Spannable
 import android.text.SpannableString
-import android.text.Spanned
 import android.text.method.LinkMovementMethod
-import android.text.style.ClickableSpan
-import android.text.style.ForegroundColorSpan
 import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -75,8 +69,8 @@ class SigninFragment : Fragment() {
         }
         spannableString.setColorToSubstring(color, start, end)
         spannableString.removeUnderLine(start, end)
-        signup_link.text = spannableString
-        signup_link.movementMethod = LinkMovementMethod.getInstance()
+        signupLink.text = spannableString
+        signupLink.movementMethod = LinkMovementMethod.getInstance()
     }
 
 
