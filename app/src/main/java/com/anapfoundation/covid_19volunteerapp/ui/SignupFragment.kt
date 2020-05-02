@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
@@ -61,7 +62,7 @@ class SignupFragment : Fragment() {
         val start = 25
         val end = textLen
         spannableString.enableClickOnSubstring(start, end){
-            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.signinFragment)
         }
         spannableString.setColorToSubstring(color, start, end)
         spannableString.removeUnderLine(start, end)
