@@ -6,16 +6,16 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.skydoves.powerspinner.IconSpinnerAdapter
 import kotlinx.android.synthetic.main.fragment_address.*
 import org.json.JSONArray
 import java.io.IOException
@@ -62,6 +62,7 @@ class AddressFragment : Fragment() {
             Toast.makeText(context, "LGA ${spinnerLGA.selectedItem}", Toast.LENGTH_SHORT).show()
         }
 
+        powerSpinner.setItems(listOf("hello", "Holla", "J", "K", "O", "Po", "JH", "U", "tp", "Lo", "Lop", "Pl", "Lkk", "Lmn"))
     }
 
     private fun setAdapterData() {
@@ -70,6 +71,7 @@ class AddressFragment : Fragment() {
         newList.add("States")
         Log.e(title, spannableString.toString())
         newList.addAll(stateLgaMap.keys.toSortedSet())
+
         val adapterState =
             ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, newList)
         spinnerState.adapter = adapterState
@@ -88,6 +90,9 @@ class AddressFragment : Fragment() {
                 stateLgaMap.get(newList[position])!!.toList().mapTo(lga, {
                     it.name
                 })
+
+                val v = parent?.getChildAt(0) as TextView
+                v.setTextColor(resources.getColor(R.color.colorTextHint))
 
                 val adapterLga = ArrayAdapter(
                     requireContext(),
