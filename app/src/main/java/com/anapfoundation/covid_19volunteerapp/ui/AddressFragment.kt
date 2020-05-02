@@ -6,16 +6,17 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.skydoves.powerspinner.IconSpinnerAdapter
 import kotlinx.android.synthetic.main.fragment_address.*
 import org.json.JSONArray
 import java.io.IOException
@@ -29,12 +30,6 @@ class AddressFragment : Fragment() {
 
     val title: String by lazy {
         getName()
-    }
-    val statesText:String by lazy {
-        requireContext().localized(R.string.states)
-    }
-    private val spannableString: SpannableString by lazy {
-        statesText.setAsSpannable()
     }
     val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
         HashMap<String, List<CityClass>>()
@@ -62,14 +57,12 @@ class AddressFragment : Fragment() {
             Toast.makeText(context, "LGA ${spinnerLGA.selectedItem}", Toast.LENGTH_SHORT).show()
         }
 
-        powerSpinner.setItems(listOf("hello", "Holla", "J", "K", "O", "Po", "JH", "U", "tp", "Lo", "Lop", "Pl", "Lkk", "Lmn"))
     }
 
     private fun setAdapterData() {
         val newList = arrayListOf<String>()
-        setHintColor()
         newList.add("States")
-        Log.e(title, spannableString.toString())
+
         newList.addAll(stateLgaMap.keys.toSortedSet())
 
         val adapterState =
@@ -92,7 +85,7 @@ class AddressFragment : Fragment() {
                 })
 
                 val v = parent?.getChildAt(0) as TextView
-                v.setTextColor(resources.getColor(R.color.colorTextHint))
+//                v.setTextColor(resources.getColor(R.color.colorTextHint))
 
                 val adapterLga = ArrayAdapter(
                     requireContext(),
@@ -125,9 +118,5 @@ class AddressFragment : Fragment() {
         }
     }
 
-    private fun setHintColor(){
-        val start = 0
-        val end = statesText.length
-        spannableString.setColorToSubstring(R.color.colorTextHint, start, end)
-    }
+
 }

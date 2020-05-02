@@ -78,26 +78,7 @@
             app:layout_constraintTop_toBottomOf="@id/spinnerState"
              />
 
-        <com.skydoves.powerspinner.PowerSpinnerView
-            android:id="@+id/powerSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/white"
-            android:gravity="left"
-            android:hint="Question 1"
-            android:padding="10dp"
-            android:textColor="@color/colorPrimaryDark"
-            android:textColorHint="@color/colorTextHint"
-            android:textSize="14.5sp"
-            app:spinner_arrow_gravity="end"
-            app:spinner_arrow_padding="8dp"
-            app:spinner_divider_color="@color/colorPrimaryDark"
-            app:spinner_divider_show="true"
-            app:spinner_divider_size="0.4dp"
-            app:spinner_popup_animation="dropdown"
-            app:spinner_popup_background="@color/colorPrimary"
-            app:layout_constraintTop_toTopOf="parent"
-            app:spinner_popup_elevation="14dp" />
+
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/streetEditTextField"
             android:layout_width="match_parent"
