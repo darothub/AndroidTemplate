@@ -43,54 +43,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/house_number_hint_text"
-                android:textColorHint="@color/colorTextHint"
-                android:singleLine="true" />
+
+               />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
-        <com.skydoves.powerspinner.PowerSpinnerView
+        <Spinner
             android:id="@+id/spinnerState"
-            android:layout_width="match_parent"
             android:layout_height="65dp"
-            android:background="@drawable/rounded_border"
+            android:background="@drawable/spinner_backgrnd"
             android:gravity="left|center"
             android:hint="@string/states"
             android:padding="10dp"
-            android:layout_marginTop="20dp"
+            android:spinnerMode="dropdown"
+            style="@style/CustomEditTextStyle"
             android:textColor="@color/colorPrimaryDark"
-            android:textColorHint="@color/colorTextHint"
-            android:textSize="16sp"
-            app:spinner_arrow_gravity="end"
-            app:spinner_arrow_padding="8dp"
-            app:spinner_arrow_tint="@color/colorPrimaryDark"
-            app:spinner_divider_color="@color/colorPrimaryDark"
-            app:spinner_divider_show="true"
-            app:spinner_divider_size="0.4dp"
-            app:spinner_popup_animation="dropdown"
-            app:spinner_popup_background="@color/colorNeutral"
+            app:layout_constraintStart_toStartOf="parent"
+            android:dropDownVerticalOffset="95dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:popupTheme="@style/AppThemeActivity"
             app:layout_constraintTop_toBottomOf="@id/houseNumber"
-            app:spinner_popup_elevation="14dp" />
-        <com.skydoves.powerspinner.PowerSpinnerView
+             />
+        <Spinner
             android:id="@+id/spinnerLGA"
             android:layout_width="match_parent"
+            android:background="@drawable/spinner_backgrnd"
             android:layout_height="65dp"
-            android:background="@drawable/rounded_border"
             android:gravity="left|center"
             android:hint="@string/lga"
             android:padding="10dp"
-            android:layout_marginTop="20dp"
+            style="@style/CustomEditTextStyle"
             android:textColor="@color/colorPrimaryDark"
             android:textColorHint="@color/colorTextHint"
             android:textSize="16sp"
-            app:spinner_arrow_gravity="end"
-            app:spinner_arrow_padding="8dp"
-            app:spinner_arrow_tint="@color/colorPrimaryDark"
-            app:spinner_divider_color="@color/colorPrimaryDark"
-            app:spinner_divider_show="true"
-            app:spinner_divider_size="0.4dp"
-            app:spinner_popup_animation="dropdown"
-            app:spinner_popup_background="@color/colorNeutral"
             app:layout_constraintTop_toBottomOf="@id/spinnerState"
-            app:spinner_popup_elevation="14dp" />
+             />
 
 
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
