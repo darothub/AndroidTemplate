@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
@@ -54,7 +55,7 @@ class AddressFragment : Fragment() {
 
 
         saveBtn.setOnClickListener {
-            Toast.makeText(context, "LGA ${spinnerLGA.selectedItem}", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.reportFragment)
         }
 
     }

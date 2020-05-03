@@ -2,7 +2,7 @@
     <string name="app_name">COVID-19VolunteerApp</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Hello create report fragment</string>
     <string name="anap">ANAP</string>
     <string name="themeText">Promoting Good\nGovernance</string>
     <string name="foundation">FOUNDATION</string>
@@ -25,4 +25,6 @@
     <string name="lga">LGA</string>
     <string name="street_hint_text">Street</string>
     <string name="save_text">Save</string>
+    <string name="profile_fragment">Hello profile fragment</string>
+    <string name="report_home_fragment">Hello report home fragment</string>
 </resources>
