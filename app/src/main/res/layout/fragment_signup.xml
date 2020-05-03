@@ -16,7 +16,7 @@
         android:layout_height="match_parent">
 
         <TextView
-            android:id="@+id/layout_title"
+            android:id="@+id/layoutSignupTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/signin_link"
+            android:id="@+id/signinLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/signin_link"
@@ -38,7 +38,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/layout_title" />
+            app:layout_constraintTop_toBottomOf="@id/layoutSignupTitle" />
 
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/fullName"
@@ -50,7 +50,7 @@
             app:layout_constraintHorizontal_bias="0.5"
             android:layout_marginTop="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/signin_link"
+            app:layout_constraintTop_toBottomOf="@+id/signinLink"
             app:layout_constraintVertical_bias="0">
 
             <EditText
@@ -139,10 +139,10 @@
             />
 
         <Button
-            android:id="@+id/sigin_btn"
+            android:id="@+id/signupBtn"
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:background="@drawable/rounded_button"
+            android:background="@drawable/rounded_border_with_backgrnd"
             android:text="@string/signup_text"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/checkboxForSignup"
@@ -158,7 +158,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/sigin_btn"
+            app:layout_constraintTop_toBottomOf="@id/signupBtn"
             app:layout_constraintVertical_bias=".98"
             app:progressView_colorBackground="@color/progressBackground"
             app:progressView_colorProgress="@color/progressColor"

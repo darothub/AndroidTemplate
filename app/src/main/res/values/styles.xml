@@ -31,6 +31,15 @@
         <item name="android:statusBarColor">@color/colorNeutral</item>
         <item name="android:textViewStyle">@style/PoppinsTextViewStyle</item>
         <item name="android:buttonStyle">@style/PoppinsButtonStyle</item>
+        <item name="editTextStyle">@style/CustomEditTextStyle</item>
+        <item name="android:dropDownListViewStyle">@style/SpinnerStyle</item>
+    </style>
+    <style name="CustomEditTextStyle" parent="Widget.AppCompat.EditText">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="singleLine">true</item>
+        <item name="android:textColorHint">@color/colorTextHint</item>
+        <item name="android:layout_marginTop">20dp</item>
     </style>
 
     <style name="PoppinsTextViewStyle" parent="Widget.AppCompat.TextView">
@@ -39,5 +48,15 @@
 
     <style name="PoppinsButtonStyle" parent="android:Widget.Holo.Button">
         <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:textColorHint">@color/colorTextHint</item>
     </style>
+
+    <style name="SpinnerStyle" parent="android:style/Widget.ListView.DropDown">
+        <item name="android:divider">@android:color/darker_gray</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:listSelector">@color/colorPrimary</item>
+        <item name="background">@drawable/spinner_backgrnd</item>
+
+    </style>
+
 </resources>

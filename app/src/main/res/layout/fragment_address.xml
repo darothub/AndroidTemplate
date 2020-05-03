@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorNeutral"
+    android:fillViewport="true"
+    android:paddingStart="30dp"
+    android:paddingEnd="30dp"
+    tools:context=".ui.AddressFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/layoutAddressTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="65dp"
+            android:text="@string/address_title"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/vlarge_font_size"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/houseNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            app:borderColor="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/layoutAddressTitle">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/house_number_hint_text"
+
+               />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <Spinner
+            android:id="@+id/spinnerState"
+            android:layout_height="65dp"
+            android:background="@drawable/spinner_backgrnd"
+            android:gravity="left|center"
+            android:hint="@string/states"
+            android:padding="10dp"
+            android:spinnerMode="dropdown"
+            style="@style/CustomEditTextStyle"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintStart_toStartOf="parent"
+            android:dropDownVerticalOffset="95dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:popupTheme="@style/AppThemeActivity"
+            app:layout_constraintTop_toBottomOf="@id/houseNumber"
+             />
+        <Spinner
+            android:id="@+id/spinnerLGA"
+            android:layout_width="match_parent"
+            android:background="@drawable/spinner_backgrnd"
+            android:layout_height="65dp"
+            android:gravity="left|center"
+            android:hint="@string/lga"
+            android:padding="10dp"
+            style="@style/CustomEditTextStyle"
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/colorTextHint"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/spinnerState"
+             />
+
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/streetEditTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            app:borderColor="@android:color/darker_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinnerLGA">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/street_hint_text"
+                android:textColorHint="@color/colorTextHint"
+                android:singleLine="true" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/rounded_border_with_backgrnd"
+            android:text="@string/save_text"
+            app:layout_constraintTop_toBottomOf="@id/streetEditTextField"
+            app:layout_constraintBottom_toBottomOf="@id/progressView1"
+            app:layout_constraintVertical_bias="0.18" />
+
+        <com.skydoves.progressview.ProgressView
+            android:id="@+id/progressView1"
+            android:layout_width="0dp"
+            android:layout_height="10dp"
+            android:layout_marginStart="70dp"
+            android:layout_marginEnd="70dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/saveBtn"
+            app:layout_constraintVertical_bias=".98"
+            app:progressView_colorBackground="@color/progressBackground"
+            app:progressView_colorProgress="@color/progressColor"
+            app:progressView_max="500"
+            app:progressView_min="0"
+            app:progressView_padding="0dp"
+            app:progressView_radius="12dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

@@ -54,5 +54,11 @@ dependencies {
     //EditText
     implementation "ss.anoop:awesome-textinput-layout:$versions.textinput"
 
+    //powerspinner
+    implementation "com.github.skydoves:powerspinner:$versions.powerspinner"
+
+    //gson
+    implementation "com.google.code.gson:gson:2.8.6"
+
 
 }

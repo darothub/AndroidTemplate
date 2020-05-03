@@ -56,6 +56,9 @@ class SignupFragment : Fragment() {
             }
             return@setOnKeyListener false
         }
+        signupBtn.setOnClickListener {
+            findNavController().navigate(R.id.addressFragment)
+        }
     }
 
     private fun setupSignInLink() {
@@ -66,7 +69,7 @@ class SignupFragment : Fragment() {
         }
         spannableString.setColorToSubstring(color, start, end)
         spannableString.removeUnderLine(start, end)
-        signin_link.text = spannableString
-        signin_link.movementMethod = LinkMovementMethod.getInstance()
+        signinLink.text = spannableString
+        signinLink.movementMethod = LinkMovementMethod.getInstance()
     }
 }
