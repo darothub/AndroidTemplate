@@ -47,23 +47,5 @@
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportFragment"
         android:label="fragment_report"
         tools:layout="@layout/fragment_report" />
-    <navigation
-        android:id="@+id/navigation"
-        app:startDestination="@id/reportHomeFragment2" >
-        <fragment
-            android:id="@+id/reportHomeFragment2"
-            android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportHomeFragment"
-            android:label="fragment_report_home"
-            tools:layout="@layout/fragment_report_home" />
-        <fragment
-            android:id="@+id/createReportFragment2"
-            android:name="com.anapfoundation.covid_19volunteerapp.ui.CreateReportFragment"
-            android:label="fragment_create_report"
-            tools:layout="@layout/fragment_create_report" />
-        <fragment
-            android:id="@+id/profileFragment2"
-            android:name="com.anapfoundation.covid_19volunteerapp.ui.ProfileFragment"
-            android:label="fragment_profile"
-            tools:layout="@layout/fragment_profile" />
-    </navigation>
+    <include app:graph="@navigation/nav_graph2" />
 </navigation>

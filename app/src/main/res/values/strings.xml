@@ -27,4 +27,7 @@
     <string name="save_text">Save</string>
     <string name="profile_fragment">Hello profile fragment</string>
     <string name="report_home_fragment">Hello report home fragment</string>
+    <string name="food_price">FOOD PRICE</string>
+    <string name="dummy_details">The new price of rice in Lagos is alarming</string>
+    <string name="location">Onipanu, Lagos</string>
 </resources>

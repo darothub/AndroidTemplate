@@ -9,7 +9,7 @@
     <item
         android:id="@+id/createReportFragment"
         android:title="Create"
-        android:icon="@drawable/create_icon"/>
+        android:icon="@drawable/ic_add_black"/>
 
     <item
         android:id="@+id/profileFragment"

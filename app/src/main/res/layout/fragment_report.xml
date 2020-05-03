@@ -8,10 +8,10 @@
     android:fillViewport="true"
     tools:context=".ui.ReportFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:clipChildren="false">
 
         <fragment
             android:id="@+id/fragment2"
@@ -35,6 +35,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:menu="@menu/bottom_menu"
+            android:elevation="55dp"
+            android:background="@color/colorNeutral"
+
+
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
