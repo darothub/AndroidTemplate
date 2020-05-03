@@ -5,4 +5,5 @@
     <dimen name="medium_font_size">14sp</dimen>
     <dimen name="large_font_size">18sp</dimen>
     <dimen name="vlarge_font_size">32sp</dimen>
+    <dimen name="medium_margin_size">20dp</dimen>
 </resources>

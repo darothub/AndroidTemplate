@@ -37,8 +37,6 @@
             app:menu="@menu/bottom_menu"
             android:elevation="55dp"
             android:background="@color/colorNeutral"
-
-
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -63,5 +63,8 @@ dependencies {
     //recyclerView
     implementation "com.utsman.recycling:recycling:$versions.recycling"
 
+    //justify textview
+    implementation 'com.github.pouriaHemmati:JustifiedTextView:1.0.0'
+
 
 }
