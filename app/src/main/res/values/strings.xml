@@ -31,4 +31,12 @@
     <string name="dummy_details">The new price of rice in Lagos is alarming</string>
     <string name="location">Onipanu, Lagos</string>
     <string name="recent_report">Recent Reports</string>
+    <string name="choose_a_topic">Choose a topic \nto report on</string>
+    <string name="hunger">Hunger</string>
+    <string name="death">Death</string>
+    <string name="food_prices">Food Prices</string>
+    <string name="category">Category</string>
+    <string name="health">Health</string>
+    <string name="lockdown">Lockdown</string>
+
 </resources>

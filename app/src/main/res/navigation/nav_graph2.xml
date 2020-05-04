@@ -13,7 +13,7 @@
     <fragment
         android:id="@+id/createReportFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.CreateReportFragment"
-        android:label="fragment_create_report"
+        android:label='""'
         tools:layout="@layout/fragment_create_report" />
     <fragment
         android:id="@+id/profileFragment"
