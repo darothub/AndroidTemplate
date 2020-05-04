@@ -39,7 +39,7 @@
             app:menu="@menu/bottom_menu" />
 
         <com.skydoves.progressview.ProgressView
-            android:id="@+id/progressView1"
+            android:id="@+id/reportFragmentProgressView1"
             android:layout_width="0dp"
             android:layout_height="5dp"
             android:layout_marginStart="100dp"

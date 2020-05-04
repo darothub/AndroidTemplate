@@ -6,4 +6,6 @@
     <dimen name="large_font_size">18sp</dimen>
     <dimen name="vlarge_font_size">32sp</dimen>
     <dimen name="medium_margin_size">20dp</dimen>
+    <dimen name="normal_padding">20dp</dimen>
+    <dimen name="normal_margin">20dp</dimen>
 </resources>

@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 
@@ -44,6 +46,10 @@ class CreateReportQuestionsFragment : Fragment() {
             bind { itemView, position, item ->
                 itemView.optionsText.text = item
                 itemView.setOnClickListener {
+                    val request = NavDeepLinkRequest.Builder
+                        .fromUri("app://uploadreportscreen".toUri())
+                        .build()
+                    findNavController().navigate(request)
                 }
             }
 

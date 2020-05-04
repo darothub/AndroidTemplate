@@ -13,6 +13,8 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
 import kotlinx.android.synthetic.main.fragment_report.*
 
 /**
@@ -37,14 +39,27 @@ class ReportFragment : Fragment() {
         bottomNav.setupWithNavController(navController)
 
 
-//        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-//
-//        }
+        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+            when(destination.id){
+                R.id.reportUploadFragment -> {
+                    bottomNav.hide()
+                    reportFragmentProgressView1.hide()
+                }
+            }
+        }
         requireActivity().onBackPressedDispatcher.addCallback {
 
             requireActivity().finish()
 
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        bottomNav.show()
+        reportFragmentProgressView1.show()
+    }
+
+
 
 }
