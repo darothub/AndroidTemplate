@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.GridLayoutManager
 
@@ -43,6 +44,9 @@ class CreateReportFragment : Fragment() {
     private val death by lazy {
         requireContext().localized(R.string.death)
     }
+    private val navController by lazy {
+        findNavController()
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -61,13 +65,17 @@ class CreateReportFragment : Fragment() {
             bind { itemView, position, item ->
                 itemView.createReportSubject.text = item
                 itemView.setOnClickListener {
-                    requireActivity().toast("Pos $position")
+                    val action = CreateReportFragmentDirections.actionCreateReportFragmentToCreateReportOptionsFragment()
+                    action.option = it.createReportSubject.text.toString()
+                    findNavController().navigate(action)
                 }
             }
             setLayoutManager(GridLayoutManager(requireContext(), 2))
 
             submitList(myList)
         }
+
+
     }
 
 
