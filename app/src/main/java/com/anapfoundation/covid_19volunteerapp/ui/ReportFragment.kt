@@ -37,6 +37,9 @@ class ReportFragment : Fragment() {
         bottomNav.setupWithNavController(navController)
 
 
+//        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+//
+//        }
         requireActivity().onBackPressedDispatcher.addCallback {
 
             requireActivity().finish()
