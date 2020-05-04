@@ -26,13 +26,13 @@
         tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/createReportOptionsFragment"
-        android:name="com.anapfoundation.covid_19volunteerapp.ui.CreateReportOptionsFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.CreateReportQuestionsFragment"
         android:label="fragment_create_report_options"
-        tools:layout="@layout/fragment_create_report_options" >
+        tools:layout="@layout/fragment_create_report_questions" >
         <argument
-            android:name="option"
-            app:argType="string"
+            android:name="question"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.ReportQuestionModel"
             app:nullable="true"
-            android:defaultValue='""' />
+            android:defaultValue="@null" />
     </fragment>
 </navigation>

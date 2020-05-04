@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.CreateReportOptionsFragment">
+    tools:context=".ui.CreateReportQuestionsFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/createReportOptionsAppBar"
+        android:id="@+id/createReportQuestionAppBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:background="@null"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/createReportOptionsToolbar"
+            android:id="@+id/createReportQuestionToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
@@ -56,7 +56,7 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <TextView
-        android:id="@+id/createReportOptionsHeading"
+        android:id="@+id/createReportQuestionHeading"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
@@ -67,19 +67,20 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/createReportOptionsAppBar"
+        app:layout_constraintTop_toBottomOf="@id/createReportQuestionAppBar"
+        android:textAllCaps="true"
         app:layout_constraintVertical_bias=".5" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/createReportRecyclerView"
+        android:id="@+id/createReportQuestionRecyclerView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:spanCount="3"
-        app:layout_constraintTop_toBottomOf="@id/createReportOptionsHeading"
-        tools:listitem="@layout/create_report_options_item" />
+        app:spanCount="2"
+        app:layout_constraintTop_toBottomOf="@id/createReportQuestionHeading"
+        tools:listitem="@layout/create_report_questions_item" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
