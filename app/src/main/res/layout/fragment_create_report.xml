@@ -23,13 +23,12 @@
             android:id="@+id/createReportToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
             android:textAlignment="center"
-            app:titleTextColor="@android:color/black">
+            app:titleTextColor="@color/colorPrimaryDark">
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Create New report"
+                android:text="@string/create_new_report"
                 android:gravity="center"
                 android:textSize="@dimen/large_font_size"
                 android:textColor="@color/colorPrimaryDark"
@@ -43,7 +42,6 @@
         android:id="@+id/createReportHeading"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
         android:text="@string/choose_a_topic"
         android:textColor="@color/colorPrimaryDark"
@@ -58,14 +56,13 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/createReportRecyclerView"
-
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
         app:spanCount="2"
         app:layout_constraintTop_toBottomOf="@id/createReportHeading"
         tools:listitem="@layout/create_report_item" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
