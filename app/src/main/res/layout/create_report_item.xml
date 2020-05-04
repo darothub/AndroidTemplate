@@ -51,13 +51,13 @@
         android:id="@+id/leftOffset"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/cardView"
-        android:layout_width="30dp"
+        android:layout_width="15dp"
         android:layout_height="30dp" />
 
     <Space
         android:id="@+id/rightOffset"
         app:layout_constraintStart_toEndOf="@id/cardView"
         app:layout_constraintTop_toTopOf="@id/cardView"
-        android:layout_width="10dp"
+        android:layout_width="20dp"
         android:layout_height="30dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
