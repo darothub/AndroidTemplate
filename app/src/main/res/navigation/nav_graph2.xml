@@ -35,4 +35,10 @@
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
+    <include app:graph="@navigation/nav_graph" />
+    <fragment
+        android:id="@+id/reportUploadFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportUploadFragment"
+        android:label="fragment_report_upload"
+        tools:layout="@layout/fragment_report_upload" />
 </navigation>

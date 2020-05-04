@@ -18,7 +18,7 @@
         </activity>
         <activity android:name=".ui.MainActivity"
             android:theme="@style/AppThemeActivity">
-
+            <nav-graph android:value="@navigation/nav_graph" />
         </activity>
     </application>
 

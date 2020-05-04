@@ -85,9 +85,6 @@ class AddressFragment : Fragment() {
                     it.name
                 })
 
-                val v = parent?.getChildAt(0) as TextView
-//                v.setTextColor(resources.getColor(R.color.colorTextHint))
-
                 val adapterLga = ArrayAdapter(
                     requireContext(),
                     R.layout.support_simple_spinner_dropdown_item,

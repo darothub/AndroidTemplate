@@ -71,5 +71,8 @@
     <string name="food">Food</string>
     <string name="money">Money</string>
     <string name="material">Materials\n(sanitizers, face masks, shelter, etc)</string>
+    <string name="upload_picture">Upload Picture</string>
+    <string name="enter_your_report">Enter your report here</string>
+    <string name="submit_text">Submit</string>
 
 </resources>

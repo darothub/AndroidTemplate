@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -57,6 +59,10 @@ class SigninFragment : Fragment() {
                 return@setOnKeyListener true
             }
             return@setOnKeyListener false
+        }
+
+        signinBtn.setOnClickListener {
+
         }
 
     }

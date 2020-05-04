@@ -5,11 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.ReportQuestionModel
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.setBackButtonNavigation
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.utsman.recycling.setupAdapter
 import kotlinx.android.synthetic.main.create_report_item.view.*
@@ -37,13 +40,19 @@ class CreateReportQuestionsFragment : Fragment() {
 
         receiveQuestion()
         setQuestion()
-        setBackButtonAction()
+//        setBackButtonAction()
+        backButton.setBackButtonNavigation()
 
         val myList = question.options
         createReportQuestionRecyclerView.setupAdapter<String>(R.layout.create_report_questions_item){ adapter, context, list ->
             bind { itemView, position, item ->
                 itemView.optionsText.text = item
                 itemView.setOnClickListener {
+//                    val request = NavDeepLinkRequest.Builder
+//                        .fromUri("app://uploadreportscreen".toUri())
+//                        .build()
+
+                    findNavController().navigate(R.id.reportUploadFragment)
                 }
             }
 
@@ -54,6 +63,7 @@ class CreateReportQuestionsFragment : Fragment() {
             requireContext().toast("listSize ${list?.size}")
         }
 //        requireContext().toast("$question")
+
 
     }
 

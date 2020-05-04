@@ -8,6 +8,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 
@@ -36,3 +37,5 @@ fun Context.hideKeyboard(view: View) {
 fun Context.toast(message:String){
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
+
+
