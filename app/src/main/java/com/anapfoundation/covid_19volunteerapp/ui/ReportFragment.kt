@@ -1,6 +1,7 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
 import kotlinx.android.synthetic.main.fragment_report.*
@@ -22,8 +24,27 @@ import kotlinx.android.synthetic.main.fragment_report.*
  */
 class ReportFragment : Fragment() {
 
+    private val title by lazy {
+        getName()
+    }
     private val navController by lazy {
         Navigation.findNavController(requireActivity(), R.id.fragment2)
+    }
+
+
+    lateinit var controller: NavController
+
+    private val uploadListener = NavController.OnDestinationChangedListener{controller, destination, arguments ->
+        when(destination.id){
+            R.id.reportUploadFragment -> {
+                bottomNav.hide()
+                reportFragmentProgressView1.hide()
+            }
+            else -> {
+                bottomNav.show()
+                reportFragmentProgressView1.show()
+            }
+        }
     }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,15 +59,8 @@ class ReportFragment : Fragment() {
 
         bottomNav.setupWithNavController(navController)
 
+        Log.i(title, "OnActivity")
 
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            when(destination.id){
-                R.id.reportUploadFragment -> {
-                    bottomNav.hide()
-                    reportFragmentProgressView1.hide()
-                }
-            }
-        }
         requireActivity().onBackPressedDispatcher.addCallback {
 
             requireActivity().finish()
@@ -56,10 +70,23 @@ class ReportFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        bottomNav.show()
-        reportFragmentProgressView1.show()
+        //
+        Log.i(title, "OnResume")
+        navController.addOnDestinationChangedListener(uploadListener)
+
+
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.i(title, "OnPause")
+        navController.removeOnDestinationChangedListener(uploadListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(title, "OnDestroy")
+    }
 
 
 }

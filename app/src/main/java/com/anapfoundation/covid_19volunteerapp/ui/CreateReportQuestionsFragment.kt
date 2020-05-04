@@ -46,10 +46,11 @@ class CreateReportQuestionsFragment : Fragment() {
             bind { itemView, position, item ->
                 itemView.optionsText.text = item
                 itemView.setOnClickListener {
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("app://uploadreportscreen".toUri())
-                        .build()
-                    findNavController().navigate(request)
+//                    val request = NavDeepLinkRequest.Builder
+//                        .fromUri("app://uploadreportscreen".toUri())
+//                        .build()
+
+                    findNavController().navigate(R.id.reportUploadFragment)
                 }
             }
 

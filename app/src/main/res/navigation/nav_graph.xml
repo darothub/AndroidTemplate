@@ -47,5 +47,4 @@
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportFragment"
         android:label="fragment_report"
         tools:layout="@layout/fragment_report" />
-    <include app:graph="@navigation/nav_graph2" />
 </navigation>
