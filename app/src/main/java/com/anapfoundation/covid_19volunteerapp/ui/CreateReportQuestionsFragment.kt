@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.ReportQuestionModel
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.setBackButtonNavigation
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.utsman.recycling.setupAdapter
 import kotlinx.android.synthetic.main.create_report_item.view.*
@@ -39,7 +40,8 @@ class CreateReportQuestionsFragment : Fragment() {
 
         receiveQuestion()
         setQuestion()
-        setBackButtonAction()
+//        setBackButtonAction()
+        backButton.setBackButtonNavigation()
 
         val myList = question.options
         createReportQuestionRecyclerView.setupAdapter<String>(R.layout.create_report_questions_item){ adapter, context, list ->
@@ -61,6 +63,7 @@ class CreateReportQuestionsFragment : Fragment() {
             requireContext().toast("listSize ${list?.size}")
         }
 //        requireContext().toast("$question")
+
 
     }
 

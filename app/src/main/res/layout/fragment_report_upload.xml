@@ -34,7 +34,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/backButton"
+                        android:id="@+id/reportUploadBackButton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:clickable="true"
@@ -173,7 +173,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
-            app:borderColor="@android:color/darker_gray"
+            app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/reportUploadLGA">
