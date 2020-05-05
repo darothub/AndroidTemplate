@@ -32,6 +32,7 @@ class ReportHomeFragment : Fragment() {
         recyclerView.setupAdapter<String>(R.layout.report_item){adapter, context, list ->
             bind { itemView, position, item ->
                 itemView.reportTitle.text = item
+                itemView.reportImage.clipToOutline = true
                 itemView.setOnClickListener {
                     requireActivity().toast("Pos $position")
                 }

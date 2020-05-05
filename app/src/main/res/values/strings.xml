@@ -51,18 +51,18 @@
     <string name="high">High</string>
     <string name="low">Low</string>
     <string name="very_low">Very low</string>
-    <string name="public_enlightenment">Public Enlightenment</string>
+    <string name="public_enlightenment">Public\nEnlightenment</string>
     <string name="adequate">Adequate</string>
     <string name="very_adequate">Very Adequate</string>
-    <string name="inadequate">Inadequate\n(explain)</string>
+    <string name="inadequate">Inadequate(explain)</string>
     <string name="measures">Measures</string>
-    <string name="curfew">Curfew\n(when to when?)</string>
+    <string name="curfew">Curfew(when to when?)</string>
     <string name="total_lockdown">Total lockdown</string>
     <string name="partial_lockdown">Partial lockdown</string>
     <string name="level_of_compliance">Level of Compliance</string>
-    <string name="high_total">High\n(total)</string>
-    <string name="average_largely">Average\n(largely)</string>
-    <string name="low_partial">Low\n(partial)</string>
+    <string name="high_total">High(total)</string>
+    <string name="average_largely">Average(largely)</string>
+    <string name="low_partial">Low(partial)</string>
     <string name="challenge_observed">Challenge Observed with Enforcement</string>
     <string name="defiance">Defiance</string>
     <string name="no_surveillance">No surveillance</string>
@@ -74,5 +74,6 @@
     <string name="upload_picture">Upload Picture</string>
     <string name="enter_your_report">Enter your report here</string>
     <string name="submit_text">Submit</string>
+    <string name="select_text">Select</string>
 
 </resources>
