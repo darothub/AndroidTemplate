@@ -110,7 +110,12 @@ class CreateReportFragment : Fragment() {
             }
             submitList(myList)
         }
+
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
+        bottomSheetView.selectBtn.setOnClickListener {
+            bottomSheetDialog.dismiss()
+            findNavController().navigate(R.id.reportUploadFragment)
+        }
     }
 }

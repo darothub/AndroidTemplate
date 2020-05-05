@@ -77,11 +77,11 @@
             android:textColor="@color/colorNeutral"
             app:layout_constraintVertical_bias="0.3"
             app:layout_constraintTop_toBottomOf="@id/foundation"
-            app:layout_constraintBottom_toTopOf="@id/progressView1"
+            app:layout_constraintBottom_toTopOf="@id/homeProgressView1"
             />
 
         <com.skydoves.progressview.ProgressView
-            android:id="@+id/progressView1"
+            android:id="@+id/homeProgressView1"
             android:layout_width="match_parent"
             android:layout_height="15dp"
             app:progressView_colorBackground="@color/progressBackground"
