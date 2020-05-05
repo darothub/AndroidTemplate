@@ -32,11 +32,14 @@ class ReportFragment : Fragment() {
     }
 
 
-    lateinit var controller: NavController
 
     private val uploadListener = NavController.OnDestinationChangedListener{controller, destination, arguments ->
         when(destination.id){
             R.id.reportUploadFragment -> {
+                bottomNav.hide()
+                reportFragmentProgressView1.hide()
+            }
+            R.id.notificationFragment ->{
                 bottomNav.hide()
                 reportFragmentProgressView1.hide()
             }

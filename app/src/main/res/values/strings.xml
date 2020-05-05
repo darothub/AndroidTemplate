@@ -46,7 +46,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="question">How would rate the situation</string>
     <string name="bad">Bad</string>
-    <string name="awareness_of_covid">Awareness of Covid-19</string>
+    <string name="awareness_of_covid">Awareness of \nCovid-19</string>
     <string name="very_high">Very High</string>
     <string name="high">High</string>
     <string name="low">Low</string>
@@ -74,6 +74,12 @@
     <string name="upload_picture">Upload Picture</string>
     <string name="enter_your_report">Enter your report here</string>
     <string name="submit_text">Submit</string>
+    <string name="notification_text">Notifications</string>
+    <string name="location_state">Yaba, Lagos</string>
+    <string name="notification_status">New</string>
+    <string name="notification_headline">Covid-19 process attacks the human body</string>
+    <string name="report_details">This is the details of the report. This is the details of the report.This is the details of the report.This is the details of the report.This is the details of the report.</string>
     <string name="select_text">Select</string>
+
 
 </resources>

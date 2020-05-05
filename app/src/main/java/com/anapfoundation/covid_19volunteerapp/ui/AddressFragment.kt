@@ -33,7 +33,7 @@ class AddressFragment : Fragment() {
         getName()
     }
     val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
-        HashMap<String, List<CityClass>>()
+        requireActivity().readCitiesAndLgaData()
     }
     val gson: Gson by lazy {
         Gson()
@@ -50,7 +50,7 @@ class AddressFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        readCitiesAndLgaData()
+
         setAdapterData()
 
 
@@ -96,25 +96,25 @@ class AddressFragment : Fragment() {
         }
     }
 
-    private fun readCitiesAndLgaData(){
-        try {
-            val inputStream: InputStream = requireActivity().assets.open("stateslga.json")
-            val json = inputStream.bufferedReader().readText()
-            val stateType = object : TypeToken<ArrayList<ArrayObjOfStates?>?>() {}.type
-            val stateListObject: ArrayList<ArrayObjOfStates> = gson.fromJson(json, stateType)
-            stateLgaMap.put("States", listOf(CityClass("LGA", 0)))
-            stateListObject.associateByTo(stateLgaMap, {
-                it.state.name
-            }, {
-                it.state.locals.toList()
-            })
-
-//            requireContext().toast("state ${stateListObject}")
-
-        } catch (e: IOException) {
-            Log.e(title, "$e")
-        }
-    }
+//    private fun readCitiesAndLgaData(){
+//        try {
+//            val inputStream: InputStream = requireActivity().assets.open("stateslga.json")
+//            val json = inputStream.bufferedReader().readText()
+//            val stateType = object : TypeToken<ArrayList<ArrayObjOfStates?>?>() {}.type
+//            val stateListObject: ArrayList<ArrayObjOfStates> = gson.fromJson(json, stateType)
+//            stateLgaMap.put("States", listOf(CityClass("LGA", 0)))
+//            stateListObject.associateByTo(stateLgaMap, {
+//                it.state.name
+//            }, {
+//                it.state.locals.toList()
+//            })
+//
+////            requireContext().toast("state ${stateListObject}")
+//
+//        } catch (e: IOException) {
+//            Log.e(title, "$e")
+//        }
+//    }
 
 
 }
