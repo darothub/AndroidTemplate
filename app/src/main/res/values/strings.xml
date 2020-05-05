@@ -86,6 +86,8 @@
     <string name="upload_number">2,423</string>
     <string name="uploaded_report_text">Uploaded Reports</string>
     <string name="edit_profile_text">Edit Info</string>
+    <string name="change_profile_picture">Change profile picture</string>
+    <string name="update_info">Update Info</string>
 
 
 </resources>

@@ -1,22 +1,26 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.navigation.fragment.findNavController
+
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.google.gson.Gson
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.readCitiesAndLgaData
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.setSpinnerAdapterData
 import kotlinx.android.synthetic.main.fragment_address.*
-
+import kotlinx.android.synthetic.main.fragment_edit_profile.*
 
 /**
  * A simple [Fragment] subclass.
  */
-class AddressFragment : Fragment() {
+class EditProfileFragment : Fragment() {
 
     val title: String by lazy {
         getName()
@@ -24,34 +28,23 @@ class AddressFragment : Fragment() {
     val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
         requireActivity().readCitiesAndLgaData()
     }
-    val gson: Gson by lazy {
-        Gson()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_address, container, false)
+        return inflater.inflate(R.layout.fragment_edit_profile, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        requireContext().setSpinnerAdapterData(editInfoStateSpinner, editInfoLGASpinner, stateLgaMap)
 
-        requireContext().setSpinnerAdapterData(spinnerState, spinnerLGA, stateLgaMap)
-//        setAdapterData()
-
-
-        saveBtn.setOnClickListener {
-            findNavController().navigate(R.id.reportFragment)
+        editInfoBackButton.setOnClickListener {
+            findNavController().popBackStack()
         }
-
     }
-
-
-
-
 
 }
