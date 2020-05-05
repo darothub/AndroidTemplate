@@ -41,4 +41,9 @@
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportUploadFragment"
         android:label="fragment_report_upload"
         tools:layout="@layout/fragment_report_upload" />
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
 </navigation>

@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
@@ -38,6 +39,10 @@ class ReportHomeFragment : Fragment() {
             }
 
             submitList(myList)
+        }
+
+        notificationIcon.setOnClickListener {
+            findNavController().navigate(R.id.notificationFragment)
         }
     }
 
