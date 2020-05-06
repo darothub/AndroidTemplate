@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.core.net.toUri
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
@@ -61,6 +62,8 @@ class SigninFragment : Fragment() {
             return@setOnKeyListener false
         }
 
+        val signinBtn = signinIndicator.findViewById<Button>(R.id.includeBtn)
+        signinBtn.text = requireContext().localized(R.string.signin_text)
         signinBtn.setOnClickListener {
 
         }

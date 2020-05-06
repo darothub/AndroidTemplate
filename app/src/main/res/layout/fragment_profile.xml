@@ -173,6 +173,8 @@
             android:layout_height="55dp"
             android:background="@drawable/rounded_border_with_backgrnd"
             android:text="@string/edit_profile_text"
+            android:textAllCaps="false"
+            android:textColor="@color/colorNeutral"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"

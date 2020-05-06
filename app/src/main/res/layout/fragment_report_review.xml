@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".ui.ReportReviewFragment">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:fitsSystemWindows="true"
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="@drawable/healthpic"
+            >
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolBar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:theme="@style/Theme.AppCompat.Light"
+                app:layout_collapseMode="pin" >
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/reviewNotificationImage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitXY"
+                        android:layout_margin="@dimen/normal_margin"
+                        android:elevation="10dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/notification_icon_white" />
+                    <ImageView
+                        android:id="@+id/reviewBackBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="fitXY"
+                        android:layout_margin="@dimen/normal_margin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:elevation="10dp"
+                        app:srcCompat="@drawable/back_button_with_background" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:background="@color/colorNeutral"
+                        app:layout_constraintTop_toBottomOf="@id/reviewBackBtn"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.appcompat.widget.Toolbar>
+
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/reviewReportStack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="200dp"
+            android:background="@drawable/bottom_sheet_background"
+            android:elevation="10dp"
+            >
+            <TextView
+                android:id="@+id/reviewReportTopic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/hunger"
+                android:layout_margin="@dimen/normal_margin"
+
+                android:textSize="@dimen/medium_font_size"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimary"/>
+            <TextView
+                android:id="@+id/reviewReportLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/location"
+                android:layout_margin="@dimen/normal_margin"
+                android:textSize="@dimen/medium_font_size"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"/>
+
+            <TextView
+                android:id="@+id/reviewReportHeadline"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reviewReportTopic"
+                android:text="@string/headline_sample"
+                android:textSize="@dimen/large_font_size"
+                android:layout_margin="@dimen/normal_margin"
+                android:textStyle="bold"
+                android:textColor="@color/colorPrimaryDark"/>
+
+            <TextView
+                android:id="@+id/reviewReportDetails"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/reviewReportHeadline"
+                android:text="@string/report_details"
+                android:textSize="@dimen/smallest_font_size"
+                android:textStyle="normal"
+                android:padding="@dimen/normal_margin"
+                android:breakStrategy="balanced"
+                android:justificationMode="inter_word"
+
+                android:textColor="@color/colorPrimaryDark"/>
+            <include
+                android:id="@+id/reviewBottomLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                app:layout_constraintTop_toBottomOf="@id/reviewReportDetails"
+                layout="@layout/bottom_layout"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+</androidx.core.widget.NestedScrollView>
