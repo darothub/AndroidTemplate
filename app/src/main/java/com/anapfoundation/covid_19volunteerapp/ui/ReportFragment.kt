@@ -43,6 +43,10 @@ class ReportFragment : Fragment() {
                 bottomNav.hide()
                 reportFragmentProgressView1.hide()
             }
+            R.id.reportReviewFragment ->{
+                bottomNav.hide()
+                reportFragmentProgressView1.hide()
+            }
             else -> {
                 bottomNav.show()
                 reportFragmentProgressView1.show()

@@ -7,14 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.readCitiesAndLgaData
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.setBackButtonNavigation
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.setSpinnerAdapterData
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import kotlinx.android.synthetic.main.fragment_edit_profile.*
+import kotlinx.android.synthetic.main.fragment_report_review.*
 import kotlinx.android.synthetic.main.fragment_report_upload.*
 
 /**
@@ -42,42 +43,14 @@ class ReportUploadFragment : Fragment() {
         reportUploadBackButton.setBackButtonNavigation()
 
         requireContext().setSpinnerAdapterData(reportUploadState, reportUploadLGA, stateLgaMap)
-    }
-
-
-    private fun setAdapterData() {
-        val newList = arrayListOf<String>()
-        newList.add("States")
-
-        newList.addAll(stateLgaMap.keys.toSortedSet())
-
-        val adapterState =
-            ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, newList)
-        reportUploadState.adapter = adapterState
-        reportUploadState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                val lga = ArrayList<String>()
-                stateLgaMap.get(newList[position])!!.toList().mapTo(lga, {
-                    it.name
-                })
-
-                val adapterLga = ArrayAdapter(
-                    requireContext(),
-                    R.layout.support_simple_spinner_dropdown_item,
-                    lga
-                )
-                reportUploadLGA.adapter = adapterLga
-            }
-
+        val submitReportBtn = reportUploadBottomLayout.findViewById<Button>(R.id.btn)
+        submitReportBtn.text = requireContext().localized(R.string.submit_text)
+        submitReportBtn.setOnClickListener{
+            Toast.makeText(requireContext(), "hey", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.reportReviewFragment)
         }
     }
+
+
+
 }

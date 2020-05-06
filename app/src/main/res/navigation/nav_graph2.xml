@@ -51,4 +51,9 @@
         android:name="com.anapfoundation.covid_19volunteerapp.ui.EditProfileFragment"
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" />
+    <fragment
+        android:id="@+id/reportReviewFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportReviewFragment"
+        android:label="fragment_report_review"
+        tools:layout="@layout/fragment_report_review" />
 </navigation>

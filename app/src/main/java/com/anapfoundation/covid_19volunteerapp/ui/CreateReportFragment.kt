@@ -1,10 +1,14 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.content.res.ColorStateList
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.RadioButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.Navigation
@@ -110,6 +114,9 @@ class CreateReportFragment : Fragment() {
             }
             submitList(myList)
         }
+
+
+
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()

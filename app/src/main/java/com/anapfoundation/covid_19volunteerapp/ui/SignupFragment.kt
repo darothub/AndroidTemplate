@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 
@@ -56,6 +57,8 @@ class SignupFragment : Fragment() {
             }
             return@setOnKeyListener false
         }
+        val signupBtn = signupIndicator.findViewById<Button>(R.id.includeBtn)
+        signupBtn.text = requireContext().localized(R.string.signup_text)
         signupBtn.setOnClickListener {
             findNavController().navigate(R.id.addressFragment)
         }
