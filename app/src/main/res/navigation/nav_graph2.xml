@@ -57,8 +57,8 @@
         android:label="fragment_report_review"
         tools:layout="@layout/fragment_report_review" />
     <fragment
-        android:id="@+id/readReportFragment"
-        android:name="com.anapfoundation.covid_19volunteerapp.ui.ReadReportFragment"
-        android:label="fragment_read_report"
-        tools:layout="@layout/fragment_read_report" />
+        android:id="@+id/singleReportFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.SingleReportFragment"
+        android:label="fragment_single_report"
+        tools:layout="@layout/fragment_single_report" />
 </navigation>
