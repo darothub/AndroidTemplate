@@ -54,6 +54,9 @@ class NotificationFragment : Fragment() {
                 else{
                     itemView.notificationStatus.hide()
                 }
+                itemView.setOnClickListener {
+                    findNavController().navigate(R.id.readReportFragment)
+                }
             }
 
             submitList(myList)
