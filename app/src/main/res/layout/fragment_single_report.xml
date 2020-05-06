@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/readReportappBar"
+            android:id="@+id/singleReportappBar"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:background="@drawable/healthpic"
@@ -20,7 +20,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/readReporttoolBar"
+                android:id="@+id/singleReporttoolBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:theme="@style/Theme.AppCompat.Light"
@@ -31,7 +31,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/readReportNotificationImage"
+                        android:id="@+id/singleReportNotificationImage"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="15dp"
@@ -42,7 +42,7 @@
                         app:srcCompat="@drawable/notification_icon_white" />
 
                     <ImageView
-                        android:id="@+id/readReportBackBtn"
+                        android:id="@+id/singleReportBackBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="15dp"
@@ -57,7 +57,7 @@
                         android:layout_height="50dp"
                         android:background="@color/colorNeutral"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/readReportBackBtn" />
+                        app:layout_constraintTop_toBottomOf="@id/singleReportBackBtn" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.appcompat.widget.Toolbar>
@@ -66,7 +66,7 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/readReportReportStack"
+            android:id="@+id/singleReportReportStack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="200dp"
@@ -139,7 +139,7 @@
                 app:srcCompat="@drawable/pinterest" />
 
             <TextView
-                android:id="@+id/readReportReportTopic"
+                android:id="@+id/singleReportReportTopic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/normal_margin"
@@ -151,7 +151,7 @@
                 app:layout_constraintTop_toBottomOf="@id/pininterestIcon" />
 
             <TextView
-                android:id="@+id/readReportReportLocation"
+                android:id="@+id/singleReportReportLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/normal_margin"
@@ -159,9 +159,9 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/medium_font_size"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@id/readReportReportTopic"
+                app:layout_constraintBottom_toBottomOf="@id/singleReportReportTopic"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/readReportReportTopic"
+                app:layout_constraintTop_toTopOf="@id/singleReportReportTopic"
 
                 />
 
