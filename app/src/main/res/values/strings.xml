@@ -103,6 +103,8 @@
     <string name="headline_sample">Is Lagos prepared for outbreak of Covid-19?...Nothing seems so.</string>
     <string name="approve_report">Approve Report</string>
     <string name="do_something">Do something</string>
+    <string name="share_text">Share</string>
+    <string name="source_text">Source: </string>
 
 
 </resources>

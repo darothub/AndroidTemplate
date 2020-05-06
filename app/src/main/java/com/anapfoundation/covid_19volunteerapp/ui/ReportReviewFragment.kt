@@ -6,6 +6,7 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.IconMarginSpan
 import android.text.style.ImageSpan
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -50,10 +51,10 @@ class ReportReviewFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
 
-        val ssb = SpannableStringBuilder()
-        ssb.append(requireContext().localized(R.string.report_details))
-        ssb.setSpan(ImageSpan(requireContext(), R.drawable.ic_back_icon), spannableString.length-1, spannableString.length,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+//        val ssb = SpannableStringBuilder()
+//        ssb.append(requireContext().localized(R.string.report_details))
+//        ssb.setSpan(ImageSpan(requireContext(), R.drawable.very_bad), 20, detailsText.length-1,
+//            Spanned.SPAN_MARK_MARK)
 
 
         reviewBackBtn.setOnClickListener {
@@ -64,6 +65,9 @@ class ReportReviewFragment : Fragment() {
 //        reviewReportDetails.text = ssb
 //
 //
+        val res = detailsText.split(".").dropLastWhile { it.isEmpty() }.toTypedArray().size - 1
+        val occ = detailsText.indexOf(".", 100)
+        Log.i(title, "occ $occ")
         val approveBtn = reviewBottomLayout.findViewById<Button>(R.id.btn)
         approveBtn.text = requireContext().localized(R.string.approve_report)
     }

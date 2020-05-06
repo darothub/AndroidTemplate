@@ -70,12 +70,10 @@ dependencies {
 
     //recyclerView
     implementation "com.utsman.recycling:recycling:$versions.recycling"
-    
+
 
     //material design
     implementation "com.google.android.material:material:$versions.material_design"
-
-
 
 
 }
