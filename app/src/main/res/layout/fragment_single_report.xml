@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".ui.ReadReportFragment">
+    tools:context=".ui.SingleReportFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -75,72 +75,68 @@
             android:nestedScrollingEnabled="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
+
             <TextView
                 android:id="@+id/shareText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/share_text"
-                app:layout_constraintEnd_toStartOf="@id/shareIcon"
-                android:textSize="@dimen/large_font_size"
-                app:layout_constraintTop_toTopOf="@id/pininterestIcon"
-                app:layout_constraintBottom_toBottomOf="@id/pininterestIcon"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_marginRight="10dp"/>
-            <ImageView
-                android:id="@+id/shareIcon"
-                style="@style/SocialMediaIcon"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:srcCompat="@drawable/ic_share_icon"
-                app:layout_constraintBottom_toBottomOf="@id/pininterestIcon"
                 android:layout_marginRight="@dimen/normal_margin"
-                />
+                android:text="@string/share_text"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/large_font_size"
+                android:drawableEnd="@drawable/ic_share_icon"
+                app:layout_constraintBottom_toBottomOf="@id/pininterestIcon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/pininterestIcon" />
+
+
 
             <ImageView
                 android:id="@+id/facebookIcon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/facebook3"
-                android:scaleType="centerCrop"
                 android:layout_marginLeft="@dimen/normal_margin"
                 android:layout_marginTop="10dp"
-                />
+                android:scaleType="centerCrop"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/facebook3" />
+
             <ImageView
                 android:id="@+id/twitterIcon"
                 style="@style/SocialMediaIcon"
+                app:layout_constraintBottom_toBottomOf="@id/facebookIcon"
                 app:layout_constraintStart_toEndOf="@id/facebookIcon"
                 app:layout_constraintTop_toTopOf="@id/facebookIcon"
-                app:layout_constraintBottom_toBottomOf="@id/facebookIcon"
                 app:srcCompat="@drawable/twitter"
 
                 />
+
             <ImageView
                 android:id="@+id/linkedinIcon"
                 style="@style/SocialMediaIcon"
+                app:layout_constraintBottom_toBottomOf="@id/twitterIcon"
                 app:layout_constraintStart_toEndOf="@id/twitterIcon"
                 app:layout_constraintTop_toTopOf="@id/twitterIcon"
-                app:layout_constraintBottom_toBottomOf="@id/twitterIcon"
-                app:srcCompat="@drawable/linkedin4"
-                />
+                app:srcCompat="@drawable/linkedin4" />
+
             <ImageView
                 android:id="@+id/mailIcon"
+                style="@style/SocialMediaIcon"
+                app:layout_constraintBottom_toBottomOf="@id/linkedinIcon"
                 app:layout_constraintStart_toEndOf="@id/linkedinIcon"
                 app:layout_constraintTop_toTopOf="@id/linkedinIcon"
-                app:layout_constraintBottom_toBottomOf="@id/linkedinIcon"
-                app:srcCompat="@drawable/envelopes"
 
-                style="@style/SocialMediaIcon"
-                />
+                app:srcCompat="@drawable/envelopes" />
+
             <ImageView
                 android:id="@+id/pininterestIcon"
-                app:layout_constraintStart_toEndOf="@id/mailIcon"
-                app:layout_constraintTop_toTopOf="@id/mailIcon"
-                app:layout_constraintBottom_toBottomOf="@id/mailIcon"
-
-                app:srcCompat="@drawable/pinterest"
                 style="@style/SocialMediaIcon"
-                />
+                app:layout_constraintBottom_toBottomOf="@id/mailIcon"
+                app:layout_constraintStart_toEndOf="@id/mailIcon"
+
+                app:layout_constraintTop_toTopOf="@id/mailIcon"
+                app:srcCompat="@drawable/pinterest" />
 
             <TextView
                 android:id="@+id/readReportReportTopic"
@@ -163,9 +159,9 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/medium_font_size"
                 android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/readReportReportTopic"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/readReportReportTopic"
-                app:layout_constraintBottom_toBottomOf="@id/readReportReportTopic"
 
                 />
 
@@ -185,10 +181,10 @@
                 android:id="@+id/readReportReportDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/dummy_details"
                 android:breakStrategy="balanced"
                 android:justificationMode="inter_word"
                 android:padding="@dimen/normal_margin"
+                android:text="@string/dummy_details"
 
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/smallest_font_size"
@@ -237,7 +233,6 @@
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/readReportReportDetailsContd" />
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
