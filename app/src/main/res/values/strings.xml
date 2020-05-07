@@ -114,6 +114,7 @@
     <string name="phone_hint_text">Phone number</string>
     <string name="user_successfully_registered">User successfully registered\nPlease sign in</string>
     <string name="successful">Successful</string>
+    <string name="done">Done</string>
 
 
 </resources>

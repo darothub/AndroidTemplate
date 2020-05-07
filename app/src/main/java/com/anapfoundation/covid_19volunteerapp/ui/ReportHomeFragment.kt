@@ -52,14 +52,7 @@ class ReportHomeFragment : DaggerFragment() {
             findNavController().navigate(R.id.notificationFragment)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback {
 
-            val user = storageRequest.checkUser("loggedInUser")
-            user?.loggedIn = false
-            storageRequest.saveData(user, "loggedOutUser")
-            requireActivity().finish()
-
-        }
     }
 
 }

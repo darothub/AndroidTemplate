@@ -18,13 +18,14 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report.*
 import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
-class ReportFragment : Fragment() {
+class ReportFragment : DaggerFragment() {
 
     private val title by lazy {
         getName()
@@ -56,6 +57,8 @@ class ReportFragment : Fragment() {
             }
         }
     }
+    @Inject
+    lateinit var storageRequest: StorageRequest
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -70,6 +73,14 @@ class ReportFragment : Fragment() {
         bottomNav.setupWithNavController(navController)
 
         Log.i(title, "OnActivity")
+        requireActivity().onBackPressedDispatcher.addCallback {
+
+            val user = storageRequest.checkUser("loggedInUser")
+            user?.loggedIn = false
+            storageRequest.saveData(user, "loggedOutUser")
+            requireActivity().finish()
+
+        }
 
 
     }

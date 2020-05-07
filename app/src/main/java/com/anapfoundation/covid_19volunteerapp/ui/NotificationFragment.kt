@@ -15,7 +15,6 @@ import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.utsman.recycling.setupAdapter
 import kotlinx.android.synthetic.main.create_report_questions_item.view.*
-import kotlinx.android.synthetic.main.fragment_create_report_questions.*
 import kotlinx.android.synthetic.main.fragment_notification.*
 import kotlinx.android.synthetic.main.notification_item.view.*
 

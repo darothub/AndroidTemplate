@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelModules
 import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.ReportHomeFragmentModule
+import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.ReportParentFragmentModule
 import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.SigninFragmentModule
 import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.SignupFragmentModule
 import com.anapfoundation.covid_19volunteerapp.di.networkmodules.UserRequestModule
@@ -30,7 +31,9 @@ abstract class ActivityBuilderModule {
             ViewModelModules::class,
             UserRequestModule::class,
             SigninFragmentModule::class,
-            ReportHomeFragmentModule::class
+            ReportHomeFragmentModule::class,
+            ReportParentFragmentModule::class
+
         ]
     )
     abstract fun mainActivity(): MainActivity
