@@ -3,6 +3,7 @@
     package="com.anapfoundation.covid_19volunteerapp">
 
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:name=".di.BaseApplication"

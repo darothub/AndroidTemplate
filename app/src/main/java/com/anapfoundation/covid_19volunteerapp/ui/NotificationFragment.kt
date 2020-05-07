@@ -33,20 +33,13 @@ class NotificationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val myList = listOf<Report>(Report("Covid-19 process attacks", "This is the details. This is the details" +
-                "This is the details. This is the details. This is the details", "Yaba, Lagos"), Report("Covid-19 process attacks", "This is the details. This is the details" +
-                "This is the details. This is the details. This is the details", "Yaba, Lagos"),
-            Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"), Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"),
-            Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"), Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"))
+        val myList = listOf<Report>(Report("Covid-19 process attacks", "high","This is the details. This is the details" +
+                "This is the details. This is the details. This is the details", "Yaba, Lagos"))
         notificationRecyclerView.setupAdapter<Report>(R.layout.notification_item){ adapter, context, list ->
             bind { itemView, position, item ->
-                itemView.notificationHeadLine.text = item?.headline
-                itemView.notificationLocation.text = item?.location
-                itemView.notificationDetail.text = item?.details
+                itemView.notificationHeadLine.text = item?.topic
+                itemView.notificationLocation.text = item?.state
+                itemView.notificationDetail.text = item?.story
                 if (position == 0){
                     itemView.notificationStatus.show()
                 }

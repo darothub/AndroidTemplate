@@ -115,6 +115,7 @@
     <string name="user_successfully_registered">User successfully registered\nPlease sign in</string>
     <string name="successful">Successful</string>
     <string name="done">Done</string>
+    <string name="pick_one_rating">Only one rating is allowed</string>
 
 
 </resources>
