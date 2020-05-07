@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -45,7 +46,17 @@ fun Context.hideKeyboard(view: View) {
 }
 
 fun Context.toast(message:String){
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+    val view = toast.view.findViewById<TextView>(android.R.id.message)
+    when {
+        view != null -> {
+            view.gravity = Gravity.CENTER
+            toast.show()
+        }
+        else ->{
+            toast.show()
+        }
+    }
 }
 
 fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateLgaMap:HashMap<String, List<CityClass>> ) {
