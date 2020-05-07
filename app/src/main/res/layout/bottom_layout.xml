@@ -10,8 +10,6 @@
         android:id="@+id/buttonVG"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-
-
         android:layout_marginTop="@dimen/normal_margin"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
