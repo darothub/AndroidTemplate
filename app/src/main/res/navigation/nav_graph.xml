@@ -14,6 +14,9 @@
             android:id="@+id/toSiginScreen"
             app:destination="@id/signinFragment"
             app:enterAnim="@anim/fragment_fade_enter" />
+        <action
+            android:id="@+id/action_homeFragment_to_signupFragment"
+            app:destination="@id/signupFragment" />
     </fragment>
     <fragment
         android:id="@+id/signinFragment"

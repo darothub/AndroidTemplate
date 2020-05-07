@@ -175,7 +175,7 @@
                 android:textSize="@dimen/large_font_size"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/readReportReportTopic" />
+                app:layout_constraintTop_toBottomOf="@id/singleReportReportTopic" />
 
             <TextView
                 android:id="@+id/readReportReportDetails"

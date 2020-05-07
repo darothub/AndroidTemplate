@@ -1,7 +1,11 @@
 package com.anapfoundation.covid_19volunteerapp.di
 
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelModules
+import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.SignupFragmentModule
+import com.anapfoundation.covid_19volunteerapp.di.networkmodules.UserRequestModule
 import com.anapfoundation.covid_19volunteerapp.ui.MainActivity
 import com.anapfoundation.covid_19volunteerapp.utils.constant.BASE_URL
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.android.ContributesAndroidInjector
@@ -10,12 +14,13 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
-@Module
+@Module(includes = [ActivityStaticModule::class])
 abstract class ActivityBuilderModule {
     @ContributesAndroidInjector(
         modules = [
-
-
+            SignupFragmentModule::class,
+            ViewModelModules::class,
+            UserRequestModule::class
         ]
     )
     abstract fun mainActivity(): MainActivity

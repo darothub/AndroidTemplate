@@ -1,13 +1,13 @@
 package com.anapfoundation.covid_19volunteerapp.services.userservices
 
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.Result
+import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.POST
 
 interface UserApiRequests {
-    @POST("user")
+    @POST("signup")
     @FormUrlEncoded
     fun registerUser(
         @Field("firstName") first:String,
@@ -16,5 +16,5 @@ interface UserApiRequests {
         @Field("phone") phone:String,
         @Field("password") password:String
 
-    ): Call<Result>
+    ): Call<ServiceResult>
 }
