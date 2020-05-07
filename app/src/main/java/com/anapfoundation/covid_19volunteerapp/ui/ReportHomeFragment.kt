@@ -5,19 +5,25 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.utsman.recycling.setupAdapter
+import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.report_item.view.*
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
-class ReportHomeFragment : Fragment() {
+class ReportHomeFragment : DaggerFragment() {
 
+    @Inject
+    lateinit var storageRequest: StorageRequest
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -35,7 +41,7 @@ class ReportHomeFragment : Fragment() {
                 itemView.reportTitle.text = item
                 itemView.reportImage.clipToOutline = true
                 itemView.setOnClickListener {
-                    requireActivity().toast("Pos $position")
+//                    requireActivity().toast("Pos $position")
                 }
             }
 
@@ -44,6 +50,15 @@ class ReportHomeFragment : Fragment() {
 
         notificationIcon.setOnClickListener {
             findNavController().navigate(R.id.notificationFragment)
+        }
+
+        requireActivity().onBackPressedDispatcher.addCallback {
+
+            val user = storageRequest.checkUser("loggedInUser")
+            user?.loggedIn = false
+            storageRequest.saveData(user, "loggedOutUser")
+            requireActivity().finish()
+
         }
     }
 

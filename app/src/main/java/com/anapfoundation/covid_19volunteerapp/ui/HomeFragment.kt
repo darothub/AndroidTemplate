@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
             try {
                 kotlin.run {
                     Thread.sleep(5505)
-                    findNavController().navigate(R.id.signupFragment)
+                    findNavController().navigate(R.id.signinFragment)
                 }
             }
             catch(e: Exception){
