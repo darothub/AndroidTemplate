@@ -97,17 +97,16 @@ fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateL
     }
 }
 
-fun Fragment.observeRequest(response: LiveData<ServicesResponseWrapper<ServiceResult>>,
+fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<ServiceResult>>,
                             progressBar: ProgressBar, button: Button
 ): LiveData<Pair<Boolean, Any?>> {
     val result = MutableLiveData<Pair<Boolean, Any?>>()
     val title:String by lazy{
         this.getName()
     }
-    progressBar.show()
-    button.hide()
+
     hideKeyboard()
-    response.observe(viewLifecycleOwner, Observer {
+    request.observe(viewLifecycleOwner, Observer {
         val responseData = it.data
         val errorResponse = it.message
         when (it) {
@@ -120,7 +119,7 @@ fun Fragment.observeRequest(response: LiveData<ServicesResponseWrapper<ServiceRe
                 progressBar.hide()
                 button.show()
                 result.postValue(Pair(true, responseData))
-                requireContext().toast(requireContext().localized(R.string.user_successfully_registered))
+                requireContext().toast(requireContext().localized(R.string.successful))
                 Log.i(title, "success ${it.data}")
             }
             is ServicesResponseWrapper.Error -> {

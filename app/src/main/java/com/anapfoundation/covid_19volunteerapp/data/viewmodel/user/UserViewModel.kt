@@ -28,7 +28,6 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
 
     }
 
-
     fun registerUser(
         firstName: String,
         lastName: String,
@@ -44,6 +43,46 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
             "Loading..."
         )
         val request = userRequestInterface.registerUser(firstName, lastName, email, password, phone)
+        request.enqueue(object : Callback<ServiceResult>{
+            override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(call: Call<ServiceResult>, response: Response<ServiceResult>) {
+                val res = response.body()
+                Log.i(title, "${response.code()}")
+                when {
+                    response.code() != 200 || response.code() != 201 ->{
+                        Log.i(title, "errorbody ${response.raw()}")
+                        val a = object : Annotation{}
+                        val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
+                        val error = converter.convert(response.errorBody())
+                        Log.i(title, "message ${error?.message}")
+                        responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+                    }
+                    res?.token != null -> {
+                        Log.i(title, "token ${res.token}")
+                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+                    }
+                    else -> {
+                        Log.i(title, "errors ${response.errorBody()}")
+                        responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
+                    }
+                }
+            }
+
+        })
+        return responseLiveData
+    }
+
+    fun loginUserRequest(username: String, password: String): LiveData<ServicesResponseWrapper<ServiceResult>>{
+
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<ServiceResult>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = userRequestInterface.loginRequest(username, password)
         request.enqueue(object : Callback<ServiceResult>{
             override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))

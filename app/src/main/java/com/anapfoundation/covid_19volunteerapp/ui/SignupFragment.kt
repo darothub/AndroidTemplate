@@ -22,6 +22,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderF
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.User
+import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signin.*
@@ -58,6 +59,9 @@ class SignupFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
+
+    @Inject
+    lateinit var storageRequest: StorageRequest
 
     val userViewModel: UserViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
@@ -111,8 +115,8 @@ class SignupFragment : DaggerFragment() {
 
     private fun signupRequest() {
 
-        val firstName = firstNameEdit.text.toString().trim().capitalize()
-        val lastName = lastNameEdit.text.toString().trim().capitalize()
+        val firstName = firstNameEdit.text.toString().trim()
+        val lastName = lastNameEdit.text.toString().trim()
         val emailAddress = emailEdit.text.toString().trim()
         val phoneNumber = phoneNumberEdit.text.toString().trim()
         val passwordString = passwordEdit.text.toString().trim()
@@ -146,6 +150,12 @@ class SignupFragment : DaggerFragment() {
                     val (bool, result) = it
                     when (bool) {
                         true -> {
+                            val registeredUser = User(firstName, lastName, emailAddress, phoneNumber, passwordString)
+                            registeredUser.email?.let { it1 ->
+                                storageRequest.saveData(registeredUser,
+                                    it1
+                                )
+                            }
                             findNavController().navigate(R.id.signinFragment)
                         }
                         else -> Log.i(title, "error $result")

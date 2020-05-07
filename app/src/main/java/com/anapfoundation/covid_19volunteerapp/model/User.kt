@@ -20,6 +20,7 @@ open class User(
     var loggedIn:Boolean = false
     var message = ""
     var token:String?=""
+    var rememberPassword:Boolean = false
 
 
 }

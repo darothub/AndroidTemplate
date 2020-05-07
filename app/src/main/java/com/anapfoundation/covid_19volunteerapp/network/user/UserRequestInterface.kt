@@ -10,7 +10,7 @@ interface UserRequestInterface {
         return TODO()
     }
 
-    fun loginUser(email:String, password: String): Call<ServiceResult> {
+    fun loginRequest(username:String, password: String): Call<ServiceResult> {
         return TODO()
     }
 }

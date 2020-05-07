@@ -113,6 +113,7 @@
     <string name="agree_to_term">Kindly agree to terms and condition</string>
     <string name="phone_hint_text">Phone number</string>
     <string name="user_successfully_registered">User successfully registered\nPlease sign in</string>
+    <string name="successful">Successful</string>
 
 
 </resources>

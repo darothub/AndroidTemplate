@@ -17,4 +17,11 @@ interface UserApiRequests {
         @Field("password") password:String
 
     ): Call<ServiceResult>
+
+    @POST("login")
+    @FormUrlEncoded
+    fun loginRequest(
+        @Field("username") email:String,
+        @Field("password") password:String
+    ):Call<ServiceResult>
 }

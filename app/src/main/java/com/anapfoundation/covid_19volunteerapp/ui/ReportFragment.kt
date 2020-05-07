@@ -14,10 +14,12 @@ import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
 import kotlinx.android.synthetic.main.fragment_report.*
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -30,6 +32,7 @@ class ReportFragment : Fragment() {
     private val navController by lazy {
         Navigation.findNavController(requireActivity(), R.id.fragment2)
     }
+
 
 
 
@@ -68,11 +71,7 @@ class ReportFragment : Fragment() {
 
         Log.i(title, "OnActivity")
 
-        requireActivity().onBackPressedDispatcher.addCallback {
 
-            requireActivity().finish()
-
-        }
     }
 
     override fun onResume() {

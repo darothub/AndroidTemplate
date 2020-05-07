@@ -16,4 +16,8 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
     ): Call<ServiceResult> {
         return userApiRequests.registerUser(firstName, lastName, email, phone, password)
     }
+
+    override fun loginRequest(username: String, password: String): Call<ServiceResult> {
+        return userApiRequests.loginRequest(username, password)
+    }
 }
