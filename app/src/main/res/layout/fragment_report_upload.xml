@@ -125,7 +125,7 @@
 
             >
             <EditText
-                android:id="@+id/reportDetailEditText"
+                android:id="@+id/storyEditText"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:maxLines="50"
@@ -196,10 +196,12 @@
         <include
             android:id="@+id/reportUploadBottomLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="150dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            android:layout_marginLeft="@dimen/normal_margin"
             app:layout_constraintTop_toBottomOf="@id/topSpace"
-            layout="@layout/bottom_layout"/>
+            layout="@layout/bottom_indicator"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

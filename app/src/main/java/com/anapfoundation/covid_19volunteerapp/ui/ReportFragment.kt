@@ -75,14 +75,18 @@ class ReportFragment : DaggerFragment() {
         Log.i(title, "OnActivity")
         requireActivity().onBackPressedDispatcher.addCallback {
 
-            val user = storageRequest.checkUser("loggedInUser")
-            user?.loggedIn = false
-            storageRequest.saveData(user, "loggedOutUser")
-            requireActivity().finish()
+            checkForOnActivityDestroyed()
 
         }
 
 
+    }
+
+    private fun checkForOnActivityDestroyed() {
+        val user = storageRequest.checkUser("loggedInUser")
+        user?.loggedIn = false
+        storageRequest.saveData(user, "loggedOutUser")
+//        requireActivity().finish()
     }
 
     override fun onResume() {
@@ -98,11 +102,14 @@ class ReportFragment : DaggerFragment() {
         super.onPause()
         Log.i(title, "OnPause")
         navController.removeOnDestinationChangedListener(uploadListener)
+        checkForOnActivityDestroyed()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(title, "OnDestroy")
+        checkForOnActivityDestroyed()
+
     }
 
 

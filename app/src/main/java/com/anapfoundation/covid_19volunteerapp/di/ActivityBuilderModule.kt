@@ -4,11 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelModules
-import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.ReportHomeFragmentModule
-import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.ReportParentFragmentModule
-import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.SigninFragmentModule
-import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.SignupFragmentModule
-import com.anapfoundation.covid_19volunteerapp.di.networkmodules.UserRequestModule
+import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.*
+import com.anapfoundation.covid_19volunteerapp.di.networkmodules.auth.AuthRequestModule
+import com.anapfoundation.covid_19volunteerapp.di.networkmodules.user.UserRequestModule
 import com.anapfoundation.covid_19volunteerapp.helpers.SharedPrefManager
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.ui.MainActivity
@@ -32,7 +30,9 @@ abstract class ActivityBuilderModule {
             UserRequestModule::class,
             SigninFragmentModule::class,
             ReportHomeFragmentModule::class,
-            ReportParentFragmentModule::class
+            ReportParentFragmentModule::class,
+            ReportUploadFragmentModule::class,
+            AuthRequestModule::class
 
         ]
     )

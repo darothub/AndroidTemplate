@@ -92,11 +92,11 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
                 val res = response.body()
                 Log.i(title, "${response.code()}")
                 when {
-                    response.code() != 200 ->{
+                    response.code() != 200  ->{
                         Log.i(title, "errorbody ${response.raw()}")
                         val a = object : Annotation{}
                         val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
-                        val error = converter.convert(response.errorBody())
+                        val error = converter.convert(response.errorBody()!!)
                         Log.i(title, "message ${error?.message}")
                         responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
                     }

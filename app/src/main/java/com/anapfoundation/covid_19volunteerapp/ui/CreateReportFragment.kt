@@ -143,8 +143,10 @@ class CreateReportFragment : Fragment() {
             }
             else{
                 requireContext().toast("size ${newReport.rating}")
-//                bottomSheetDialog.dismiss()
-//                findNavController().navigate(R.id.reportUploadFragment)
+                bottomSheetDialog.dismiss()
+                val action = CreateReportFragmentDirections.toUploadFragment()
+                action.report = newReport
+                findNavController().navigate(action)
             }
 
 

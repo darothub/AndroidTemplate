@@ -1,4 +1,4 @@
-package com.anapfoundation.covid_19volunteerapp.di.networkmodules
+package com.anapfoundation.covid_19volunteerapp.di.networkmodules.user
 
 import com.anapfoundation.covid_19volunteerapp.data.repositories.user.UserRequestRepository
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface

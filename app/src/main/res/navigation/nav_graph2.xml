@@ -14,7 +14,11 @@
         android:id="@+id/createReportFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.CreateReportFragment"
         android:label='""'
-        tools:layout="@layout/fragment_create_report" />
+        tools:layout="@layout/fragment_create_report" >
+        <action
+            android:id="@+id/toUploadFragment"
+            app:destination="@id/reportUploadFragment" />
+    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ProfileFragment"
@@ -25,7 +29,13 @@
         android:id="@+id/reportUploadFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportUploadFragment"
         android:label="fragment_report_upload"
-        tools:layout="@layout/fragment_report_upload" />
+        tools:layout="@layout/fragment_report_upload" >
+        <argument
+            android:name="report"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.Report"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
     <fragment
         android:id="@+id/notificationFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.NotificationFragment"

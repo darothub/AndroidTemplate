@@ -2,6 +2,7 @@ package com.anapfoundation.covid_19volunteerapp.data.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import dagger.Binds
 import dagger.Module
@@ -15,6 +16,11 @@ abstract class ViewModelModules {
     @IntoMap
     @ViewModelKey(UserViewModel::class)
     abstract fun bindUserViewModel(registerUserViewModel: UserViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(AuthViewModel::class)
+    abstract fun bindAuthViewModel(authViewModel: AuthViewModel): ViewModel
 }
 
 @Module
