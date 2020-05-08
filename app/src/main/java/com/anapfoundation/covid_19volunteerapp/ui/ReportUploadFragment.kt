@@ -76,6 +76,10 @@ class ReportUploadFragment : DaggerFragment() {
     val bottomSheetIncludeLayout by lazy {
         bottomSheetView.findViewById<View>(R.id.galleryBottomSheet)
     }
+
+    val cameraIcon by lazy {
+        bottomSheetView.cameraIcon
+    }
     //Get upload button from the included layout
     val uploadPictureBtn by lazy {
         bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
@@ -236,11 +240,10 @@ class ReportUploadFragment : DaggerFragment() {
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
         uploadPictureBtn.setOnClickListener {
-
+            bottomSheetDialog.dismiss()
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
-        bottomSheetView.cameraIcon.setOnClickListener {
-
+        cameraIcon.setOnClickListener {
 
             Dexter.withContext(requireContext())
                 .withPermission(Manifest.permission.CAMERA)
@@ -282,7 +285,8 @@ class ReportUploadFragment : DaggerFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            cameraImage.setImageBitmap(imageBitmap)
+            bottomSheetDialog.show()
+            cameraIcon.setImageBitmap(imageBitmap)
         }
     }
 

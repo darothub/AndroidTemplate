@@ -25,6 +25,7 @@ class ProfileFragment : DaggerFragment() {
     val user by lazy {
         storageRequest.checkUser("loggedInUser")
     }
+    val getUserByEmail by lazy {  }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -119,6 +119,9 @@
     <string name="cloudinary_url">cloudinary://841314333535362:Gu1v12wvYgbg7EHsjN45x9dt0dM@carflux</string>
     <string name="signup_successful">Sign up successfully</string>
     <string name="upload_successful">Report has been uploaded successfully</string>
+    <string name="you_are_about">You are about to logout</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 
 </resources>

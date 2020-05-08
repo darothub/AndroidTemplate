@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -17,8 +16,12 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report.*
+import kotlinx.android.synthetic.main.layout_upload_gallery.*
+import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
+import kotlinx.android.synthetic.main.layout_upload_gallery.view.imageUploadLayout
 import javax.inject.Inject
 
 /**
@@ -33,6 +36,31 @@ class ReportFragment : DaggerFragment() {
         Navigation.findNavController(requireActivity(), R.id.fragment2)
     }
 
+    private val bottomSheetDialog by lazy {
+        BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+    }
+    //inflate bottomSheetView
+    private val bottomSheetView by lazy {
+        LayoutInflater.from(requireContext()).inflate(
+            R.layout.layout_upload_gallery,
+            requireActivity().findViewById(R.id.uploadBottomSheetContainer)
+        )
+    }
+    //Get included layout in the parent layout/* layout.fragment_report_upload */
+    private val logoutLayout by lazy {
+        bottomSheetView.findViewById<View>(R.id.logoutLayout)
+    }
+
+    private val uploadLayout by lazy {
+        bottomSheetView.findViewById<View>(R.id.imageUploadLayout)
+    }
+
+    private val yesButton by lazy{
+        bottomSheetView.yesButton
+    }
+    private val noButton by lazy{
+        bottomSheetView.noButton
+    }
 
 
 
@@ -74,20 +102,16 @@ class ReportFragment : DaggerFragment() {
         Log.i(title, "OnActivity")
         requireActivity().onBackPressedDispatcher.addCallback {
 
-            findNavController().popBackStack()
-//            logoutOnPopBackStack()
+//            findNavController().popBackStack()
+
+            logout()
+            showBottomSheet()
 
         }
 
 
     }
 
-    private fun logoutOnPopBackStack() {
-        val user = storageRequest.checkUser("loggedInUser")
-        user?.loggedIn = false
-        storageRequest.saveData(user, "loggedOutUser")
-//        requireActivity().finishFromChild(activity)
-    }
 
     override fun onResume() {
         super.onResume()
@@ -100,14 +124,39 @@ class ReportFragment : DaggerFragment() {
         super.onPause()
         Log.i(title, "OnPause")
         navController.removeOnDestinationChangedListener(uploadListener)
-        logoutOnPopBackStack()
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(title, "OnDestroy")
-        logoutOnPopBackStack()
+        logout()
 
+    }
+
+    private fun showBottomSheet() {
+
+        logoutLayout.show()
+        uploadLayout.hide()
+        bottomSheetDialog.setContentView(bottomSheetView)
+        bottomSheetDialog.show()
+
+
+
+    }
+
+    private fun logout(){
+        yesButton.setOnClickListener {
+            val user = storageRequest.checkUser("loggedInUser")
+            user?.loggedIn = false
+            storageRequest.saveData(user, "loggedOutUser")
+            bottomSheetDialog.dismiss()
+            requireActivity().finishFromChild(activity)
+        }
+
+        noButton.setOnClickListener {
+            bottomSheetDialog.dismiss()
+        }
     }
 
 
