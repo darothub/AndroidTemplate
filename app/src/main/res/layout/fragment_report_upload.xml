@@ -92,7 +92,7 @@
                 android:textSize="@dimen/large_font_size"
                 android:layout_marginLeft="10dp"/>
             <ImageView
-                android:id="@+id/moreIcon"
+                android:id="@+id/uploadIcon"
                 android:layout_width="wrap_content"
                 android:layout_height="45dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -125,7 +125,7 @@
 
             >
             <EditText
-                android:id="@+id/reportDetailEditText"
+                android:id="@+id/storyEditText"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
                 android:maxLines="50"
@@ -150,22 +150,22 @@
             android:popupTheme="@style/AppThemeActivity"
             app:layout_constraintTop_toBottomOf="@id/reportDetailField"
             />
-        <Spinner
-            android:id="@+id/reportUploadLGA"
-            android:layout_width="match_parent"
-            android:background="@drawable/spinner_backgrnd"
-            android:layout_height="55dp"
-            android:gravity="left|center"
-            android:hint="@string/lga"
-            android:padding="10dp"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            style="@style/CustomEditTextStyle"
-            android:textColor="@color/colorPrimaryDark"
-            android:textColorHint="@color/colorTextHint"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/reportUploadState"
-            />
+<!--        <Spinner-->
+<!--            android:id="@+id/reportUploadLGA"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:background="@drawable/spinner_backgrnd"-->
+<!--            android:layout_height="55dp"-->
+<!--            android:gravity="left|center"-->
+<!--            android:hint="@string/lga"-->
+<!--            android:padding="10dp"-->
+<!--            android:layout_marginLeft="@dimen/normal_margin"-->
+<!--            android:layout_marginRight="@dimen/normal_margin"-->
+<!--            style="@style/CustomEditTextStyle"-->
+<!--            android:textColor="@color/colorPrimaryDark"-->
+<!--            android:textColorHint="@color/colorTextHint"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/reportUploadState"-->
+<!--            />-->
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/reportUploadTown"
             android:layout_width="match_parent"
@@ -176,9 +176,10 @@
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reportUploadLGA">
+            app:layout_constraintTop_toBottomOf="@id/reportUploadState">
 
             <EditText
+                android:id="@+id/reportUploadstreetEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/street_hint_text"
@@ -196,10 +197,12 @@
         <include
             android:id="@+id/reportUploadBottomLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="150dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            android:layout_marginLeft="@dimen/normal_margin"
             app:layout_constraintTop_toBottomOf="@id/topSpace"
-            layout="@layout/bottom_layout"/>
+            layout="@layout/bottom_indicator"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

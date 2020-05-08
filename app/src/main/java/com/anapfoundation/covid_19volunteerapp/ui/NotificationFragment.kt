@@ -15,7 +15,6 @@ import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.utsman.recycling.setupAdapter
 import kotlinx.android.synthetic.main.create_report_questions_item.view.*
-import kotlinx.android.synthetic.main.fragment_create_report_questions.*
 import kotlinx.android.synthetic.main.fragment_notification.*
 import kotlinx.android.synthetic.main.notification_item.view.*
 
@@ -34,20 +33,13 @@ class NotificationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val myList = listOf<Report>(Report("Covid-19 process attacks", "This is the details. This is the details" +
-                "This is the details. This is the details. This is the details", "Yaba, Lagos"), Report("Covid-19 process attacks", "This is the details. This is the details" +
-                "This is the details. This is the details. This is the details", "Yaba, Lagos"),
-            Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"), Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"),
-            Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"), Report("Covid-19 process attacks", "This is the details. This is the details" +
-                    "This is the details. This is the details. This is the details", "Yaba, Lagos"))
+        val myList = listOf<Report>(Report("Covid-19 process attacks", "high","This is the details. This is the details" +
+                "This is the details. This is the details. This is the details", "Yaba, Lagos"))
         notificationRecyclerView.setupAdapter<Report>(R.layout.notification_item){ adapter, context, list ->
             bind { itemView, position, item ->
-                itemView.notificationHeadLine.text = item?.headline
-                itemView.notificationLocation.text = item?.location
-                itemView.notificationDetail.text = item?.details
+                itemView.notificationHeadLine.text = item?.topic
+                itemView.notificationLocation.text = item?.state
+                itemView.notificationDetail.text = item?.story
                 if (position == 0){
                     itemView.notificationStatus.show()
                 }
@@ -60,7 +52,7 @@ class NotificationFragment : Fragment() {
             }
 
             submitList(myList)
-            requireContext().toast("listSize ${list?.size}")
+//            requireContext().toast("listSize ${list?.size}")
         }
     }
 }

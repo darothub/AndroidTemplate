@@ -18,6 +18,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
+import com.anapfoundation.covid_19volunteerapp.model.Data
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import kotlinx.android.synthetic.main.fragment_edit_profile.*
@@ -47,6 +48,7 @@ fun Context.hideKeyboard(view: View) {
 
 fun Context.toast(message:String){
     val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+    toast.setGravity(Gravity.CENTER, 0, 0)
     val view = toast.view.findViewById<TextView>(android.R.id.message)
     when {
         view != null -> {
@@ -97,8 +99,8 @@ fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateL
     }
 }
 
-fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<ServiceResult>>,
-                            progressBar: ProgressBar, button: Button
+fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
+                            progressBar: ProgressBar?, button: Button?
 ): LiveData<Pair<Boolean, Any?>> {
     val result = MutableLiveData<Pair<Boolean, Any?>>()
     val title:String by lazy{
@@ -111,20 +113,20 @@ fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<ServiceRes
         val errorResponse = it.message
         when (it) {
             is ServicesResponseWrapper.Loading<*> -> {
-                progressBar.show()
-                button.hide()
+                progressBar?.show()
+                button?.hide()
                 Log.i(title, "Loading..")
             }
             is ServicesResponseWrapper.Success -> {
-                progressBar.hide()
-                button.show()
+                progressBar?.hide()
+                button?.show()
                 result.postValue(Pair(true, responseData))
-                requireContext().toast(requireContext().localized(R.string.successful))
+//                requireContext().toast(requireContext().localized(R.string.successful))
                 Log.i(title, "success ${it.data}")
             }
             is ServicesResponseWrapper.Error -> {
-                progressBar.hide()
-                button.show()
+                progressBar?.hide()
+                button?.show()
                 result.postValue(Pair(false, errorResponse))
                 requireContext().toast("$errorResponse")
                 Log.i(title, "Error $errorResponse")
@@ -135,7 +137,7 @@ fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<ServiceRes
     return result
 }
 
-fun initEnterKeyToSubmitForm(editText: EditText, request:()->Unit) {
+fun Fragment.initEnterKeyToSubmitForm(editText: EditText, request:()->Unit) {
     editText.setOnKeyListener { view, keyCode, keyEvent ->
         if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 

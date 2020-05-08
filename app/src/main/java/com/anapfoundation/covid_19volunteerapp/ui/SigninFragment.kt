@@ -80,15 +80,39 @@ class SigninFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         setupSignUpLink()
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
         checkForReturninUser()
-        signinBtn.text = requireContext().localized(R.string.signin_text)
+        signinBtn.setButtonText(requireContext().localized(R.string.signin_text))
+        submitLoginRequest()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i(title, "onpause")
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.i(title, "onStart")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.i(title, "detached")
+    }
+    private fun submitLoginRequest() {
         signinBtn.setOnClickListener {
             loginRequest()
         }
-
-
     }
 
     private fun checkForReturninUser() {
@@ -127,7 +151,7 @@ class SigninFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().localized(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} is empty")
+                requireActivity().toast("${checkForEmpty.hint} field is empty")
             }
             validation != null -> requireActivity().toast("$validation is invalid")
             else -> {
@@ -137,31 +161,42 @@ class SigninFragment : DaggerFragment() {
                 val response = observeRequest(request, progressBar, signinBtn)
                 response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                     val (bool, result) = it
-                    when (bool) {
-                        true -> {
-                            val res = result as ServiceResult
-                            var userExist = storageRequest.checkUser(emailAddress)
-                            if (userExist != null){
-                                userExist?.loggedIn = true
-                                userExist?.token = res.token
-                            }
-                            else{
-                                userExist = User("Not found", "Not found",
-                                    emailAddress, passwordString, "Not found")
-                            }
-                            userExist?.rememberPassword = signinCheckbox.isChecked
-                            storageRequest.saveData(userExist, emailAddress)
-                            storageRequest.saveData(userExist, "loggedInUser")
-                            Log.i("UserExist", "${userExist}")
-                            Log.i(title, "message ${result.token}")
-                            findNavController().navigate(R.id.reportFragment)
-                        }
-                        else -> Log.i(title, "error $result")
-                    }
+                    onRequestResponseTask(bool, result, emailAddress, passwordString)
                 })
             }
         }
 
+    }
+
+    private fun onRequestResponseTask(
+        bool: Boolean,
+        result: Any?,
+        emailAddress: String,
+        passwordString: String
+    ) {
+        when (bool) {
+            true -> {
+                val res = result as ServiceResult
+                var userExist = storageRequest.checkUser(emailAddress)
+                if (userExist != null) {
+                    userExist?.loggedIn = true
+                    userExist?.token = res.token
+                } else {
+                    userExist = User(
+                        "Not found", "Not found",
+                        emailAddress, passwordString, "Not found"
+                    )
+                }
+                requireContext().toast(requireContext().localized(R.string.successful))
+                userExist?.rememberPassword = signinCheckbox.isChecked
+                storageRequest.saveData(userExist, emailAddress)
+                storageRequest.saveData(userExist, "loggedInUser")
+                Log.i("UserExist", "${userExist}")
+                Log.i(title, "message ${result.token}")
+                findNavController().navigate(R.id.reportFragment)
+            }
+            else -> Log.i(title, "error $result")
+        }
     }
 
 

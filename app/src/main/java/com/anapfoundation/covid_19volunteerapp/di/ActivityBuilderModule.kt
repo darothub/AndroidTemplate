@@ -4,10 +4,9 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelModules
-import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.ReportHomeFragmentModule
-import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.SigninFragmentModule
-import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.SignupFragmentModule
-import com.anapfoundation.covid_19volunteerapp.di.networkmodules.UserRequestModule
+import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.*
+import com.anapfoundation.covid_19volunteerapp.di.networkmodules.auth.AuthRequestModule
+import com.anapfoundation.covid_19volunteerapp.di.networkmodules.user.UserRequestModule
 import com.anapfoundation.covid_19volunteerapp.helpers.SharedPrefManager
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.ui.MainActivity
@@ -30,7 +29,13 @@ abstract class ActivityBuilderModule {
             ViewModelModules::class,
             UserRequestModule::class,
             SigninFragmentModule::class,
-            ReportHomeFragmentModule::class
+            ReportHomeFragmentModule::class,
+            ReportParentFragmentModule::class,
+            ReportUploadFragmentModule::class,
+            AuthRequestModule::class,
+            CreateReportFragmentModule::class,
+            ProfileFragmentModule::class
+
         ]
     )
     abstract fun mainActivity(): MainActivity
@@ -50,13 +55,17 @@ open class ActivityStaticModule {
     @Singleton
     @Provides
     fun provideGsonConverterFcatory(): GsonConverterFactory = GsonConverterFactory.create()
+
     /**
      * A function to provide retrofit instance
      *
      */
     @Singleton
     @Provides
-    open fun provideRetrofitInstance(gson: GsonConverterFactory, callAdapter: RxJava2CallAdapterFactory): Retrofit {
+    open fun provideRetrofitInstance(
+        gson: GsonConverterFactory,
+        callAdapter: RxJava2CallAdapterFactory
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addCallAdapterFactory(callAdapter)
@@ -72,7 +81,7 @@ open class ActivityStaticModule {
 
     @Singleton
     @Provides
-    fun provideSharedPreference(context: Context):SharedPreferences{
+    fun provideSharedPreference(context: Context): SharedPreferences {
         return context.getSharedPreferences("anapcovidapp", Context.MODE_PRIVATE)
     }
 
@@ -81,9 +90,10 @@ open class ActivityStaticModule {
     fun provideGson(): Gson {
         return GsonBuilder().create()
     }
+
     @Singleton
     @Provides
-    fun provideStorage(sharedPrefs:SharedPreferences, gson: Gson):StorageRequest{
+    fun provideStorage(sharedPrefs: SharedPreferences, gson: Gson): StorageRequest {
         return SharedPrefManager(sharedPrefs, gson)
     }
 
