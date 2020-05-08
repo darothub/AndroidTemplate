@@ -83,12 +83,16 @@ class SignupFragment : DaggerFragment() {
 
         passwordCheckAlert()
 
-        signupBtn.text = requireContext().localized(R.string.signup_text)
+        signupBtn.setButtonText(requireContext().localized(R.string.signup_text))
 
+        sendSignupRequest()
+
+    }
+
+    private fun sendSignupRequest() {
         signupBtn.setOnClickListener {
             signupRequest()
         }
-
     }
 
 
@@ -122,7 +126,6 @@ class SignupFragment : DaggerFragment() {
         val passwordString = passwordEdit.text.toString().trim()
         val cpassword = cpasswordEdit.text.toString().trim()
 
-
         val checkForEmpty =
             IsEmptyCheck(firstNameEdit, lastNameEdit, emailEdit, phoneNumberEdit, passwordEdit, cpasswordEdit)
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
@@ -148,23 +151,45 @@ class SignupFragment : DaggerFragment() {
                 val response = observeRequest(request, progressBar, signupBtn)
                 response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                     val (bool, result) = it
-                    when (bool) {
-                        true -> {
-                            val registeredUser = User(firstName, lastName, emailAddress, phoneNumber, passwordString)
-                            registeredUser.email?.let { it1 ->
-                                storageRequest.saveData(registeredUser,
-                                    it1
-                                )
-                            }
-                            findNavController().navigate(R.id.signinFragment)
-                        }
-                        else -> Log.i(title, "error $result")
-                    }
+                    onRequestResponseTask(
+                        bool,
+                        firstName,
+                        lastName,
+                        emailAddress,
+                        phoneNumber,
+                        passwordString,
+                        result
+                    )
                 })
             }
         }
 
 
+    }
+
+    private fun onRequestResponseTask(
+        bool: Boolean,
+        firstName: String,
+        lastName: String,
+        emailAddress: String,
+        phoneNumber: String,
+        passwordString: String,
+        result: Any?
+    ) {
+        when (bool) {
+            true -> {
+                val registeredUser =
+                    User(firstName, lastName, emailAddress, phoneNumber, passwordString)
+                registeredUser.email?.let { it1 ->
+                    storageRequest.saveData(
+                        registeredUser,
+                        it1
+                    )
+                }
+                findNavController().navigate(R.id.signinFragment)
+            }
+            else -> Log.i(title, "error $result")
+        }
     }
 
     private fun validateEmailAndPassword(text: CharSequence) {

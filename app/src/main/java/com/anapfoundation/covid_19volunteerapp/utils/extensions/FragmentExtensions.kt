@@ -136,7 +136,7 @@ fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
     return result
 }
 
-fun initEnterKeyToSubmitForm(editText: EditText, request:()->Unit) {
+fun Fragment.initEnterKeyToSubmitForm(editText: EditText, request:()->Unit) {
     editText.setOnKeyListener { view, keyCode, keyEvent ->
         if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 

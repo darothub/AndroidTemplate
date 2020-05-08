@@ -9,8 +9,6 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -75,18 +73,18 @@ class ReportFragment : DaggerFragment() {
         Log.i(title, "OnActivity")
         requireActivity().onBackPressedDispatcher.addCallback {
 
-            checkForOnActivityDestroyed()
+            logoutOnPopBackStack()
 
         }
 
 
     }
 
-    private fun checkForOnActivityDestroyed() {
+    private fun logoutOnPopBackStack() {
         val user = storageRequest.checkUser("loggedInUser")
         user?.loggedIn = false
         storageRequest.saveData(user, "loggedOutUser")
-//        requireActivity().finish()
+        requireActivity().finish()
     }
 
     override fun onResume() {
@@ -94,21 +92,19 @@ class ReportFragment : DaggerFragment() {
         //
         Log.i(title, "OnResume")
         navController.addOnDestinationChangedListener(uploadListener)
-
-
     }
 
     override fun onPause() {
         super.onPause()
         Log.i(title, "OnPause")
         navController.removeOnDestinationChangedListener(uploadListener)
-        checkForOnActivityDestroyed()
+        logoutOnPopBackStack()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i(title, "OnDestroy")
-        checkForOnActivityDestroyed()
+        logoutOnPopBackStack()
 
     }
 

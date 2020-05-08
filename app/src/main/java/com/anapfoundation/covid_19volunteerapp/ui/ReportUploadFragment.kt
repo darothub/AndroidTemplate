@@ -20,6 +20,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
@@ -38,6 +39,7 @@ import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_upload.*
+import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
 import java.io.File
 import java.io.IOException
@@ -50,11 +52,9 @@ import javax.inject.Inject
  */
 class ReportUploadFragment : DaggerFragment() {
 
+    //Class title
     val title: String by lazy {
         getName()
-    }
-    val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
-        requireActivity().readCitiesAndLgaData()
     }
 
     lateinit var report: Report
@@ -65,35 +65,45 @@ class ReportUploadFragment : DaggerFragment() {
     val bottomSheetDialog by lazy {
         BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
     }
+    //inflate bottomSheetView
     val bottomSheetView by lazy {
         LayoutInflater.from(requireContext()).inflate(
             R.layout.layout_upload_gallery,
             requireActivity().findViewById(R.id.uploadBottomSheetContainer)
         )
     }
+    //Get included layout in the parent layout/* layout.fragment_report_upload */
     val bottomSheetIncludeLayout by lazy {
         bottomSheetView.findViewById<View>(R.id.galleryBottomSheet)
     }
+    //Get upload button from the included layout
     val uploadPictureBtn by lazy {
         bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
     }
 
+    //Get submit button from the included layout
     val submitBtn by lazy {
         reportUploadBottomLayout.findViewById<Button>(R.id.includeBtn)
     }
+
+    //Get progress bar button from the included layout
     val progressBar by lazy{
         reportUploadBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
+    //Get logged-in user
     val getUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
+    //Get token
     val token by lazy {
         getUser?.token
     }
+    //Set header
     val header by lazy {
         "Bearer $token"
     }
+
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
@@ -114,74 +124,88 @@ class ReportUploadFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        reportUploadBackButton.setBackButtonNavigation()
-
-
-
-        arguments?.let {
-            report = ReportUploadFragmentArgs.fromBundle(it).report!!
-        }
-
-        val stateData = getStates(header)
-
-
-        stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-
-            it.data.associateByTo(states, {
-                it.state
-            },{
-                it.id
-            })
-
-            val adapterState =
-                ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, states.keys.sorted())
-            reportUploadState.adapter = adapterState
-            Log.i(title, "states $states")
-        })
-
-
-
-//        requireContext().setSpinnerAdapterData(reportUploadState, reportUploadLGA, stateLgaMap)
-        submitBtn.text = requireContext().localized(R.string.submit_text)
-//        submitReportBtn.setOnClickListener {
-//            Toast.makeText(requireContext(), "hey", Toast.LENGTH_SHORT).show()
-//            findNavController().navigate(R.id.reportReviewFragment)
-//        }
-
-
-
-
-
-        requireContext().toast("${report}")
 
         Log.i(title, header)
+        reportUploadBackButton.setBackButtonNavigation()
+        setButtonText()
+        receiveReportFromPreviousScreen()
+        getStateAndSendToSpinner()
+        addReportRequest()
+        initEnterKeyToSubmitForm(reportUploadstreetEditText) {  addReportRequest() }
+
+    }
+
+    private fun addReportRequest() {
         submitBtn.setOnClickListener {
             val story = storyEditText.text
             val stateSelected = reportUploadState.selectedItem
             val stateGUID = states.get(stateSelected)
             report.story = story.toString()
-
             report.state = "$stateGUID"
 
-            requireContext().toast("${stateGUID}")
-
-            val request = authViewModel.addReport(report.topic, report.rating, report.story, report.state , header)
+            val request = authViewModel.addReport(
+                report.topic,
+                report.rating,
+                report.story,
+                report.state,
+                header
+            )
             val response = observeRequest(request, progressBar, submitBtn)
 
             response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-                val (bool, result) = it
-                when (bool) {
-                    true -> {
-                        val res = result as Data
-                        Log.i(title, "message ${result.message}")
-//                        findNavController().navigate(R.id.reportFragment)
-                    }
-                    else -> Log.i(title, "error $result")
-                }
+                requestResponseTask(it)
             })
 
         }
+    }
 
+    private fun requestResponseTask(it: Pair<Boolean, Any?>) {
+        val (bool, result) = it
+        when (bool) {
+            true -> {
+                val res = result as Data
+                Log.i(title, "message ${result.message}")
+//                findNavController().navigate(R.id.reportFragment)
+            }
+            else -> Log.i(title, "error $result")
+        }
+    }
+
+    private fun getStateAndSendToSpinner() {
+        val stateData = getStates(header)
+        stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            extractStateList(it)
+            setupSpinner()
+        })
+    }
+
+    private fun receiveReportFromPreviousScreen() {
+        arguments?.let {
+            report = ReportUploadFragmentArgs.fromBundle(it).report!!
+        }
+    }
+
+    private fun setButtonText() {
+        submitBtn.setButtonText(requireContext().localized(R.string.submit_text))
+    }
+
+    private fun setupSpinner() {
+        val adapterState =
+            ArrayAdapter(
+                requireContext(),
+                R.layout.support_simple_spinner_dropdown_item,
+                states.keys.sorted()
+            )
+        reportUploadState.adapter = adapterState
+        Log.i(title, "states $states")
+    }
+
+    private fun extractStateList(it: StatesList) {
+        it.data.associateByTo(states, {
+            it.state /* key */
+        }, {
+            it.id /* value */
+        })
     }
 
 
@@ -220,7 +244,6 @@ class ReportUploadFragment : DaggerFragment() {
                 .withPermission(Manifest.permission.CAMERA)
                 .withListener(object : PermissionListener {
                     override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-//                        requireContext().toast("thanks")
                         dispatchTakePictureIntent()
 
                     }
@@ -244,14 +267,13 @@ class ReportUploadFragment : DaggerFragment() {
 
                     }
                 }).check()
-
-//
         }
 
     }
 
     override fun onPause() {
         super.onPause()
+        //dismiss bottomSheetDialog
         bottomSheetDialog.dismiss()
     }
 
@@ -259,14 +281,10 @@ class ReportUploadFragment : DaggerFragment() {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             cameraImage.setImageBitmap(imageBitmap)
-//            MediaManager.init(requireContext())
-//            val url = MediaManager.get().url().generate(imageBitmap.toString())
-
-
-//            Log.i(title, "url ${url}")
         }
     }
 
+    //Event listener for upload card or upload forward icon
     fun setOnClickEvent(vararg views: View, action: () -> Unit) {
         for (view in views) {
             view.setOnClickListener {
@@ -294,14 +312,6 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
 
-//    private fun dispatchTakePictureIntent() {
-//        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-//            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-//                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
-//            }
-//        }
-//    }
-
     private fun dispatchTakePictureIntent() {
         var photoString = ""
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
@@ -310,7 +320,6 @@ class ReportUploadFragment : DaggerFragment() {
                 // Create the File where the photo should go
                 val photoFile: File? = try {
                     createImageFile()
-
 
                 } catch (ex: IOException) {
                     // Error occurred while creating the File
@@ -325,18 +334,6 @@ class ReportUploadFragment : DaggerFragment() {
                         "com.anapfoundation.covid_19volunteerapp.android.fileprovider",
                         it
                     )
-
-
-
-//
-//                    val requestId = MediaManager.get().upload("dog.mp4")
-//                        .unsigned("preset1")
-//                        .option("resource_type", "video")
-//                        .option("folder", "my_folder/my_sub_folder/")
-//                        .option("public_id", "my_dog")
-//                        .option("overwrite", true)
-//                        .option("notification_url", "https://mysite.example.com/notify_endpoint")
-//                        .dispatch()
 
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)

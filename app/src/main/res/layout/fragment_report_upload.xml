@@ -179,6 +179,7 @@
             app:layout_constraintTop_toBottomOf="@id/reportUploadState">
 
             <EditText
+                android:id="@+id/reportUploadstreetEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/street_hint_text"
