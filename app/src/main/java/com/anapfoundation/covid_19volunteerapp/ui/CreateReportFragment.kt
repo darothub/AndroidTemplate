@@ -108,7 +108,7 @@ class CreateReportFragment : DaggerFragment() {
     //                    val action = CreateReportFragmentDirections.actionCreateReportFragmentToCreateReportOptionsFragment()
     //                    action.question = item
     //                    findNavController().navigate(action)
-                        newReport.topic = item?.topic.toString()
+
                         val rating = item?.id?.let { id -> getRating(id, header) }
                         rating?.observe(viewLifecycleOwner, Observer {
                             Log.i(title, it.data.toString())
@@ -171,14 +171,16 @@ class CreateReportFragment : DaggerFragment() {
                     if (isChecked) {
                         checkBoxMap.put(position, itemView.optionRadio.isChecked)
 
-                        newReport.rating = item.toString()
 
-//                        requireContext().toast("add")
+                        newReport.rating = item?.id.toString()
+
+                        requireContext().toast(item?.topic.toString())
                     }
                     else{
                         checkBoxMap.remove(position)
 //                        requireContext().toast("remove")
                     }
+                    newReport.topic = item?.topic.toString()
                 }
 
             }

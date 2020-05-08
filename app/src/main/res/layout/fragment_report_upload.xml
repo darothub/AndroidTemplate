@@ -150,22 +150,22 @@
             android:popupTheme="@style/AppThemeActivity"
             app:layout_constraintTop_toBottomOf="@id/reportDetailField"
             />
-        <Spinner
-            android:id="@+id/reportUploadLGA"
-            android:layout_width="match_parent"
-            android:background="@drawable/spinner_backgrnd"
-            android:layout_height="55dp"
-            android:gravity="left|center"
-            android:hint="@string/lga"
-            android:padding="10dp"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
-            style="@style/CustomEditTextStyle"
-            android:textColor="@color/colorPrimaryDark"
-            android:textColorHint="@color/colorTextHint"
-            android:textSize="16sp"
-            app:layout_constraintTop_toBottomOf="@id/reportUploadState"
-            />
+<!--        <Spinner-->
+<!--            android:id="@+id/reportUploadLGA"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:background="@drawable/spinner_backgrnd"-->
+<!--            android:layout_height="55dp"-->
+<!--            android:gravity="left|center"-->
+<!--            android:hint="@string/lga"-->
+<!--            android:padding="10dp"-->
+<!--            android:layout_marginLeft="@dimen/normal_margin"-->
+<!--            android:layout_marginRight="@dimen/normal_margin"-->
+<!--            style="@style/CustomEditTextStyle"-->
+<!--            android:textColor="@color/colorPrimaryDark"-->
+<!--            android:textColorHint="@color/colorTextHint"-->
+<!--            android:textSize="16sp"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/reportUploadState"-->
+<!--            />-->
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/reportUploadTown"
             android:layout_width="match_parent"
@@ -176,7 +176,7 @@
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reportUploadLGA">
+            app:layout_constraintTop_toBottomOf="@id/reportUploadState">
 
             <EditText
                 android:layout_width="match_parent"

@@ -116,6 +116,7 @@
     <string name="successful">Successful</string>
     <string name="done">Done</string>
     <string name="pick_one_rating">Only one rating is allowed</string>
+    <string name="cloudinary_url">cloudinary://841314333535362:Gu1v12wvYgbg7EHsjN45x9dt0dM@carflux</string>
 
 
 </resources>

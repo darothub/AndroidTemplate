@@ -16,6 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <meta-data
+            android:name="CLOUDINARY_URL"
+            android:value="@string/cloudinary_url" />
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.anapfoundation.covid_19volunteerapp.android.fileprovider"

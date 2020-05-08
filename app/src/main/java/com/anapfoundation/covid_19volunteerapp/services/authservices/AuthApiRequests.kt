@@ -1,6 +1,7 @@
 package com.anapfoundation.covid_19volunteerapp.services.authservices
 
 import com.anapfoundation.covid_19volunteerapp.model.Report
+import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.model.TopicData
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import retrofit2.Call
@@ -20,4 +21,7 @@ interface AuthApiRequests {
 
     @GET("topics/ratings/{topicID}")
     fun getRating(@Path("topicID") topicID:String, @Header("Authorization") header:String): Call<TopicData>
+
+    @GET("states")
+    fun getStates(@Header("Authorization") header:String): Call<StatesList>
 }

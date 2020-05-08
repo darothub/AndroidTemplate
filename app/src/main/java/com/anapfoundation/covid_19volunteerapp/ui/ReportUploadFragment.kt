@@ -13,22 +13,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
-import com.anapfoundation.covid_19volunteerapp.model.CityClass
-import com.anapfoundation.covid_19volunteerapp.model.Report
-import com.anapfoundation.covid_19volunteerapp.model.User
+import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.cloudinary.android.MediaManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -39,14 +38,12 @@ import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_upload.*
-import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.HashMap
 
 /**
  * A simple [Fragment] subclass.
@@ -88,6 +85,15 @@ class ReportUploadFragment : DaggerFragment() {
         reportUploadBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
+    val getUser by lazy {
+        storageRequest.checkUser("loggedInUser")
+    }
+    val token by lazy {
+        getUser?.token
+    }
+    val header by lazy {
+        "Bearer $token"
+    }
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
@@ -97,6 +103,7 @@ class ReportUploadFragment : DaggerFragment() {
     @Inject
     lateinit var storageRequest: StorageRequest
 
+    val states = hashMapOf<String, String>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -109,10 +116,32 @@ class ReportUploadFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
         reportUploadBackButton.setBackButtonNavigation()
 
+
+
         arguments?.let {
             report = ReportUploadFragmentArgs.fromBundle(it).report!!
         }
-        requireContext().setSpinnerAdapterData(reportUploadState, reportUploadLGA, stateLgaMap)
+
+        val stateData = getStates(header)
+
+
+        stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+
+            it.data.associateByTo(states, {
+                it.state
+            },{
+                it.id
+            })
+
+            val adapterState =
+                ArrayAdapter(requireContext(), R.layout.support_simple_spinner_dropdown_item, states.keys.sorted())
+            reportUploadState.adapter = adapterState
+            Log.i(title, "states $states")
+        })
+
+
+
+//        requireContext().setSpinnerAdapterData(reportUploadState, reportUploadLGA, stateLgaMap)
         submitBtn.text = requireContext().localized(R.string.submit_text)
 //        submitReportBtn.setOnClickListener {
 //            Toast.makeText(requireContext(), "hey", Toast.LENGTH_SHORT).show()
@@ -123,26 +152,27 @@ class ReportUploadFragment : DaggerFragment() {
 
 
 
-        requireContext().toast("${report.topic}")
+        requireContext().toast("${report}")
 
-        var getUser = storageRequest.checkUser("loggedInUser")
-        var token = getUser?.token
-        var header = "Bearer $token"
         Log.i(title, header)
         submitBtn.setOnClickListener {
             val story = storyEditText.text
-            val state = reportUploadState.selectedItem
+            val stateSelected = reportUploadState.selectedItem
+            val stateGUID = states.get(stateSelected)
             report.story = story.toString()
-            report.state = state as String
 
-            val request = authViewModel.addReport(report.topic, report.rating, report.state , report.story, header)
+            report.state = "$stateGUID"
+
+            requireContext().toast("${stateGUID}")
+
+            val request = authViewModel.addReport(report.topic, report.rating, report.story, report.state , header)
             val response = observeRequest(request, progressBar, submitBtn)
 
             response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                 val (bool, result) = it
                 when (bool) {
                     true -> {
-                        val res = result as ServiceResult
+                        val res = result as Data
                         Log.i(title, "message ${result.message}")
 //                        findNavController().navigate(R.id.reportFragment)
                     }
@@ -154,6 +184,16 @@ class ReportUploadFragment : DaggerFragment() {
 
     }
 
+
+    private fun getStates(header:String): MediatorLiveData<StatesList> {
+        val data = MediatorLiveData<StatesList>()
+        val request = authViewModel.getStates(header)
+        val response = observeRequest(request, null, null)
+        data.addSource(response) {
+            data.value = it.second as StatesList
+        }
+        return data
+    }
     override fun onResume() {
         super.onResume()
 
@@ -219,6 +259,11 @@ class ReportUploadFragment : DaggerFragment() {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             cameraImage.setImageBitmap(imageBitmap)
+//            MediaManager.init(requireContext())
+//            val url = MediaManager.get().url().generate(imageBitmap.toString())
+
+
+//            Log.i(title, "url ${url}")
         }
     }
 
@@ -266,25 +311,37 @@ class ReportUploadFragment : DaggerFragment() {
                 val photoFile: File? = try {
                     createImageFile()
 
+
                 } catch (ex: IOException) {
                     // Error occurred while creating the File
                     Log.i(title, ex.localizedMessage)
                     null
                 }
                 // Continue only if the File was successfully created
-
+                Log.i(title, "File ${createImageFile()}")
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
                         requireContext(),
                         "com.anapfoundation.covid_19volunteerapp.android.fileprovider",
                         it
                     )
-                    Log.i(title, "${photoURI}")
 
+
+
+//
+//                    val requestId = MediaManager.get().upload("dog.mp4")
+//                        .unsigned("preset1")
+//                        .option("resource_type", "video")
+//                        .option("folder", "my_folder/my_sub_folder/")
+//                        .option("public_id", "my_dog")
+//                        .option("overwrite", true)
+//                        .option("notification_url", "https://mysite.example.com/notify_endpoint")
+//                        .dispatch()
 
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 }
+
             }
         }
     }

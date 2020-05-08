@@ -106,6 +106,9 @@ dependencies {
     //Dexter permission
     implementation 'com.karumi:dexter:6.1.0'
 
+    //Cloudinary
+    implementation group: 'com.cloudinary', name: 'cloudinary-android', version: '1.27.0'
+
 
 
 
