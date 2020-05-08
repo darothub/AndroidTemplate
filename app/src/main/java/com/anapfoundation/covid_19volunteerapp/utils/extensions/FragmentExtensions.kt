@@ -48,6 +48,7 @@ fun Context.hideKeyboard(view: View) {
 
 fun Context.toast(message:String){
     val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
+    toast.setGravity(Gravity.CENTER, 0, 0)
     val view = toast.view.findViewById<TextView>(android.R.id.message)
     when {
         view != null -> {
@@ -120,7 +121,7 @@ fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
                 progressBar?.hide()
                 button?.show()
                 result.postValue(Pair(true, responseData))
-                requireContext().toast(requireContext().localized(R.string.successful))
+//                requireContext().toast(requireContext().localized(R.string.successful))
                 Log.i(title, "success ${it.data}")
             }
             is ServicesResponseWrapper.Error -> {

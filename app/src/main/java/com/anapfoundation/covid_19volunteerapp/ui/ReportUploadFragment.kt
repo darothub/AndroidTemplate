@@ -162,10 +162,12 @@ class ReportUploadFragment : DaggerFragment() {
     private fun requestResponseTask(it: Pair<Boolean, Any?>) {
         val (bool, result) = it
         when (bool) {
+
             true -> {
+                requireContext().toast(requireContext().localized(R.string.upload_successful))
                 val res = result as Data
                 Log.i(title, "message ${result.message}")
-//                findNavController().navigate(R.id.reportFragment)
+                findNavController().navigate(R.id.reportHomeFragment)
             }
             else -> Log.i(title, "error $result")
         }

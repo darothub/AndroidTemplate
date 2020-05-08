@@ -52,7 +52,7 @@ class NotificationFragment : Fragment() {
             }
 
             submitList(myList)
-            requireContext().toast("listSize ${list?.size}")
+//            requireContext().toast("listSize ${list?.size}")
         }
     }
 }

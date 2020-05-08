@@ -28,6 +28,7 @@ import kotlinx.android.synthetic.main.fragment_create_report.*
 import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet.view.*
 import kotlinx.android.synthetic.main.options_item.view.*
+import java.lang.Exception
 import javax.inject.Inject
 
 /**
@@ -138,8 +139,16 @@ class CreateReportFragment : DaggerFragment() {
         val response = observeRequest(request, null, null)
 
         data.addSource(response) {
-            data.value = it.second as TopicData
+            try {
+                data.value = it.second as TopicData
+            }
+            catch (e:Exception){
+               Log.e(title, e.message)
+            }
+
         }
+
+
 
         return data
 
@@ -170,11 +179,9 @@ class CreateReportFragment : DaggerFragment() {
                 itemView.optionRadio.setOnCheckedChangeListener { buttonView, isChecked ->
                     if (isChecked) {
                         checkBoxMap.put(position, itemView.optionRadio.isChecked)
-
-
                         newReport.rating = item?.id.toString()
 
-                        requireContext().toast(item?.topic.toString())
+//                        requireContext().toast(item?.topic.toString())
                     }
                     else{
                         checkBoxMap.remove(position)
@@ -197,7 +204,7 @@ class CreateReportFragment : DaggerFragment() {
                 requireContext().toast(requireContext().localized(R.string.pick_one_rating))
             }
             else{
-                requireContext().toast("size ${newReport.rating}")
+//                requireContext().toast("size ${newReport.rating}")
                 bottomSheetDialog.dismiss()
                 val action = CreateReportFragmentDirections.toUploadFragment()
                 action.report = newReport

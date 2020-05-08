@@ -80,15 +80,35 @@ class SigninFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         setupSignUpLink()
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
         checkForReturninUser()
         signinBtn.setButtonText(requireContext().localized(R.string.signin_text))
         submitLoginRequest()
-
-
     }
 
+    override fun onPause() {
+        super.onPause()
+        Log.i(title, "onpause")
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.i(title, "onStart")
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        Log.i(title, "detached")
+    }
     private fun submitLoginRequest() {
         signinBtn.setOnClickListener {
             loginRequest()
@@ -167,6 +187,7 @@ class SigninFragment : DaggerFragment() {
                         emailAddress, passwordString, "Not found"
                     )
                 }
+                requireContext().toast(requireContext().localized(R.string.successful))
                 userExist?.rememberPassword = signinCheckbox.isChecked
                 storageRequest.saveData(userExist, emailAddress)
                 storageRequest.saveData(userExist, "loggedInUser")

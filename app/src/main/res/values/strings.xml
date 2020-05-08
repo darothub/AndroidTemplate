@@ -95,7 +95,7 @@
     <string name="profile_text">Profile</string>
     <string name="adddress">Block 16, Anthony Ajayi Street, Onike, Yaba, Lagos</string>
     <string name="email_address">decagonhq@decagon.com</string>
-    <string name="upload_number">2,423</string>
+    <string name="upload_number">0</string>
     <string name="uploaded_report_text">Uploaded Reports</string>
     <string name="edit_profile_text">Edit Info</string>
     <string name="change_profile_picture">Change profile picture</string>
@@ -117,6 +117,8 @@
     <string name="done">Done</string>
     <string name="pick_one_rating">Only one rating is allowed</string>
     <string name="cloudinary_url">cloudinary://841314333535362:Gu1v12wvYgbg7EHsjN45x9dt0dM@carflux</string>
+    <string name="signup_successful">Sign up successfully</string>
+    <string name="upload_successful">Report has been uploaded successfully</string>
 
 
 </resources>

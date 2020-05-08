@@ -76,8 +76,9 @@ class SignupFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_signup, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+
+    override fun onResume() {
+        super.onResume()
         setupSignInLink()
         initEnterKeyToSubmitForm(phoneNumberEdit) { signupRequest() }
 
@@ -86,7 +87,6 @@ class SignupFragment : DaggerFragment() {
         signupBtn.setButtonText(requireContext().localized(R.string.signup_text))
 
         sendSignupRequest()
-
     }
 
     private fun sendSignupRequest() {
@@ -178,6 +178,7 @@ class SignupFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
+                requireContext().toast(requireContext().localized(R.string.signup_successful))
                 val registeredUser =
                     User(firstName, lastName, emailAddress, phoneNumber, passwordString)
                 registeredUser.email?.let { it1 ->
