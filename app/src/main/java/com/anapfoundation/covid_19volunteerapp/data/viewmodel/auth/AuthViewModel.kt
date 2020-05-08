@@ -4,7 +4,9 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.anapfoundation.covid_19volunteerapp.model.Data
 import com.anapfoundation.covid_19volunteerapp.model.Report
+import com.anapfoundation.covid_19volunteerapp.model.TopicData
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
@@ -23,8 +25,8 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
 
     }
 
-    fun addReport(topic: String, rating:String, story:String, state:String, header:String): LiveData<ServicesResponseWrapper<ServiceResult>> {
-        val responseLiveData = MutableLiveData<ServicesResponseWrapper<ServiceResult>>()
+    fun addReport(topic: String, rating:String, story:String, state:String, header:String): LiveData<ServicesResponseWrapper<Data>> {
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
@@ -36,30 +38,72 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
             }
 
             override fun onResponse(call: Call<ServiceResult>, response: Response<ServiceResult>) {
-                val res = response.body()
-                Log.i(title, "${response.code()}")
-                when {
-                    response.code() != 200 || response.code() != 201 ->{
-                        Log.i(title, "errorbody ${response.raw()}")
-                        val a = object : Annotation{}
-                        val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
-                        val error = converter.convert(response.errorBody())
-                        Log.i(title, "message ${error?.message}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
-                    }
-                    res?.token != null -> {
-                        Log.i(title, "token ${res.token}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
-                    }
-                    else -> {
-                        Log.i(title, "errors ${response.errorBody()}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
-                    }
-                }
+                onResponseTask(response as Response<Data>, responseLiveData)
             }
 
         })
         return responseLiveData
+    }
+    fun getTopic(header: String): LiveData<ServicesResponseWrapper<Data>>{
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = authRequestInterface.getTopic(header)
+
+        request.enqueue(object :Callback<TopicData>{
+            override fun onFailure(call: Call<TopicData>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(call: Call<TopicData>, response: Response<TopicData>) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
+    }
+
+    fun getRating(topicID:String, header:String): LiveData<ServicesResponseWrapper<Data>>{
+
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = authRequestInterface.getRating(topicID, header)
+        request.enqueue(object:Callback<TopicData>{
+            override fun onFailure(call: Call<TopicData>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(call: Call<TopicData>, response: Response<TopicData>) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
+    }
+
+    private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
+        val res = response.body()
+        Log.i(title, "${response.code()}")
+        when(response.code()) {
+            in 400..500 ->{
+                Log.i(title, "errorbody ${response.raw()}")
+                val a = object : Annotation{}
+                val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
+                val error = converter.convert(response.errorBody())
+                Log.i(title, "message ${error?.message}")
+                responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+            }
+            else -> {
+                Log.i(title, "errors ${response.errorBody()}")
+                responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+            }
+        }
+
     }
 
 }

@@ -23,7 +23,7 @@ class AuthRequestModule {
     }
     /**
      * A function provides an instance of the user repository
-     *@param userApiServices is a retrofit instance
+     *@param authApiRequests is a retrofit instance
      */
     @Provides
     fun provideAuthRequest(authApiRequests: AuthApiRequests): AuthRequestInterface {

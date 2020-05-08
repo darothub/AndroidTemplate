@@ -32,7 +32,8 @@ abstract class ActivityBuilderModule {
             ReportHomeFragmentModule::class,
             ReportParentFragmentModule::class,
             ReportUploadFragmentModule::class,
-            AuthRequestModule::class
+            AuthRequestModule::class,
+            CreateReportFragmentModule::class
 
         ]
     )
@@ -53,13 +54,17 @@ open class ActivityStaticModule {
     @Singleton
     @Provides
     fun provideGsonConverterFcatory(): GsonConverterFactory = GsonConverterFactory.create()
+
     /**
      * A function to provide retrofit instance
      *
      */
     @Singleton
     @Provides
-    open fun provideRetrofitInstance(gson: GsonConverterFactory, callAdapter: RxJava2CallAdapterFactory): Retrofit {
+    open fun provideRetrofitInstance(
+        gson: GsonConverterFactory,
+        callAdapter: RxJava2CallAdapterFactory
+    ): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addCallAdapterFactory(callAdapter)
@@ -75,7 +80,7 @@ open class ActivityStaticModule {
 
     @Singleton
     @Provides
-    fun provideSharedPreference(context: Context):SharedPreferences{
+    fun provideSharedPreference(context: Context): SharedPreferences {
         return context.getSharedPreferences("anapcovidapp", Context.MODE_PRIVATE)
     }
 
@@ -84,9 +89,10 @@ open class ActivityStaticModule {
     fun provideGson(): Gson {
         return GsonBuilder().create()
     }
+
     @Singleton
     @Provides
-    fun provideStorage(sharedPrefs:SharedPreferences, gson: Gson):StorageRequest{
+    fun provideStorage(sharedPrefs: SharedPreferences, gson: Gson): StorageRequest {
         return SharedPrefManager(sharedPrefs, gson)
     }
 

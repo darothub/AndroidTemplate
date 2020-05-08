@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.anapfoundation.covid_19volunteerapp.model.Data
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
@@ -35,9 +36,9 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
         phone: String,
         password: String
 
-    ): LiveData<ServicesResponseWrapper<ServiceResult>>{
+    ): LiveData<ServicesResponseWrapper<Data>>{
 
-        val responseLiveData = MutableLiveData<ServicesResponseWrapper<ServiceResult>>()
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
@@ -49,35 +50,16 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
             }
 
             override fun onResponse(call: Call<ServiceResult>, response: Response<ServiceResult>) {
-                val res = response.body()
-                Log.i(title, "${response.code()}")
-                when {
-                    response.code() != 200 || response.code() != 201 ->{
-                        Log.i(title, "errorbody ${response.raw()}")
-                        val a = object : Annotation{}
-                        val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
-                        val error = converter.convert(response.errorBody())
-                        Log.i(title, "message ${error?.message}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
-                    }
-                    res?.token != null -> {
-                        Log.i(title, "token ${res.token}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
-                    }
-                    else -> {
-                        Log.i(title, "errors ${response.errorBody()}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
-                    }
-                }
+                onResponseTask(response as Response<Data>, responseLiveData)
             }
 
         })
         return responseLiveData
     }
 
-    fun loginUserRequest(username: String, password: String): LiveData<ServicesResponseWrapper<ServiceResult>>{
+    fun loginUserRequest(username: String, password: String): LiveData<ServicesResponseWrapper<Data>>{
 
-        val responseLiveData = MutableLiveData<ServicesResponseWrapper<ServiceResult>>()
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
@@ -89,29 +71,33 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
             }
 
             override fun onResponse(call: Call<ServiceResult>, response: Response<ServiceResult>) {
-                val res = response.body()
-                Log.i(title, "${response.code()}")
-                when {
-                    response.code() != 200  ->{
-                        Log.i(title, "errorbody ${response.raw()}")
-                        val a = object : Annotation{}
-                        val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
-                        val error = converter.convert(response.errorBody()!!)
-                        Log.i(title, "message ${error?.message}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
-                    }
-                    res?.token != null -> {
-                        Log.i(title, "token ${res.token}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
-                    }
-                    else -> {
-                        Log.i(title, "errors ${response.errorBody()}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
-                    }
-                }
+                onResponseTask(response as Response<Data>, responseLiveData)
             }
 
         })
         return responseLiveData
+    }
+    private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
+        val res = response.body()
+        Log.i(title, "${response.code()}")
+        when {
+            response.code() != 200  ->{
+                Log.i(title, "errorbody ${response.raw()}")
+                val a = object : Annotation{}
+                val converter = retrofit.responseBodyConverter<ServiceResult>(Data::class.java, arrayOf(a))
+                val error = converter.convert(response.errorBody()!!)
+                Log.i(title, "message ${error?.message}")
+                responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+            }
+            res?.token != null -> {
+                Log.i(title, "token ${res.token}")
+                responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+            }
+            else -> {
+                Log.i(title, "errors ${response.errorBody()}")
+                responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
+            }
+        }
+
     }
 }

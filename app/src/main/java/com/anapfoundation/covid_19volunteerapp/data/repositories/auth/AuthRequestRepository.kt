@@ -1,6 +1,8 @@
 package com.anapfoundation.covid_19volunteerapp.data.repositories.auth
 
+import com.anapfoundation.covid_19volunteerapp.model.Data
 import com.anapfoundation.covid_19volunteerapp.model.Report
+import com.anapfoundation.covid_19volunteerapp.model.TopicData
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
@@ -16,6 +18,14 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         header: String
     ): Call<ServiceResult> {
         return authApiRequests.addReport(topic, rating, story, state, header)
+    }
+
+    override fun getTopic(header: String): Call<TopicData> {
+        return authApiRequests.getTopic(header)
+    }
+
+    override fun getRating(topicID: String, header: String): Call<TopicData> {
+        return authApiRequests.getRating(topicID, header)
     }
 
 

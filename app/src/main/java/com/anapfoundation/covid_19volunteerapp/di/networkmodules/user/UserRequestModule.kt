@@ -21,7 +21,7 @@ class UserRequestModule {
 
     /**
      * A function provides an instance of the user repository
-     *@param userApiServices is a retrofit instance
+     *@param userApiRequests is a retrofit instance
      */
     @Provides
     fun provideUserCall(userApiRequests: UserApiRequests): UserRequestInterface {
