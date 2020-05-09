@@ -132,7 +132,7 @@
                 app:layout_constraintTop_toBottomOf="@id/profileEmail" />
 
             <TextView
-                android:id="@+id/uploadNumber"
+                android:id="@+id/profileUploadNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/upload_number"
@@ -152,8 +152,8 @@
                 android:includeFontPadding="false"
                 android:textColor="@color/colorPrimaryDark"
 
-                app:layout_constraintStart_toStartOf="@id/uploadNumber"
-                app:layout_constraintTop_toBottomOf="@id/uploadNumber" />
+                app:layout_constraintStart_toStartOf="@id/profileUploadNumber"
+                app:layout_constraintTop_toBottomOf="@id/profileUploadNumber" />
 
             <View
                 android:id="@+id/profileBottomDivider"
@@ -163,7 +163,7 @@
                 android:background="@android:color/darker_gray"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/uploadNumber" />
+                app:layout_constraintTop_toBottomOf="@id/profileUploadNumber" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

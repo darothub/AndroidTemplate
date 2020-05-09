@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.activity.addCallback
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavDeepLinkRequest
@@ -92,6 +93,11 @@ class SigninFragment : DaggerFragment() {
         checkForReturninUser()
         signinBtn.setButtonText(requireContext().localized(R.string.signin_text))
         submitLoginRequest()
+        requireActivity().onBackPressedDispatcher.addCallback {
+            requireActivity().finish()
+
+
+        }
     }
 
     override fun onPause() {

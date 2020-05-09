@@ -20,6 +20,7 @@ import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.utsman.recycling.setupAdapter
 import dagger.android.support.DaggerFragment
@@ -48,7 +49,7 @@ class CreateReportFragment : DaggerFragment() {
     }
 
     val checkBoxMap by lazy {
-        hashMapOf<Int, Boolean>()
+        hashMapOf<Int, Topic>()
     }
     val getUser by lazy {
         storageRequest.checkUser("loggedInUser")
@@ -79,6 +80,9 @@ class CreateReportFragment : DaggerFragment() {
     }
     @Inject
     lateinit var storageRequest: StorageRequest
+
+    var ratingList:ArrayList<String> = arrayListOf()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -106,21 +110,17 @@ class CreateReportFragment : DaggerFragment() {
                 bind { itemView, position, item ->
                     itemView.createReportSubject.text = item?.topic
                     itemView.setOnClickListener {
-    //                    val action = CreateReportFragmentDirections.actionCreateReportFragmentToCreateReportOptionsFragment()
-    //                    action.question = item
-    //                    findNavController().navigate(action)
 
                         val rating = item?.id?.let { id -> getRating(id, header) }
                         rating?.observe(viewLifecycleOwner, Observer {
-                            Log.i(title, it.data.toString())
+
                             val ratingItems = it.data
-                            ratingItems?.let { data -> setUpBottomSheet(data) }
+                            ratingItems.let { data -> setUpBottomSheet(data) }
+//                            Log.i(title, "${ratingItems.size}")
 
                         })
 
                         bottomSheetView.reportQuestionHeading.text = item?.topic
-
-
 
                     }
                 }
@@ -132,6 +132,22 @@ class CreateReportFragment : DaggerFragment() {
         })
     }
 
+    override fun onPause() {
+        super.onPause()
+        bottomSheetDialog.dismiss()
+        Log.i(title, "Paused")
+    }
+    override fun onStart() {
+        super.onStart()
+        bottomSheetDialog.dismiss()
+        Log.i(title, "started")
+
+    }
+    override fun onResume() {
+        super.onResume()
+        bottomSheetDialog.dismiss()
+        Log.i(title, "Resumed")
+    }
     private fun getTopic(header:String):MediatorLiveData<TopicData>{
         val data = MediatorLiveData<TopicData>()
         val request = authViewModel.getTopic(header)
@@ -159,7 +175,13 @@ class CreateReportFragment : DaggerFragment() {
         val request = authViewModel.getRating(topicID, header)
         val response = observeRequest(request, null, null)
         data.addSource(response) {
-            data.value = it.second as TopicData
+            try{
+                data.value = it.second as TopicData
+            }
+            catch (e:Exception){
+                Log.e(title, e.message)
+            }
+
         }
         return data
     }
@@ -167,51 +189,77 @@ class CreateReportFragment : DaggerFragment() {
     private fun setUpBottomSheet(item:List<Topic>){
 
         val myList = item
-        bottomSheetView.reportQuestionRecyclerView.setupAdapter<Topic>(R.layout.options_item){ adapter, context, list ->
-            bind { itemView, position, item ->
-
-                itemView.optionText.text = item?.rating
-
-                itemView.setOnClickListener {
-                    itemView.optionRadio.isChecked = !itemView.optionRadio.isChecked
-
-                }
-                itemView.optionRadio.setOnCheckedChangeListener { buttonView, isChecked ->
-                    if (isChecked) {
-                        checkBoxMap.put(position, itemView.optionRadio.isChecked)
-                        newReport.rating = item?.id.toString()
-
-//                        requireContext().toast(item?.topic.toString())
-                    }
-                    else{
-                        checkBoxMap.remove(position)
-//                        requireContext().toast("remove")
-                    }
-                    newReport.topic = item?.topic.toString()
-                }
-
-            }
-            submitList(myList)
-        }
-
+        setupBottomSheetRecyclerView(myList)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
-        bottomSheetView.selectBtn.setOnClickListener {
-            val checkBoxValues = checkBoxMap.values
 
-            if(checkBoxValues.size != 1) {
-                requireContext().toast(requireContext().localized(R.string.pick_one_rating))
-            }
-            else{
-//                requireContext().toast("size ${newReport.rating}")
+        clearBottomDialogOnDismiss()
+
+        submitRatingSelection()
+    }
+
+    private fun submitRatingSelection() {
+        bottomSheetView.selectBtn.setOnClickListener {
+            val checkBoxesKeys = checkBoxMap.keys
+
+            Log.i(title, "checkBoxMapChanged ${checkBoxMap}")
+            if (ratingList.isEmpty()) {
                 bottomSheetDialog.dismiss()
+                val action = CreateReportFragmentDirections.toUploadFragment()
+                action.report = newReport
+                findNavController().navigate(action)
+            } else if (checkBoxesKeys.size != 1) {
+                requireContext().toast(requireContext().localized(R.string.pick_one_rating))
+            } else {
+                bottomSheetDialog.dismiss()
+                val topicItem = checkBoxMap.values.elementAt(0)
+                newReport.topic = topicItem.topic
+                newReport.rating = topicItem.id
+                Log.i(title, "new report " + newReport.topic + " " + newReport.rating)
                 val action = CreateReportFragmentDirections.toUploadFragment()
                 action.report = newReport
                 findNavController().navigate(action)
             }
 
+        }
+    }
 
+    private fun clearBottomDialogOnDismiss() {
+        bottomSheetDialog.setOnDismissListener {
+            checkBoxMap.clear()
+            ratingList.clear()
+        }
+    }
+
+    private fun setupBottomSheetRecyclerView(myList: List<Topic>) {
+        bottomSheetView.reportQuestionRecyclerView.setupAdapter<Topic>(R.layout.options_item) { adapter, context, list ->
+            bind { itemView, position, item ->
+
+                when {
+                    item?.rating?.length!! >= 1 -> itemView.optionText.text = item.rating
+                    else -> bottomSheetView.selectBtn.setOnClickListener {
+                        findNavController().navigate(R.id.reportUploadFragment)
+                    }
+                }
+                itemView.setOnClickListener {
+                    itemView.optionRadio.isChecked = !itemView.optionRadio.isChecked
+                }
+
+                ratingList.add(item.rating)
+                itemView.optionRadio.setOnCheckedChangeListener { buttonView, isChecked ->
+                    if (isChecked) {
+                        checkBoxMap.put(position, item)
+                        Log.i(title, "ratingtext ${item?.id}")
+                    } else {
+                        checkBoxMap.remove(position)
+                    }
+
+    //                    Log.i(title, "checkBoxMapChanged ${checkBoxMap}")
+
+                }
+            }
+            submitList(myList)
         }
     }
 }

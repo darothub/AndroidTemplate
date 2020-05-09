@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.anapfoundation.covid_19volunteerapp.model.Data
-import com.anapfoundation.covid_19volunteerapp.model.Report
-import com.anapfoundation.covid_19volunteerapp.model.StatesList
-import com.anapfoundation.covid_19volunteerapp.model.TopicData
+import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
@@ -108,6 +105,27 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         })
         return responseLiveData
 
+    }
+
+    fun getProfileData(header: String): LiveData<ServicesResponseWrapper<Data>>{
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = authRequestInterface.getProfileData(header)
+
+        request.enqueue(object :Callback<ProfileData>{
+            override fun onFailure(call: Call<ProfileData>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(call: Call<ProfileData>, response: Response<ProfileData>) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
     }
 
     private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){

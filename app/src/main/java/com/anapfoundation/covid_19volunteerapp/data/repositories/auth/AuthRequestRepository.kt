@@ -1,9 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.data.repositories.auth
 
-import com.anapfoundation.covid_19volunteerapp.model.Data
-import com.anapfoundation.covid_19volunteerapp.model.Report
-import com.anapfoundation.covid_19volunteerapp.model.StatesList
-import com.anapfoundation.covid_19volunteerapp.model.TopicData
+import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
@@ -31,6 +28,10 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
 
     override fun getStates(header: String): Call<StatesList> {
         return authApiRequests.getStates(header)
+    }
+
+    override fun getProfileData(header: String): Call<ProfileData> {
+        return authApiRequests.getProfileData(header)
     }
 
 

@@ -1,5 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.services.authservices
 
+import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.Report
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.model.TopicData
@@ -24,4 +25,7 @@ interface AuthApiRequests {
 
     @GET("states")
     fun getStates(@Header("Authorization") header:String): Call<StatesList>
+
+    @GET("me")
+    fun getProfileData(@Header("Authorization") header:String): Call<ProfileData>
 }
