@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -151,7 +152,8 @@ class ReportFragment : DaggerFragment() {
             user?.loggedIn = false
             storageRequest.saveData(user, "loggedOutUser")
             bottomSheetDialog.dismiss()
-            requireActivity().finishFromChild(activity)
+//            requireActivity().finishFromChild(activity)
+            findNavController().navigate(R.id.signinFragment)
         }
 
         noButton.setOnClickListener {

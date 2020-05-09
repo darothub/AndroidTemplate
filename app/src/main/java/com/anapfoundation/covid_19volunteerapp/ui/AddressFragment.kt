@@ -41,7 +41,7 @@ class AddressFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
 
 
-        requireContext().setSpinnerAdapterData(spinnerState, spinnerLGA, stateLgaMap)
+//        requireContext().setSpinnerAdapterData(spinnerState, spinnerLGA, stateLgaMap)
 
         val saveBtn = addressbottomIndicator.findViewById<Button>(R.id.includeBtn)
         saveBtn.text = requireContext().localized(R.string.save_text)

@@ -197,8 +197,8 @@
         <include
             android:id="@+id/reportUploadBottomLayout"
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:layout_marginTop="10dp"
+            android:layout_height="220dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="@dimen/normal_margin"
             android:layout_marginLeft="@dimen/normal_margin"
             app:layout_constraintTop_toBottomOf="@id/topSpace"
