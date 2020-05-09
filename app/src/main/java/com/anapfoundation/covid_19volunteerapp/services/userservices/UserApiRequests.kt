@@ -14,8 +14,10 @@ interface UserApiRequests {
         @Field("lastName") last:String,
         @Field("email") email:String,
         @Field("phone") phone:String,
-        @Field("password") password:String
-
+        @Field("password") password:String,
+        @Field("houseNumber") houseNumber:String,
+        @Field("street") street:String,
+        @Field("state") state:String
     ): Call<ServiceResult>
 
     @POST("login")

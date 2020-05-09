@@ -34,7 +34,8 @@ abstract class ActivityBuilderModule {
             ReportUploadFragmentModule::class,
             AuthRequestModule::class,
             CreateReportFragmentModule::class,
-            ProfileFragmentModule::class
+            ProfileFragmentModule::class,
+            AddressFragmentModule::class
 
         ]
     )

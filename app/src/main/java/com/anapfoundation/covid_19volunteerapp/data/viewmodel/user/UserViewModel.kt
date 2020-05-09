@@ -9,10 +9,6 @@ import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.google.gson.reflect.TypeToken
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
@@ -34,7 +30,10 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
         lastName: String,
         email: String,
         phone: String,
-        password: String
+        password: String,
+        houseNumber:String,
+        street:String,
+        state: String
 
     ): LiveData<ServicesResponseWrapper<Data>>{
 
@@ -43,7 +42,7 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
             null,
             "Loading..."
         )
-        val request = userRequestInterface.registerUser(firstName, lastName, email, password, phone)
+        val request = userRequestInterface.registerUser(firstName, lastName, email, password, phone, houseNumber, street, state)
         request.enqueue(object : Callback<ServiceResult>{
             override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))

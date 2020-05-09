@@ -122,6 +122,7 @@
     <string name="you_are_about">You are about to logout</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="proceed">Proceed</string>
 
 
 </resources>
