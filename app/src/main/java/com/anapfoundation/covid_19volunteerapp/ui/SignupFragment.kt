@@ -22,6 +22,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderF
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.User
+import com.anapfoundation.covid_19volunteerapp.model.UserData
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
@@ -57,15 +58,7 @@ class SignupFragment : DaggerFragment() {
     }
 
 
-    @Inject
-    lateinit var viewModelProviderFactory: ViewModelProviderFactory
 
-    @Inject
-    lateinit var storageRequest: StorageRequest
-
-    val userViewModel: UserViewModel by lazy {
-        ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,7 +77,7 @@ class SignupFragment : DaggerFragment() {
 
         passwordCheckAlert()
 
-        signupBtn.setButtonText(requireContext().localized(R.string.signup_text))
+        signupBtn.setButtonText(requireContext().localized(R.string.proceed))
 
         sendSignupRequest()
     }
@@ -141,57 +134,18 @@ class SignupFragment : DaggerFragment() {
             validation != null -> requireActivity().toast("$validation is invalid")
             passwordString != cpassword -> requireActivity().toast(requireContext().localized(R.string.passwords_do_not_match))
             else -> {
-                val request = userViewModel.registerUser(
-                    firstName,
-                    lastName,
-                    emailAddress,
-                    phoneNumber,
-                    passwordString
-                )
-                val response = observeRequest(request, progressBar, signupBtn)
-                response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-                    val (bool, result) = it
-                    onRequestResponseTask(
-                        bool,
-                        firstName,
-                        lastName,
-                        emailAddress,
-                        phoneNumber,
-                        passwordString,
-                        result
-                    )
-                })
+
+                val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)
+                val action = SignupFragmentDirections.toAddressFragment()
+                action.userData = userData
+                findNavController().navigate(action)
             }
         }
 
 
     }
 
-    private fun onRequestResponseTask(
-        bool: Boolean,
-        firstName: String,
-        lastName: String,
-        emailAddress: String,
-        phoneNumber: String,
-        passwordString: String,
-        result: Any?
-    ) {
-        when (bool) {
-            true -> {
-                requireContext().toast(requireContext().localized(R.string.signup_successful))
-                val registeredUser =
-                    User(firstName, lastName, emailAddress, phoneNumber, passwordString)
-                registeredUser.email?.let { it1 ->
-                    storageRequest.saveData(
-                        registeredUser,
-                        it1
-                    )
-                }
-                findNavController().navigate(R.id.signinFragment)
-            }
-            else -> Log.i(title, "error $result")
-        }
-    }
+
 
     private fun validateEmailAndPassword(text: CharSequence) {
         val passwordPattern = Regex("""^[a-zA-Z0-9@$!%*#?&]{6,}$""")

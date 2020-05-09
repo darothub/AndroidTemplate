@@ -40,6 +40,7 @@
             app:layout_constraintTop_toBottomOf="@id/layoutAddressTitle">
 
             <EditText
+                android:id="@+id/houseNumberEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/house_number_hint_text"
@@ -90,6 +91,7 @@
             app:layout_constraintTop_toBottomOf="@id/spinnerState">
 
             <EditText
+                android:id="@+id/streetEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/street_hint_text"

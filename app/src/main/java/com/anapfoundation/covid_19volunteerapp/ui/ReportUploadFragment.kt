@@ -118,6 +118,7 @@ class ReportUploadFragment : DaggerFragment() {
     lateinit var storageRequest: StorageRequest
 
     val states = hashMapOf<String, String>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

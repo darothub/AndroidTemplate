@@ -33,7 +33,7 @@
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" >
         <action
-            android:id="@+id/action_signupFragment_to_addressFragment"
+            android:id="@+id/toAddressFragment"
             app:destination="@id/addressFragment" />
     </fragment>
     <fragment
@@ -44,6 +44,11 @@
         <action
             android:id="@+id/action_addressFragment_to_reportFragment"
             app:destination="@id/reportFragment" />
+        <argument
+            android:name="userData"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.UserData"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/reportFragment"

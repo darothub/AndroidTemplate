@@ -12,9 +12,12 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
         lastName: String,
         email: String,
         password: String,
-        phone: String
+        phone: String,
+        houseNumber:String,
+        street:String,
+        state:String
     ): Call<ServiceResult> {
-        return userApiRequests.registerUser(firstName, lastName, email, phone, password)
+        return userApiRequests.registerUser(firstName, lastName, email, phone, password, houseNumber, street, state)
     }
 
     override fun loginRequest(username: String, password: String): Call<ServiceResult> {

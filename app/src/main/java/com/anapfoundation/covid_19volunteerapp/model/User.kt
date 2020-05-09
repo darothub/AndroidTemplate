@@ -38,30 +38,36 @@ class UserData(
 
     @SerializedName("last_name")
     val lastName: String,
-
-    val age: Long? = 0,
     val email: String,
     val phone: String,
 
-    @SerializedName("instagram_profile_username")
-    val instagramProfileUsername: String? = "",
-
-    @SerializedName("twitter_profile_username")
-    val twitterProfileUsername: String? = "",
-
-    val specialization: String? = "",
-
-    @SerializedName("profile_image_url")
-    val profileImageURL: String? = "",
+    @SerializedName("password")
+    var password:String?="",
 
     @SerializedName("house_number")
     val houseNumber: String? = "",
 
     val street: String? = "",
-    val id: String,
+    val id: String? = "",
     val state: String? = "",
+
+    val age: Long? = null,
+
+
+    @SerializedName("instagram_profile_username")
+    val instagramProfileUsername: String? = null,
+
+    @SerializedName("twitter_profile_username")
+    val twitterProfileUsername: String? = null,
+
+    val specialization: String? = null,
+
+    @SerializedName("profile_image_url")
+    val profileImageURL: String? = null,
     @SerializedName("state_id")
-    val stateID: String? = "",
+    val stateID: String? = null,
     @SerializedName("total_reports")
-    val totalReports: Long
-):Serializable
+    val totalReports: Long?=null
+):Serializable {
+
+}
