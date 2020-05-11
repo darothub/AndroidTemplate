@@ -186,6 +186,26 @@
                 android:textColorHint="@color/colorTextHint"
                 android:singleLine="true" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/suggestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginRight="@dimen/normal_margin"
+            app:borderColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/reportUploadTown">
+
+            <EditText
+                android:id="@+id/suggestionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/street_suggestion"
+                android:textColorHint="@color/colorTextHint"
+                android:singleLine="true" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
         <TextView
             android:id="@+id/imageUrlField"
@@ -197,7 +217,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/image_url"
-            app:layout_constraintTop_toBottomOf="@id/reportUploadTown"
+            app:layout_constraintTop_toBottomOf="@id/suggestion"
             android:textSize="@dimen/smallest_font_size"
             android:gravity="left|center"
             android:autoSizeTextType="uniform"
