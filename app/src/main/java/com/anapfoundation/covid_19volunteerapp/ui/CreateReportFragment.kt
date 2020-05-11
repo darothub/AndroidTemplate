@@ -17,16 +17,13 @@ import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.model.*
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.utsman.recycling.setupAdapter
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.create_report_item.view.*
 import kotlinx.android.synthetic.main.fragment_create_report.*
-import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet.view.*
 import kotlinx.android.synthetic.main.options_item.view.*
 import java.lang.Exception
@@ -210,7 +207,7 @@ class CreateReportFragment : DaggerFragment() {
                 action.report = newReport
                 findNavController().navigate(action)
             } else if (checkBoxesKeys.size != 1) {
-                requireContext().toast(requireContext().localized(R.string.pick_one_rating))
+                requireContext().toast(requireContext().getLocalisedString(R.string.pick_one_rating))
             } else {
                 bottomSheetDialog.dismiss()
                 val topicItem = checkBoxMap.values.elementAt(0)

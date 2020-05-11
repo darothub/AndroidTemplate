@@ -1,83 +1,81 @@
 package com.anapfoundation.covid_19volunteerapp.utils.extensions
 
 import android.content.Context
-import android.content.res.Resources
-import androidx.core.content.ContentProviderCompat.requireContext
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.model.ReportQuestionModel
 
 fun Context.indexCases():ReportQuestionModel{
-    return ReportQuestionModel(localized(R.string.awareness_of_covid),
-        localized(R.string.awareness_of_covid),
+    return ReportQuestionModel(getLocalisedString(R.string.awareness_of_covid),
+        getLocalisedString(R.string.awareness_of_covid),
         null,
-        listOf(localized(R.string.very_high),
-            localized(R.string.high),
-            localized(R.string.low),
-            localized(R.string.very_low)
+        listOf(getLocalisedString(R.string.very_high),
+            getLocalisedString(R.string.high),
+            getLocalisedString(R.string.low),
+            getLocalisedString(R.string.very_low)
         )
 
     )
 }
 fun Context.awareness():ReportQuestionModel{
-    return ReportQuestionModel(localized(R.string.index_cases),
-        localized(R.string.index_cases_reported),
+    return ReportQuestionModel(getLocalisedString(R.string.index_cases),
+        getLocalisedString(R.string.index_cases_reported),
         null,
-        listOf(localized(R.string.infections),
-            localized(R.string.death))
+        listOf(getLocalisedString(R.string.infections),
+            getLocalisedString(R.string.death))
     )
 }
 
 fun Context.publicEnglightenment():ReportQuestionModel{
-    return ReportQuestionModel(localized(R.string.public_enlightenment),
-        localized(R.string.public_enlightenment),
+    return ReportQuestionModel(getLocalisedString(R.string.public_enlightenment),
+        getLocalisedString(R.string.public_enlightenment),
         null,
-        listOf(localized(R.string.adequate),
-            localized(R.string.very_adequate),
-            localized(R.string.inadequate)
+        listOf(getLocalisedString(R.string.adequate),
+            getLocalisedString(R.string.very_adequate),
+            getLocalisedString(R.string.inadequate)
         )
     )
 }
 
 fun Context.measures():ReportQuestionModel{
-    return ReportQuestionModel(localized(R.string.measures),
-        localized(R.string.measures),
+    return ReportQuestionModel(getLocalisedString(R.string.measures),
+        getLocalisedString(R.string.measures),
         null,
-        listOf(localized(R.string.curfew),
-            localized(R.string.total_lockdown),
-            localized(R.string.partial_lockdown)
+        listOf(getLocalisedString(R.string.curfew),
+            getLocalisedString(R.string.total_lockdown),
+            getLocalisedString(R.string.partial_lockdown)
         )
     )
 }
 
 fun Context.compliance():ReportQuestionModel{
-    return ReportQuestionModel(localized(R.string.level_of_compliance),
-        localized(R.string.level_of_compliance),
+    return ReportQuestionModel(getLocalisedString(R.string.level_of_compliance),
+        getLocalisedString(R.string.level_of_compliance),
         null,
-        listOf(localized(R.string.high_total),
-            localized(R.string.average_largely),
-            localized(R.string.low_partial)
+        listOf(getLocalisedString(R.string.high_total),
+            getLocalisedString(R.string.average_largely),
+            getLocalisedString(R.string.low_partial)
         )
     )
 }
 
 fun Context.challenges():ReportQuestionModel{
-    return ReportQuestionModel(localized(R.string.challenge_observed),
-        localized(R.string.challenge_observed),
+    return ReportQuestionModel(getLocalisedString(R.string.challenge_observed),
+        getLocalisedString(R.string.challenge_observed),
         null,
-        listOf(localized(R.string.defiance),
-            localized(R.string.no_surveillance),
-            localized(R.string.security_forces)
+        listOf(getLocalisedString(R.string.defiance),
+            getLocalisedString(R.string.no_surveillance),
+            getLocalisedString(R.string.security_forces)
         )
     )
 }
 
 fun Context.palliatives():ReportQuestionModel{
-    return ReportQuestionModel(localized(R.string.any_govt_palliatives),
-        localized(R.string.any_govt_palliatives),
+    return ReportQuestionModel(getLocalisedString(R.string.any_govt_palliatives),
+        getLocalisedString(R.string.any_govt_palliatives),
         null,
-        listOf(localized(R.string.food),
-            localized(R.string.money),
-            localized(R.string.material)
+        listOf(getLocalisedString(R.string.food),
+            getLocalisedString(R.string.money),
+            getLocalisedString(R.string.material)
         )
     )
 }

@@ -24,11 +24,15 @@ import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
-import com.anapfoundation.covid_19volunteerapp.model.*
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.Data
+import com.anapfoundation.covid_19volunteerapp.model.Report
+import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import com.cloudinary.android.preprocess.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
@@ -39,10 +43,10 @@ import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_upload.*
-import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -169,7 +173,7 @@ class ReportUploadFragment : DaggerFragment() {
         when (bool) {
 
             true -> {
-                requireContext().toast(requireContext().localized(R.string.upload_successful))
+                requireContext().toast(requireContext().getLocalisedString(R.string.upload_successful))
                 val res = result as Data
                 Log.i(title, "message ${result.message}")
                 findNavController().navigate(R.id.reportHomeFragment)
@@ -193,7 +197,7 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     private fun setButtonText() {
-        submitBtn.setButtonText(requireContext().localized(R.string.submit_text))
+        submitBtn.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
     }
 
     private fun setupSpinner() {
@@ -236,7 +240,7 @@ class ReportUploadFragment : DaggerFragment() {
 
     private fun showBottomSheet() {
 
-        uploadPictureBtn.text = requireContext().localized(R.string.done)
+        uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
@@ -334,13 +338,61 @@ class ReportUploadFragment : DaggerFragment() {
                     null
                 }
                 // Continue only if the File was successfully created
-                Log.i(title, "File ${createImageFile()}")
+//                Log.i(title, "File ${createImageFile()}")
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
                         requireContext(),
-                        "com.anapfoundation.covid_19volunteerapp.android.fileprovider",
+                        "com.anapfoundation.android.fileprovider",
                         it
                     )
+
+                    try {
+
+                        MediaManager.init(requireContext())
+                        val requestId =
+                            MediaManager.get().upload(currentPhotoPath).callback(object : UploadCallback{
+                                override fun onSuccess(
+                                    requestId: String?,
+                                    resultData: MutableMap<Any?, Any?>?
+                                ) {
+                                    Log.i(title, "success")
+                                }
+
+                                override fun onProgress(
+                                    requestId: String?,
+                                    bytes: Long,
+                                    totalBytes: Long
+                                ) {
+                                    Log.i(title, "progress")
+                                }
+
+                                override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                                    Log.i(title, "progress")
+                                }
+
+                                override fun onError(requestId: String?, error: ErrorInfo?) {
+                                    Log.i(title, "error ${error?.description}")
+                                }
+
+                                override fun onStart(requestId: String?) {
+                                    Log.i(title, "onstart")
+                                }
+
+                            }).preprocess(ImagePreprocessChain()
+                                .loadWith(BitmapDecoder(200, 200))
+                                .addStep(Limit(300, 300))
+                                .addStep(DimensionsValidator(40, 40, 300, 300))
+                                .saveWith(BitmapEncoder(BitmapEncoder.Format.JPEG, 80))
+
+                            ).startNow(requireContext())
+                        Log.i(title, "File ${photoURI}")
+                        Log.i(title, "File ${currentPhotoPath}")
+                    }
+                    catch (e:Exception){
+                        Log.i(title, "${e.localizedMessage}")
+                    }
+
+
 
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
