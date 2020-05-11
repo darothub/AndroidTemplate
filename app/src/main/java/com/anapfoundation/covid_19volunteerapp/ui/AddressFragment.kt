@@ -58,6 +58,7 @@ class AddressFragment : DaggerFragment() {
 
     //Get logged-in user
     val getUser by lazy {
+
         storageRequest.checkUser("loggedInUser")
     }
 
@@ -207,3 +208,4 @@ class AddressFragment : DaggerFragment() {
 
 
 }
+

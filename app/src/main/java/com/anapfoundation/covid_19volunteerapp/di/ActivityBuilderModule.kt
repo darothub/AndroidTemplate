@@ -8,6 +8,7 @@ import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.*
 import com.anapfoundation.covid_19volunteerapp.di.networkmodules.auth.AuthRequestModule
 import com.anapfoundation.covid_19volunteerapp.di.networkmodules.user.UserRequestModule
 import com.anapfoundation.covid_19volunteerapp.helpers.SharedPrefManager
+import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.ui.MainActivity
 import com.anapfoundation.covid_19volunteerapp.utils.constant.BASE_URL

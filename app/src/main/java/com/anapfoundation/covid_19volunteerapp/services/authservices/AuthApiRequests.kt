@@ -28,4 +28,5 @@ interface AuthApiRequests {
 
     @GET("me")
     fun getProfileData(@Header("Authorization") header:String): Call<ProfileData>
+    
 }

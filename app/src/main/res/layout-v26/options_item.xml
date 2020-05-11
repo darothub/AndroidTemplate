@@ -15,6 +15,7 @@
         android:text="@string/very_high"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="@dimen/large_font_size"
+        android:gravity="left|center"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="14sp"
@@ -27,9 +28,10 @@
         android:layout_height="wrap_content"
         android:scaleX=".8"
         android:scaleY=".8"
-        app:layout_constraintBottom_toTopOf="@id/optionDivider"
+
+        app:layout_constraintBottom_toBottomOf="@id/optionText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="@id/optionText"/>
 
     <View
         android:id="@+id/optionDivider"

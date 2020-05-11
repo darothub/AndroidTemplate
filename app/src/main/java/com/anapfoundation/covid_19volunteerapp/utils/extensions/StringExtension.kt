@@ -11,20 +11,20 @@ import android.view.View
 import android.widget.Toast
 import com.anapfoundation.covid_19volunteerapp.R
 
-fun String.setAsSpannable():SpannableString{
+inline fun String.setAsSpannable():SpannableString{
     val spannableString: SpannableString by lazy {
         SpannableString(this)
     }
     return  spannableString
 }
-fun SpannableString.setColorToSubstring(color:Int, start:Int, end:Int){
+inline fun SpannableString.setColorToSubstring(color:Int, start:Int, end:Int){
 
     val color: ForegroundColorSpan by lazy {
         ForegroundColorSpan(color)
     }
     this.setSpan(color, start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
 }
-fun SpannableString.enableClickOnSubstring(start:Int, end:Int, action:() -> Unit){
+inline fun SpannableString.enableClickOnSubstring(start:Int, end:Int, crossinline action:() -> Unit){
     var clickableSpan = object : ClickableSpan(){
         override fun onClick(widget: View) {
             action.invoke()
@@ -42,6 +42,6 @@ class NounderLine : UnderlineSpan(){
     }
 }
 
-fun SpannableString.removeUnderLine(start:Int, end:Int){
+inline fun SpannableString.removeUnderLine(start:Int, end:Int){
     this.setSpan(NounderLine(), start, end, Spanned.SPAN_MARK_MARK)
 }

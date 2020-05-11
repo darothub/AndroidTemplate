@@ -9,11 +9,11 @@ import com.google.gson.reflect.TypeToken
 import java.io.IOException
 import java.io.InputStream
 
-fun Activity.getName():String{
+inline fun Activity.getName():String{
     return this::class.qualifiedName!!
 }
 
-fun Activity.readCitiesAndLgaData():HashMap<String, List<CityClass>>{
+inline fun Activity.readCitiesAndLgaData():HashMap<String, List<CityClass>>{
     val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
         HashMap<String, List<CityClass>>()
     }

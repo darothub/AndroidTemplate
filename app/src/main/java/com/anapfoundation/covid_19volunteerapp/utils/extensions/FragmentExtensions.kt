@@ -24,29 +24,29 @@ import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import kotlinx.android.synthetic.main.fragment_edit_profile.*
 import kotlinx.android.synthetic.main.fragment_signup.*
 
-fun Fragment.getName():String{
+inline fun Fragment.getName():String{
     return this::class.qualifiedName!!
 }
 
-fun Fragment.showStatusBar(){
+inline fun Fragment.showStatusBar(){
     requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 }
 
-fun Fragment.hideKeyboard() {
+inline fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
 
-fun Activity.hideKeyboard() {
+inline fun Activity.hideKeyboard() {
     if (currentFocus == null) View(this) else currentFocus?.let { hideKeyboard(it) }
 }
 
 @SuppressLint("ServiceCast")
-fun Context.hideKeyboard(view: View) {
+inline fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-fun Context.toast(message:String){
+inline fun Context.toast(message:String){
     val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
     toast.setGravity(Gravity.CENTER, 0, 0)
     val view = toast.view.findViewById<TextView>(android.R.id.message)
@@ -61,7 +61,7 @@ fun Context.toast(message:String){
     }
 }
 
-fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateLgaMap:HashMap<String, List<CityClass>> ) {
+inline fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateLgaMap:HashMap<String, List<CityClass>> ) {
 
     val newList = arrayListOf<String>()
     newList.add("States")
@@ -99,7 +99,7 @@ fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateL
     }
 }
 
-fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
+inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
                             progressBar: ProgressBar?, button: Button?
 ): LiveData<Pair<Boolean, Any?>> {
     val result = MutableLiveData<Pair<Boolean, Any?>>()
@@ -137,7 +137,7 @@ fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
     return result
 }
 
-fun Fragment.initEnterKeyToSubmitForm(editText: EditText, request:()->Unit) {
+inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline request:()->Unit) {
     editText.setOnKeyListener { view, keyCode, keyEvent ->
         if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 

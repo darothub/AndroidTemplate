@@ -18,6 +18,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.TopicData
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
+
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
 import dagger.android.support.DaggerFragment
