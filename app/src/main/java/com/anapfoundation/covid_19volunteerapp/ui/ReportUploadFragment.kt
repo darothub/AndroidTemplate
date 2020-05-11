@@ -5,7 +5,10 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -17,6 +20,7 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
@@ -34,6 +38,9 @@ import com.cloudinary.android.callback.ErrorInfo
 import com.cloudinary.android.callback.UploadCallback
 import com.cloudinary.android.preprocess.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -44,8 +51,15 @@ import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_upload.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.io.OutputStream
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
@@ -89,6 +103,10 @@ class ReportUploadFragment : DaggerFragment() {
         bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
     }
 
+    val bottomSheetProgressBar by lazy {
+        bottomSheetIncludeLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
+    }
+
     //Get submit button from the included layout
     val submitBtn by lazy {
         reportUploadBottomLayout.findViewById<Button>(R.id.includeBtn)
@@ -110,6 +128,23 @@ class ReportUploadFragment : DaggerFragment() {
     //Set header
     val header by lazy {
         "Bearer $token"
+    }
+
+    val capture by lazy {
+        Bitmap.createBitmap(cameraIcon.width, cameraIcon.height, Bitmap.Config.ARGB_8888)
+    }
+    val canvas by lazy {
+        Canvas(capture)
+    }
+    val firebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
+    val storageRef by lazy {
+        firebaseStorage.reference
+    }
+
+    val timeStamp by lazy {
+        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
     }
 
     @Inject
@@ -140,7 +175,7 @@ class ReportUploadFragment : DaggerFragment() {
         receiveReportFromPreviousScreen()
         getStateAndSendToSpinner()
         addReportRequest()
-        initEnterKeyToSubmitForm(reportUploadstreetEditText) {  addReportRequest() }
+        initEnterKeyToSubmitForm(reportUploadTownEditText) {  addReportRequest() }
 
     }
 
@@ -151,19 +186,28 @@ class ReportUploadFragment : DaggerFragment() {
             val stateGUID = states.get(stateSelected)
             report.story = story.toString()
             report.state = "$stateGUID"
+            report.mediaURL = imageUrlField.text.toString()
+            report.town = reportUploadTownEditText.text.toString()
+            report.localGovernment = "Dummy LGA"
 
             val request = authViewModel.addReport(
                 report.topic,
                 report.rating,
                 report.story,
                 report.state,
+                report.mediaURL,
+                report.localGovernment,
+                report.town,
                 header
             )
+
             val response = observeRequest(request, progressBar, submitBtn)
 
             response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                 requestResponseTask(it)
             })
+
+            Log.i(title, "Report $report")
 
         }
     }
@@ -245,7 +289,17 @@ class ReportUploadFragment : DaggerFragment() {
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
         uploadPictureBtn.setOnClickListener {
-            bottomSheetDialog.dismiss()
+
+            bottomSheetProgressBar.show()
+            uploadPictureBtn.hide()
+            uploadReportImage()
+            CoroutineScope(Main).launch {
+                delay(3000)
+                bottomSheetProgressBar.hide()
+                uploadPictureBtn.show()
+                bottomSheetDialog.dismiss()
+            }
+
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
         cameraIcon.setOnClickListener {
@@ -309,7 +363,7 @@ class ReportUploadFragment : DaggerFragment() {
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+
         val storageDir: File? =
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
@@ -346,60 +400,60 @@ class ReportUploadFragment : DaggerFragment() {
                         it
                     )
 
-                    try {
-
-                        MediaManager.init(requireContext())
-                        val requestId =
-                            MediaManager.get().upload(currentPhotoPath).callback(object : UploadCallback{
-                                override fun onSuccess(
-                                    requestId: String?,
-                                    resultData: MutableMap<Any?, Any?>?
-                                ) {
-                                    Log.i(title, "success")
-                                }
-
-                                override fun onProgress(
-                                    requestId: String?,
-                                    bytes: Long,
-                                    totalBytes: Long
-                                ) {
-                                    Log.i(title, "progress")
-                                }
-
-                                override fun onReschedule(requestId: String?, error: ErrorInfo?) {
-                                    Log.i(title, "progress")
-                                }
-
-                                override fun onError(requestId: String?, error: ErrorInfo?) {
-                                    Log.i(title, "error ${error?.description}")
-                                }
-
-                                override fun onStart(requestId: String?) {
-                                    Log.i(title, "onstart")
-                                }
-
-                            }).preprocess(ImagePreprocessChain()
-                                .loadWith(BitmapDecoder(200, 200))
-                                .addStep(Limit(300, 300))
-                                .addStep(DimensionsValidator(40, 40, 300, 300))
-                                .saveWith(BitmapEncoder(BitmapEncoder.Format.JPEG, 80))
-
-                            ).startNow(requireContext())
-                        Log.i(title, "File ${photoURI}")
-                        Log.i(title, "File ${currentPhotoPath}")
-                    }
-                    catch (e:Exception){
-                        Log.i(title, "${e.localizedMessage}")
-                    }
-
-
 
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 }
 
+
             }
         }
+    }
+
+    private fun uploadReportImage() {
+        val state = reportUploadState.selectedItem
+        val path = "images/report_$state _$timeStamp" + "_.jpg"
+
+        cameraIcon.draw(canvas)
+        val outputStream = ByteArrayOutputStream()
+        capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        val data = outputStream.toByteArray()
+        val imageRef = storageRef.child(path)
+
+        val uploadTask = imageRef.putBytes(data)
+
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+            Log.i(title, "Upload not successful")
+        }.addOnSuccessListener {
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+            // ...
+            Log.i(title, "Upload successful")
+        }
+        uploadTask.continueWith { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            imageRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+                downloadUri?.addOnSuccessListener {url ->
+                    val url = url.toString()
+                    Log.i(title, "url $url")
+                    imageUrlField.setText(url)
+                    imageUrlField.show()
+
+
+                }
+
+            } else {
+                Log.i(title, "uri: No url")
+            }
+        }
+        galleryAddPic()
     }
 
     // Add taken picture to gallery

@@ -13,9 +13,12 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         rating: String,
         story: String,
         state: String,
+        mediaURL:String?,
+        localGovernment:String?,
+        town:String?,
         header: String
     ): Call<ServiceResult> {
-        return authApiRequests.addReport(topic, rating, story, state, header)
+        return authApiRequests.addReport(topic, rating, story, state, mediaURL, localGovernment, town, header)
     }
 
     override fun getTopic(header: String): Call<TopicData> {

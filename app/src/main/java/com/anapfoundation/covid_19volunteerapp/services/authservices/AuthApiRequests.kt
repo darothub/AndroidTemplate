@@ -11,22 +11,30 @@ import retrofit2.http.*
 interface AuthApiRequests {
     @POST("report")
     @FormUrlEncoded
-    fun addReport(@Field("topic") topic:String,
-                    @Field("rating") rating:String,
-                    @Field("story") story:String,
-                    @Field("state") state:String,
-                    @Header("Authorization") header:String): Call<ServiceResult>
+    fun addReport(
+        @Field("topic") topic: String,
+        @Field("rating") rating: String,
+        @Field("story") story: String,
+        @Field("state") state: String,
+        @Field("mediaURL") mediaURL: String?,
+        @Field("localGovernment") lga: String?,
+        @Field("town") street: String?,
+        @Header("Authorization") header: String
+    ): Call<ServiceResult>
 
     @GET("topics")
-    fun getTopic(@Header("Authorization") header:String): Call<TopicData>
+    fun getTopic(@Header("Authorization") header: String): Call<TopicData>
 
     @GET("topics/ratings/{topicID}")
-    fun getRating(@Path("topicID") topicID:String, @Header("Authorization") header:String): Call<TopicData>
+    fun getRating(
+        @Path("topicID") topicID: String,
+        @Header("Authorization") header: String
+    ): Call<TopicData>
 
     @GET("states")
-    fun getStates(@Header("Authorization") header:String): Call<StatesList>
+    fun getStates(@Header("Authorization") header: String): Call<StatesList>
 
     @GET("me")
-    fun getProfileData(@Header("Authorization") header:String): Call<ProfileData>
-    
+    fun getProfileData(@Header("Authorization") header: String): Call<ProfileData>
+
 }

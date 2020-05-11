@@ -23,13 +23,15 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
 
     }
 
-    fun addReport(topic: String, rating:String, story:String, state:String, header:String): LiveData<ServicesResponseWrapper<Data>> {
+    fun addReport(topic: String, rating:String, story:String, state:String, mediaURL:String?,
+                  localGovernment:String?,
+                  town:String?, header:String): LiveData<ServicesResponseWrapper<Data>> {
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
         )
-        val request = authRequestInterface.addReport(topic, rating, story, state, header)
+        val request = authRequestInterface.addReport(topic, rating, story, state, mediaURL, localGovernment, town, header)
         request.enqueue(object:Callback<ServiceResult>{
             override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))

@@ -186,7 +186,7 @@
                 android:textColorHint="@color/colorTextHint"
                 android:singleLine="true" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
-        
+
         <TextView
             android:id="@+id/imageUrlField"
             android:layout_width="match_parent"
@@ -199,13 +199,16 @@
             android:text="@string/image_url"
             app:layout_constraintTop_toBottomOf="@id/reportUploadTown"
             android:textSize="@dimen/smallest_font_size"
+            android:gravity="left|center"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="14sp"
+            android:maxLines="4"
             android:visibility="gone"
             tools:visibility="visible"
             android:focusable="true"
             android:clickable="true"
-            android:maxLines="4"
             android:ellipsize="end"/>
-
 
         <Space
             android:id="@+id/topSpace"
@@ -218,7 +221,7 @@
         <include
             android:id="@+id/reportUploadBottomLayout"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="240dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="@dimen/normal_margin"
             android:layout_marginLeft="@dimen/normal_margin"

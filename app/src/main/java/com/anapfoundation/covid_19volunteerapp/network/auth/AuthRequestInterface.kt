@@ -14,6 +14,9 @@ interface AuthRequestInterface {
                   rating:String,
                   story:String,
                   state:String,
+                  mediaURL:String?,
+                  localGovernment:String?,
+                  town:String?,
                   header:String): Call<ServiceResult>
 
     fun getTopic(header: String): Call<TopicData>

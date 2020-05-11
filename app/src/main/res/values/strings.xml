@@ -124,6 +124,7 @@
     <string name="no">No</string>
     <string name="proceed">Proceed</string>
     <string name="placeholder_dash">_ _</string>
+    <string name="image_url">Image url: </string>
 
 
 </resources>
