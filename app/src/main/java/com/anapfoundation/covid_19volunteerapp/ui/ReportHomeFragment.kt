@@ -52,7 +52,14 @@ class ReportHomeFragment : DaggerFragment() {
             findNavController().navigate(R.id.notificationFragment)
         }
 
+        requireActivity().onBackPressedDispatcher.addCallback {
+
+            findNavController().popBackStack()
+
+        }
 
     }
+
+
 
 }

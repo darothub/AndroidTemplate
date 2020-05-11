@@ -27,6 +27,7 @@
             app:srcCompat="@drawable/camera_icon"
             android:focusable="true"
             android:clickable="true"
+            android:scaleType="fitXY"
             />
         <ImageView
             android:id="@+id/galleryIcon"
@@ -38,6 +39,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/gallery"
             android:focusable="true"
+            android:scaleType="fitXY"
             android:clickable="true"
             />
 

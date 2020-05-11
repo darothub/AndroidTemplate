@@ -77,13 +77,6 @@ class SigninFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-
-
-
-    }
-
-    override fun onResume() {
-        super.onResume()
         setupSignUpLink()
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
         checkForReturninUser()
@@ -94,6 +87,13 @@ class SigninFragment : DaggerFragment() {
 
 
         }
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+
     }
 
     override fun onPause() {
