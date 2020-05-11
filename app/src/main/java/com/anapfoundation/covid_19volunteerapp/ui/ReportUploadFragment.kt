@@ -92,6 +92,10 @@ class ReportUploadFragment : DaggerFragment() {
     val galleryIcon by lazy {
         bottomSheetView.galleryIcon
     }
+
+    val imagePreview by lazy {
+        bottomSheetView.imagePreview
+    }
     //Get upload button from the included layout
     val uploadPictureBtn by lazy {
         bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
@@ -361,13 +365,15 @@ class ReportUploadFragment : DaggerFragment() {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             bottomSheetDialog.show()
-            cameraIcon.setImageBitmap(imageBitmap)
+            imagePreview.setImageBitmap(imageBitmap)
+            imagePreview.show()
 
         }
         else if (requestCode == REQUEST_FROM_GALLERY && resultCode == RESULT_OK) {
             try {
                 val imageUri = data!!.data
-                galleryIcon.setImageURI(imageUri)
+                imagePreview.setImageURI(imageUri)
+                imagePreview.show()
 
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
@@ -443,17 +449,19 @@ class ReportUploadFragment : DaggerFragment() {
         val path = "images/report_$state _$timeStamp" + "_.jpg"
 
         Log.i(title, "ImagePicker $imagePicker")
-        when{
-            imagePicker == "camera" -> {
+        imagePreview.draw(canvas)
 
-                cameraIcon.draw(canvas)
-            }
-            imagePicker == "gallery" -> {
-
-                galleryIcon.draw(canvas2)
-            }
-            else -> Log.i(title, "No image picked")
-        }
+//        when{
+//            imagePicker == "camera" -> {
+//
+//                cameraIcon.draw(canvas)
+//            }
+//            imagePicker == "gallery" -> {
+//
+//                galleryIcon.draw(canvas2)
+//            }
+//            else -> Log.i(title, "No image picked")
+//        }
 
         val outputStream = ByteArrayOutputStream()
         capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
