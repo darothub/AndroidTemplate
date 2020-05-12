@@ -35,7 +35,7 @@ class ReportHomeFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        val myList = listOf<String>("Hello", "Nigeria", "Ghana", "Algeria", "Panama", "Antarctica")
+        val myList = listOf<String>("Lagos", "Abuja", "Calabar", "Abia", "Kano", "Delta")
         recyclerView.setupAdapter<String>(R.layout.report_item){adapter, context, list ->
             bind { itemView, position, item ->
                 itemView.reportTitle.text = item
@@ -52,11 +52,7 @@ class ReportHomeFragment : DaggerFragment() {
             findNavController().navigate(R.id.notificationFragment)
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback {
 
-            findNavController().popBackStack()
-
-        }
 
     }
 

@@ -42,12 +42,10 @@
            android:text="@string/signup_link" />
        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
            android:id="@+id/emailField"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
+           style="@style/CustomInputLayoutStyle"
            app:layout_constraintTop_toBottomOf="@id/signupLink"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintEnd_toEndOf="parent"
-           app:borderColor="@android:color/darker_gray"
            android:layout_marginTop="50dp"
            >
            <EditText
@@ -60,12 +58,10 @@
 
        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
            android:id="@+id/passwordField"
-           android:layout_width="match_parent"
-           android:layout_height="wrap_content"
+           style="@style/CustomInputLayoutStyle"
            app:layout_constraintTop_toBottomOf="@id/emailField"
            app:layout_constraintStart_toStartOf="parent"
            app:layout_constraintEnd_toEndOf="parent"
-           app:borderColor="@android:color/darker_gray"
            android:layout_marginTop="20dp"
            >
            <EditText

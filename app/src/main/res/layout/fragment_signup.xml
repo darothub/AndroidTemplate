@@ -42,8 +42,7 @@
 
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/firstNameField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CustomInputLayoutStyle"
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintBottom_toTopOf="@+id/lastNameField"
             app:layout_constraintEnd_toEndOf="parent"
@@ -64,8 +63,7 @@
 
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/lastNameField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CustomInputLayoutStyle"
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintBottom_toTopOf="@+id/emailFieldForSignUp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -86,8 +84,7 @@
 
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/emailFieldForSignUp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
@@ -105,8 +102,7 @@
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/passwordFieldForSignup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
@@ -138,8 +134,7 @@
             tools:visibility="visible" />
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/cpasswordField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintBottom_toTopOf="@+id/phoneNumberField"
@@ -159,8 +154,7 @@
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/phoneNumberField"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintBottom_toTopOf="@+id/cpasswordField"

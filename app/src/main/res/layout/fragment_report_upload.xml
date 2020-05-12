@@ -128,8 +128,8 @@
                 android:id="@+id/storyEditText"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:maxLines="50"
                 android:gravity="top|left"
+                android:maxLength="250"
                 android:hint="@string/enter_your_report" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
         <Spinner
@@ -202,7 +202,8 @@
             <EditText
                 android:id="@+id/suggestionEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
+                android:maxLength="200"
                 android:hint="@string/street_suggestion"
                 android:textColorHint="@color/colorTextHint"
                 android:singleLine="true" />

@@ -102,6 +102,7 @@ class CreateReportFragment : DaggerFragment() {
     private fun extractAndSetTopics() {
         val topics = getTopic(header)
 
+
         topics.observe(viewLifecycleOwner, Observer {
 
             createReportRecyclerView.setupAdapter<Topic>(R.layout.create_report_item) { adapter, context, list ->

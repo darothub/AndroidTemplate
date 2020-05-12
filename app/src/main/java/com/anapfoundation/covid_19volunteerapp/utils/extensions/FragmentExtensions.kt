@@ -9,11 +9,14 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.navigation.NavDeepLinkBuilder
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
@@ -130,6 +133,16 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
                 result.postValue(Pair(false, errorResponse))
                 requireContext().toast("$errorResponse")
                 Log.i(title, "Error $errorResponse")
+            }
+            is ServicesResponseWrapper.Logout ->{
+                progressBar?.hide()
+                button?.show()
+                requireContext().toast("$errorResponse")
+                Log.i(title, "Log out $errorResponse")
+                val request = NavDeepLinkRequest.Builder
+                    .fromUri("android-app://anapfoundation.navigation/signin".toUri())
+                    .build()
+                findNavController().navigate(request)
             }
         }
     })

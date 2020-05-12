@@ -132,9 +132,19 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
 
     private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
+        val statusCode = response.code()
         Log.i(title, "${response.code()}")
-        when(response.code()) {
+        when(statusCode) {
+            401 -> {
+                Log.i(title, "errorbody ${response.raw()}")
+                val a = object : Annotation{}
+                val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
+                val error = converter.convert(response.errorBody())
+                Log.i(title, "message ${error?.message}")
+                responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
+            }
             in 400..500 ->{
+
                 Log.i(title, "errorbody ${response.raw()}")
                 val a = object : Annotation{}
                 val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
