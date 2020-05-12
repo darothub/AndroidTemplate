@@ -17,7 +17,9 @@ interface UserApiRequests {
         @Field("password") password:String,
         @Field("houseNumber") houseNumber:String,
         @Field("street") street:String,
-        @Field("state") state:String
+        @Field("state") state:String,
+        @Field("localGovernment") localGovernment:String,
+        @Field("district") district:String
     ): Call<ServiceResult>
 
     @POST("login")

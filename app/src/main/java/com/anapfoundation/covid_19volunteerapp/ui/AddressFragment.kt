@@ -217,10 +217,15 @@ class AddressFragment : DaggerFragment() {
             }
             else -> {
                 val selectedState = spinnerState.selectedItem
+                val selectedLGA = spinnerLGA.selectedItem
                 val stateGUID = states.get(selectedState)
+                val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
+                val lgaGUID = lgaAndDistrictArray?.get(0).toString()
+                val district = lgaAndDistrictArray?.get(1).toString()
+
                 val houseNumber = houseNumberEditText.text.toString()
                 val street = streetEditText.text.toString()
-                Log.i(title, "Address $houseNumber $street")
+                Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district")
                 val request = userViewModel.registerUser(
                     userData.firstName,
                     userData.lastName,
@@ -229,7 +234,9 @@ class AddressFragment : DaggerFragment() {
                     userData.password.toString(),
                     houseNumber,
                     street,
-                    stateGUID.toString()
+                    stateGUID.toString(),
+                    lgaGUID,
+                    district
                 )
                 val response = observeRequest(request, progressBar, submitBtn)
                 response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {

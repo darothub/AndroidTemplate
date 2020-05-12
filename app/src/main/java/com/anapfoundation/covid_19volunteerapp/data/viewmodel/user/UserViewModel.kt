@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.anapfoundation.covid_19volunteerapp.model.Data
+import com.anapfoundation.covid_19volunteerapp.model.LocalGovernment
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
@@ -18,9 +19,12 @@ import java.lang.reflect.Type
 import javax.inject.Inject
 
 
-class UserViewModel @Inject constructor (val userRequestInterface: UserRequestInterface, val retrofit: Retrofit):ViewModel() {
+class UserViewModel @Inject constructor(
+    val userRequestInterface: UserRequestInterface,
+    val retrofit: Retrofit
+) : ViewModel() {
 
-    val title:String by lazy{
+    val title: String by lazy {
         this.getName()
 
     }
@@ -31,19 +35,32 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
         email: String,
         phone: String,
         password: String,
-        houseNumber:String,
-        street:String,
-        state: String
+        houseNumber: String,
+        street: String,
+        state: String,
+        localGovernment: String,
+        district:String
 
-    ): LiveData<ServicesResponseWrapper<Data>>{
+    ): LiveData<ServicesResponseWrapper<Data>> {
 
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
         )
-        val request = userRequestInterface.registerUser(firstName, lastName, email, password, phone, houseNumber, street, state)
-        request.enqueue(object : Callback<ServiceResult>{
+        val request = userRequestInterface.registerUser(
+            firstName,
+            lastName,
+            email,
+            password,
+            phone,
+            houseNumber,
+            street,
+            state,
+            localGovernment,
+            district
+        )
+        request.enqueue(object : Callback<ServiceResult> {
             override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
@@ -56,7 +73,10 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
         return responseLiveData
     }
 
-    fun loginUserRequest(username: String, password: String): LiveData<ServicesResponseWrapper<Data>>{
+    fun loginUserRequest(
+        username: String,
+        password: String
+    ): LiveData<ServicesResponseWrapper<Data>> {
 
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
@@ -64,7 +84,7 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
             "Loading..."
         )
         val request = userRequestInterface.loginRequest(username, password)
-        request.enqueue(object : Callback<ServiceResult>{
+        request.enqueue(object : Callback<ServiceResult> {
             override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
@@ -76,13 +96,17 @@ class UserViewModel @Inject constructor (val userRequestInterface: UserRequestIn
         })
         return responseLiveData
     }
-    private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
+
+    private fun onResponseTask(
+        response: Response<Data>,
+        responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>
+    ) {
         val res = response.body()
         Log.i(title, "${response.code()}")
         when {
-            response.code() != 200  ->{
+            response.code() != 200 -> {
                 Log.i(title, "errorbody ${response.raw()}")
-                val a = object : Annotation{}
+                val a = object : Annotation {}
                 val converter = retrofit.responseBodyConverter<Data>(Data::class.java, arrayOf(a))
                 val error = converter.convert(response.errorBody()!!)
                 Log.i(title, "message ${error?.message}")
