@@ -281,7 +281,7 @@ class ReportUploadFragment : DaggerFragment() {
 
     private fun getStates(header:String): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
-        val request = authViewModel.getStates(header)
+        val request = authViewModel.getStates("37")
         val response = observeRequest(request, null, null)
         data.addSource(response) {
             data.value = it.second as StatesList

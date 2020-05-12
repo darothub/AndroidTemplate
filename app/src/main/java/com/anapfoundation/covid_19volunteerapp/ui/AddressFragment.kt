@@ -5,11 +5,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
@@ -78,6 +81,7 @@ class AddressFragment : DaggerFragment() {
         addressbottomIndicator.findViewById<Button>(R.id.includeBtn)
     }
     val states = hashMapOf<String, String>()
+    val lgaAndDistrict = hashMapOf<String, String>()
 
     lateinit var userData: UserData
     override fun onCreateView(
@@ -107,20 +111,25 @@ class AddressFragment : DaggerFragment() {
         }
 
         Log.i(title, "password ${userData.password}")
+        requireActivity().onBackPressedDispatcher.addCallback {
+
+            findNavController().navigate(R.id.signupFragment)
+
+        }
 
     }
 
     private fun getStateAndSendToSpinner() {
-        val stateData = getStates(header)
+        val stateData = getStates("37", "")
         stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             extractStateList(it)
             setupSpinner()
         })
     }
 
-    private fun getStates(header: String): MediatorLiveData<StatesList> {
+    private fun getStates(first:String, after:String): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
-        val request = authViewModel.getStates(header)
+        val request = authViewModel.getStates(first, after)
         val response = observeRequest(request, null, null)
         data.addSource(response) {
             try {
@@ -150,6 +159,50 @@ class AddressFragment : DaggerFragment() {
                 states.keys.sorted()
             )
         spinnerState.adapter = adapterState
+
+        spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                lgaAndDistrict.clear()
+                val selectedState = spinnerState.selectedItem
+                val stateID = states.get(selectedState)
+                val request = authViewModel.getLocal(stateID.toString())
+                val response = observeRequest(request, null, null)
+                response.observe(viewLifecycleOwner, Observer {
+                    try {
+                        val (bool, result) = it
+                        val res = result as LGA
+                        res.data.associateByTo(lgaAndDistrict, {
+                            it.localGovernment
+                        },{
+                            "${it.id} ${it.district}"
+                        })
+                        val lga = lgaAndDistrict.keys.sorted()
+                        Log.i(title, "LGA $lga")
+                        val adapterLga = ArrayAdapter(
+                            requireContext(),
+                            R.layout.support_simple_spinner_dropdown_item,
+                            lga
+                        )
+                        spinnerLGA.adapter = adapterLga
+
+                    }catch (e:Exception){
+
+                    }
+                })
+
+
+            }
+
+        }
 //        Log.i(title, "states $states")
     }
 

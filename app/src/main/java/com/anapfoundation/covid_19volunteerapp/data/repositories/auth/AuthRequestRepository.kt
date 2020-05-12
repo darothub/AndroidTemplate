@@ -29,12 +29,16 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         return authApiRequests.getRating(topicID, header)
     }
 
-    override fun getStates(header: String): Call<StatesList> {
-        return authApiRequests.getStates(header)
+    override fun getStates(first: String, after: String?): Call<StatesList> {
+        return authApiRequests.getStates(first, after)
     }
 
     override fun getProfileData(header: String): Call<ProfileData> {
         return authApiRequests.getProfileData(header)
+    }
+
+    override fun getLocal(stateID: String): Call<LGA> {
+        return authApiRequests.getLGA(stateID)
     }
 
 

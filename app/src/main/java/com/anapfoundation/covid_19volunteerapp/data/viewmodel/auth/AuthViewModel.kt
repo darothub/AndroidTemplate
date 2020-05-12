@@ -86,14 +86,14 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         return responseLiveData
     }
 
-    fun getStates(header: String): LiveData<ServicesResponseWrapper<Data>>{
+    fun getStates(first: String, after:String?=""): LiveData<ServicesResponseWrapper<Data>>{
 
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
         )
-        val request = authRequestInterface.getStates(header)
+        val request = authRequestInterface.getStates(first, after)
 
         request.enqueue(object :Callback<StatesList>{
             override fun onFailure(call: Call<StatesList>, t: Throwable) {
@@ -107,6 +107,26 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         })
         return responseLiveData
 
+    }
+
+    fun getLocal(stateID:String): LiveData<ServicesResponseWrapper<Data>>{
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = authRequestInterface.getLocal(stateID)
+        request.enqueue(object :Callback<LGA>{
+            override fun onFailure(call: Call<LGA>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(call: Call<LGA>, response: Response<LGA>) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
     }
 
     fun getProfileData(header: String): LiveData<ServicesResponseWrapper<Data>>{

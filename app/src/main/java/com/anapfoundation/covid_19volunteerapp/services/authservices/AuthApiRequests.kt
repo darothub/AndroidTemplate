@@ -1,9 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.services.authservices
 
-import com.anapfoundation.covid_19volunteerapp.model.ProfileData
-import com.anapfoundation.covid_19volunteerapp.model.Report
-import com.anapfoundation.covid_19volunteerapp.model.StatesList
-import com.anapfoundation.covid_19volunteerapp.model.TopicData
+import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
 import retrofit2.Call
 import retrofit2.http.*
@@ -32,7 +29,15 @@ interface AuthApiRequests {
     ): Call<TopicData>
 
     @GET("states")
-    fun getStates(@Header("Authorization") header: String): Call<StatesList>
+    fun getStates(
+        @Query("first") first: String,
+        @Query("after") after: String?
+    ): Call<StatesList>
+
+    @GET("states/{stateID}/local")
+    fun getLGA(
+        @Path("stateID") stateID: String
+    ): Call<LGA>
 
     @GET("me")
     fun getProfileData(@Header("Authorization") header: String): Call<ProfileData>

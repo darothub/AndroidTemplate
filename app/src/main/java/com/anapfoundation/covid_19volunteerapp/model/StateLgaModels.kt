@@ -25,3 +25,31 @@ class State (
     @SerializedName("deleted_at")
     val deletedAt: Any? = null
 ):Serializable
+
+
+class LGA (
+    val data: List<LocalGovernment>,
+    message:String?,
+    error: AnotherError?,
+    token:String?
+):Data(message, error, token), Serializable
+
+
+data class LocalGovernment (
+    val id: String,
+    val index: Long,
+    val state: String,
+    val district: String,
+
+    @SerializedName("local_government")
+    val localGovernment: String,
+
+    @SerializedName("created_at")
+    val createdAt: String,
+
+    @SerializedName("updated_at")
+    val updatedAt: String,
+
+    @SerializedName("deleted_at")
+    val deletedAt: Any? = null
+):Serializable
