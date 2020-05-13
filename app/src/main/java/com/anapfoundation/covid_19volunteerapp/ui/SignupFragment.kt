@@ -4,31 +4,22 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
-import android.util.Log
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
-import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
-import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
-import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.UserData
-import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.fragment_signup.*
-import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -39,7 +30,7 @@ class SignupFragment : DaggerFragment() {
         getName()
     }
     val signinText: String by lazy {
-        requireContext().localized(R.string.signin_link)
+        requireContext().getLocalisedString(R.string.signin_link)
     }
     val spannableString: SpannableString by lazy {
         signinText.setAsSpannable()
@@ -69,6 +60,13 @@ class SignupFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_signup, container, false)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback {
+            findNavController().navigate(R.id.signinFragment)
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -77,7 +75,7 @@ class SignupFragment : DaggerFragment() {
 
         passwordCheckAlert()
 
-        signupBtn.setButtonText(requireContext().localized(R.string.proceed))
+        signupBtn.setButtonText(requireContext().getLocalisedString(R.string.proceed))
 
         sendSignupRequest()
     }
@@ -114,7 +112,7 @@ class SignupFragment : DaggerFragment() {
 
         val firstName = firstNameEdit.text.toString().trim()
         val lastName = lastNameEdit.text.toString().trim()
-        val emailAddress = emailEdit.text.toString().trim()
+        val emailAddress = emailEdit.text.toString().trim().toLowerCase()
         val phoneNumber = phoneNumberEdit.text.toString().trim()
         val passwordString = passwordEdit.text.toString().trim()
         val cpassword = cpasswordEdit.text.toString().trim()
@@ -124,15 +122,15 @@ class SignupFragment : DaggerFragment() {
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().localized(R.string.field_required)
+                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
                 requireActivity().toast("${checkForEmpty.hint} is empty")
             }
             !checkboxForSignup.isChecked -> {
-                requireActivity().toast(requireContext().localized(R.string.agree_to_term))
+                requireActivity().toast(requireContext().getLocalisedString(R.string.agree_to_term))
 
             }
             validation != null -> requireActivity().toast("$validation is invalid")
-            passwordString != cpassword -> requireActivity().toast(requireContext().localized(R.string.passwords_do_not_match))
+            passwordString != cpassword -> requireActivity().toast(requireContext().getLocalisedString(R.string.passwords_do_not_match))
             else -> {
 
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)

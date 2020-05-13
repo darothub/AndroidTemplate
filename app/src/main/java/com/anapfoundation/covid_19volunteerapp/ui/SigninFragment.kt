@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.util.Log
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.addCallback
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -22,12 +19,11 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderF
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.User
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signin.*
-import kotlinx.android.synthetic.main.fragment_signup.*
 import javax.inject.Inject
 
 /**
@@ -39,7 +35,7 @@ class SigninFragment : DaggerFragment() {
         getName()
     }
     val signupText: String by lazy {
-        requireContext().localized(R.string.signup_link)
+        requireContext().getLocalisedString(R.string.signup_link)
     }
     val spannableString: SpannableString by lazy {
         signupText.setAsSpannable()
@@ -81,23 +77,25 @@ class SigninFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+        setupSignUpLink()
 
+        checkForReturninUser()
+        signinBtn.setButtonText(requireContext().getLocalisedString(R.string.signin_text))
+
+        requireActivity().onBackPressedDispatcher.addCallback {
+            requireActivity().finish()
+
+
+        }
 
 
     }
 
     override fun onResume() {
         super.onResume()
-        setupSignUpLink()
+
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
-        checkForReturninUser()
-        signinBtn.setButtonText(requireContext().localized(R.string.signin_text))
         submitLoginRequest()
-        requireActivity().onBackPressedDispatcher.addCallback {
-            requireActivity().finish()
-
-
-        }
     }
 
     override fun onPause() {
@@ -156,7 +154,7 @@ class SigninFragment : DaggerFragment() {
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().localized(R.string.field_required)
+                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
                 requireActivity().toast("${checkForEmpty.hint} field is empty")
             }
             validation != null -> requireActivity().toast("$validation is invalid")
@@ -182,7 +180,7 @@ class SigninFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
-                val res = result as ServiceResult
+                val res = result as DefaultResponse
                 var userExist = storageRequest.checkUser(emailAddress)
                 if (userExist != null) {
                     userExist?.loggedIn = true
@@ -193,7 +191,7 @@ class SigninFragment : DaggerFragment() {
                         emailAddress, passwordString, "Not found"
                     )
                 }
-                requireContext().toast(requireContext().localized(R.string.successful))
+                requireContext().toast(requireContext().getLocalisedString(R.string.successful))
                 userExist?.rememberPassword = signinCheckbox.isChecked
                 storageRequest.saveData(userExist, emailAddress)
                 storageRequest.saveData(userExist, "loggedInUser")

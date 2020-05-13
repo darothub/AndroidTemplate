@@ -5,6 +5,8 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -16,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
@@ -24,12 +27,14 @@ import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
-import com.anapfoundation.covid_19volunteerapp.model.*
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.request.Report
+import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.cloudinary.android.MediaManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.storage.FirebaseStorage
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionDeniedResponse
@@ -39,10 +44,13 @@ import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
 import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_upload.*
-import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
-import java.io.File
-import java.io.IOException
+import kotlinx.android.synthetic.main.report_item.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -60,6 +68,7 @@ class ReportUploadFragment : DaggerFragment() {
     lateinit var report: Report
 
     val REQUEST_TAKE_PHOTO = 1
+    val REQUEST_FROM_GALLERY = 0
     lateinit var currentPhotoPath: String
 
     val bottomSheetDialog by lazy {
@@ -80,9 +89,21 @@ class ReportUploadFragment : DaggerFragment() {
     val cameraIcon by lazy {
         bottomSheetView.cameraIcon
     }
+
+    val galleryIcon by lazy {
+        bottomSheetView.galleryIcon
+    }
+
+    val imagePreview by lazy {
+        bottomSheetView.imagePreview
+    }
     //Get upload button from the included layout
     val uploadPictureBtn by lazy {
         bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
+    }
+
+    val bottomSheetProgressBar by lazy {
+        bottomSheetIncludeLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
     //Get submit button from the included layout
@@ -96,28 +117,56 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     //Get logged-in user
-    val getUser by lazy {
+    private val getUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
     //Get token
-    val token by lazy {
+    private val token by lazy {
         getUser?.token
     }
     //Set header
-    val header by lazy {
+    private val header by lazy {
         "Bearer $token"
     }
 
+    val capture by lazy {
+        Bitmap.createBitmap(cameraIcon.width, cameraIcon.height, Bitmap.Config.ARGB_8888)
+    }
+    val canvas by lazy {
+        Canvas(capture)
+    }
+
+    val firebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
+    val storageRef by lazy {
+        firebaseStorage.reference
+    }
+
+    val timeStamp by lazy {
+        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    }
+    var imageUrl = ""
+
+    var imagePicker = "false"
+
+
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
-    val authViewModel: AuthViewModel by lazy {
+    private val userViewModel: UserViewModel by lazy {
+        ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
+    }
+    private val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
 
     @Inject
     lateinit var storageRequest: StorageRequest
 
-    val states = hashMapOf<String, String>()
+    private val states = hashMapOf<String, String>()
+    private val lgaAndDistrict by lazy {
+        hashMapOf<String, String>()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -131,35 +180,62 @@ class ReportUploadFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
 
         Log.i(title, header)
+
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         reportUploadBackButton.setBackButtonNavigation()
         setButtonText()
         receiveReportFromPreviousScreen()
         getStateAndSendToSpinner()
         addReportRequest()
-        initEnterKeyToSubmitForm(reportUploadstreetEditText) {  addReportRequest() }
+        initEnterKeyToSubmitForm(reportUploadTownEditText) {  addReportRequest() }
+
+        setOnClickEvent(uploadCard, uploadIcon) { showBottomSheet() }
+        permissionRequest()
+        imagePreview.clipToOutline = true
 
     }
+
 
     private fun addReportRequest() {
         submitBtn.setOnClickListener {
             val story = storyEditText.text
             val stateSelected = reportUploadState.selectedItem
             val stateGUID = states.get(stateSelected)
+            val selectedLGA = reportUploadLGA.selectedItem
+            val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
+            val lgaGUID = lgaAndDistrictArray?.get(0).toString()
+            val district = lgaAndDistrictArray?.get(1).toString()
+            Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district")
             report.story = story.toString()
             report.state = "$stateGUID"
+            report.mediaURL = imageUrl
+            report.town = reportUploadTownEditText.text.toString()
+            report.localGovernment = lgaGUID
+            report.district = district
 
             val request = authViewModel.addReport(
                 report.topic,
                 report.rating,
                 report.story,
                 report.state,
+                report.mediaURL,
+                report.localGovernment,
+                report.district,
+                report.town,
                 header
             )
+
             val response = observeRequest(request, progressBar, submitBtn)
 
             response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
                 requestResponseTask(it)
             })
+
+            Log.i(title, "Report $report")
 
         }
     }
@@ -169,7 +245,7 @@ class ReportUploadFragment : DaggerFragment() {
         when (bool) {
 
             true -> {
-                requireContext().toast(requireContext().localized(R.string.upload_successful))
+                requireContext().toast(requireContext().getLocalisedString(R.string.upload_successful))
                 val res = result as Data
                 Log.i(title, "message ${result.message}")
                 findNavController().navigate(R.id.reportHomeFragment)
@@ -193,7 +269,7 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     private fun setButtonText() {
-        submitBtn.setButtonText(requireContext().localized(R.string.submit_text))
+        submitBtn.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
     }
 
     private fun setupSpinner() {
@@ -204,6 +280,7 @@ class ReportUploadFragment : DaggerFragment() {
                 states.keys.sorted()
             )
         reportUploadState.adapter = adapterState
+        setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel)
         Log.i(title, "states $states")
     }
 
@@ -218,76 +295,103 @@ class ReportUploadFragment : DaggerFragment() {
 
     private fun getStates(header:String): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
-        val request = authViewModel.getStates(header)
+        val request = userViewModel.getStates("37")
         val response = observeRequest(request, null, null)
         data.addSource(response) {
             data.value = it.second as StatesList
         }
         return data
     }
-    override fun onResume() {
-        super.onResume()
 
-        setOnClickEvent(uploadCard, uploadIcon) { showBottomSheet() }
-
-
-    }
 
 
     private fun showBottomSheet() {
 
-        uploadPictureBtn.text = requireContext().localized(R.string.done)
+        uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
         uploadPictureBtn.setOnClickListener {
-            bottomSheetDialog.dismiss()
+
+            bottomSheetProgressBar.show()
+            uploadPictureBtn.hide()
+            uploadReportImage()
+            CoroutineScope(Main).launch {
+                delay(3000)
+                bottomSheetProgressBar.hide()
+                uploadPictureBtn.show()
+                bottomSheetDialog.dismiss()
+            }
+
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
         cameraIcon.setOnClickListener {
+            imagePicker = "camera"
+            dispatchTakePictureIntent()
+        }
+        galleryIcon.setOnClickListener {
 
-            Dexter.withContext(requireContext())
-                .withPermission(Manifest.permission.CAMERA)
-                .withListener(object : PermissionListener {
-                    override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-                        dispatchTakePictureIntent()
-
-                    }
-
-                    override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                        val dialogPermissionListener: PermissionListener =
-                            DialogOnDeniedPermissionListener.Builder
-                                .withContext(context)
-                                .withTitle("Camera permission")
-                                .withMessage("Camera permission is needed to take picture for your report")
-                                .withButtonText(android.R.string.ok)
-                                .withIcon(android.R.drawable.ic_menu_camera)
-                                .build()
-                        dialogPermissionListener.onPermissionDenied(response)
-                    }
-
-                    override fun onPermissionRationaleShouldBeShown(
-                        permission: PermissionRequest?,
-                        token: PermissionToken?
-                    ) {
-
-                    }
-                }).check()
+            imagePicker = "gallery"
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            val mimeTypes = arrayOf("image/jpeg", "image/png")
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            startActivityForResult(intent, REQUEST_FROM_GALLERY)
         }
 
     }
 
+    private fun permissionRequest() {
+        Dexter.withContext(requireContext())
+            .withPermission(Manifest.permission.CAMERA)
+            .withListener(object : PermissionListener {
+                override fun onPermissionGranted(response: PermissionGrantedResponse?) {
+
+                }
+                override fun onPermissionDenied(response: PermissionDeniedResponse?) {
+                    val dialogPermissionListener: PermissionListener =
+                        DialogOnDeniedPermissionListener.Builder
+                            .withContext(context)
+                            .withTitle("Camera permission")
+                            .withMessage("Camera permission is needed to take picture for your report")
+                            .withButtonText(android.R.string.ok)
+                            .withIcon(android.R.drawable.ic_menu_camera)
+                            .build()
+                    dialogPermissionListener.onPermissionDenied(response)
+                }
+
+                override fun onPermissionRationaleShouldBeShown(
+                    permission: PermissionRequest?,
+                    token: PermissionToken?
+                ) {
+
+                }
+            }).check()
+    }
+
     override fun onPause() {
         super.onPause()
-        //dismiss bottomSheetDialog
-        bottomSheetDialog.dismiss()
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             bottomSheetDialog.show()
-            cameraIcon.setImageBitmap(imageBitmap)
+            imagePreview.setImageBitmap(imageBitmap)
+            imagePreview.show()
+
+        }
+        else if (requestCode == REQUEST_FROM_GALLERY && resultCode == RESULT_OK) {
+            try {
+                val imageUri = data!!.data
+                imagePreview.setImageURI(imageUri)
+                imagePreview.show()
+
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -305,7 +409,7 @@ class ReportUploadFragment : DaggerFragment() {
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+
         val storageDir: File? =
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
@@ -334,11 +438,11 @@ class ReportUploadFragment : DaggerFragment() {
                     null
                 }
                 // Continue only if the File was successfully created
-                Log.i(title, "File ${createImageFile()}")
+//                Log.i(title, "File ${createImageFile()}")
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
                         requireContext(),
-                        "com.anapfoundation.covid_19volunteerapp.android.fileprovider",
+                        "com.anapfoundation.android.fileprovider",
                         it
                     )
 
@@ -346,16 +450,79 @@ class ReportUploadFragment : DaggerFragment() {
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 }
 
+
+
             }
         }
+        galleryAddPic()
+    }
+
+    private fun uploadReportImage() {
+        val state = reportUploadState.selectedItem
+        val path = "images/report_$state _$timeStamp" + "_.jpg"
+
+        Log.i(title, "ImagePicker $imagePicker")
+
+
+        imagePreview.draw(canvas)
+
+
+        val outputStream = ByteArrayOutputStream()
+        capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+        val data = outputStream.toByteArray()
+        val imageRef = storageRef.child(path)
+
+        val uploadTask = imageRef.putBytes(data)
+
+        uploadTask.addOnFailureListener {
+            // Handle unsuccessful uploads
+            Log.i(title, "Upload not successful")
+        }.addOnSuccessListener {
+            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+            // ...
+            Log.i(title, "Upload successful")
+        }
+        uploadTask.continueWith { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            imageRef.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val downloadUri = task.result
+                downloadUri?.addOnSuccessListener {url ->
+                    imageUrl = url.toString()
+                    Log.i(title, "url $url")
+                    imageUrlField.append(imageUrl)
+                    imageUrlField.show()
+
+                }
+
+            } else {
+                Log.i(title, "uri: No url")
+            }
+        }
+
     }
 
     // Add taken picture to gallery
     private fun galleryAddPic() {
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-            val f = File(currentPhotoPath)
-            mediaScanIntent.data = Uri.fromFile(f)
-            requireActivity().sendBroadcast(mediaScanIntent)
+//        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+//            val f = File(currentPhotoPath)
+//            mediaScanIntent.data = Uri.fromFile(f)
+//            requireActivity().sendBroadcast(mediaScanIntent)
+//            Log.i(title, "new uri ${Uri.fromFile(f)}")
+//        }
+        MediaScannerConnection.scanFile(
+            requireContext(), arrayOf<String>(currentPhotoPath),
+            null
+        ) { path, uri ->
+            Log.i(
+                title,
+                "file $path was scanned seccessfully: $uri"
+            )
         }
     }
 

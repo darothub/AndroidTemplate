@@ -1,10 +1,10 @@
 package com.anapfoundation.covid_19volunteerapp.services.userservices
 
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import retrofit2.Call
-import retrofit2.http.Field
-import retrofit2.http.FormUrlEncoded
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface UserApiRequests {
     @POST("signup")
@@ -17,13 +17,28 @@ interface UserApiRequests {
         @Field("password") password:String,
         @Field("houseNumber") houseNumber:String,
         @Field("street") street:String,
-        @Field("state") state:String
-    ): Call<ServiceResult>
+        @Field("state") state:String,
+        @Field("localGovernment") localGovernment:String,
+        @Field("district") district:String
+    ): Call<DefaultResponse>
 
     @POST("login")
     @FormUrlEncoded
     fun loginRequest(
         @Field("username") email:String,
         @Field("password") password:String
-    ):Call<ServiceResult>
+    ):Call<DefaultResponse>
+
+    @GET("states")
+    fun getStates(
+        @Query("first") first: String,
+        @Query("after") after: String?
+    ): Call<StatesList>
+
+    @GET("states/{stateID}/local")
+    fun getLGA(
+        @Path("stateID") stateID: String,
+        @Query("first") first: String,
+        @Query("after") after: String?
+    ): Call<LGA>
 }

@@ -9,44 +9,44 @@ import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.navigation.findNavController
+import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
-import com.anapfoundation.covid_19volunteerapp.model.Data
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
-import kotlinx.android.synthetic.main.fragment_edit_profile.*
-import kotlinx.android.synthetic.main.fragment_signup.*
+import java.lang.Exception
 
-fun Fragment.getName():String{
+inline fun Fragment.getName():String{
     return this::class.qualifiedName!!
 }
 
-fun Fragment.showStatusBar(){
+inline fun Fragment.showStatusBar(){
     requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
 }
 
-fun Fragment.hideKeyboard() {
+inline fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
 
-fun Activity.hideKeyboard() {
+inline fun Activity.hideKeyboard() {
     if (currentFocus == null) View(this) else currentFocus?.let { hideKeyboard(it) }
 }
 
 @SuppressLint("ServiceCast")
-fun Context.hideKeyboard(view: View) {
+inline fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-fun Context.toast(message:String){
+inline fun Context.toast(message:String){
     val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
     toast.setGravity(Gravity.CENTER, 0, 0)
     val view = toast.view.findViewById<TextView>(android.R.id.message)
@@ -61,7 +61,7 @@ fun Context.toast(message:String){
     }
 }
 
-fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateLgaMap:HashMap<String, List<CityClass>> ) {
+inline fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateLgaMap:HashMap<String, List<CityClass>> ) {
 
     val newList = arrayListOf<String>()
     newList.add("States")
@@ -99,8 +99,8 @@ fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateL
     }
 }
 
-fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
-                            progressBar: ProgressBar?, button: Button?
+inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
+                                   progressBar: ProgressBar?, button: Button?
 ): LiveData<Pair<Boolean, Any?>> {
     val result = MutableLiveData<Pair<Boolean, Any?>>()
     val title:String by lazy{
@@ -131,13 +131,23 @@ fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
                 requireContext().toast("$errorResponse")
                 Log.i(title, "Error $errorResponse")
             }
+            is ServicesResponseWrapper.Logout ->{
+                progressBar?.hide()
+                button?.show()
+                requireContext().toast("$errorResponse")
+                Log.i(title, "Log out $errorResponse")
+                val request = NavDeepLinkRequest.Builder
+                    .fromUri("android-app://anapfoundation.navigation/signin".toUri())
+                    .build()
+                findNavController().navigate(request)
+            }
         }
     })
 
     return result
 }
 
-fun Fragment.initEnterKeyToSubmitForm(editText: EditText, request:()->Unit) {
+inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline request:()->Unit) {
     editText.setOnKeyListener { view, keyCode, keyEvent ->
         if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 
@@ -145,5 +155,53 @@ fun Fragment.initEnterKeyToSubmitForm(editText: EditText, request:()->Unit) {
             return@setOnKeyListener true
         }
         return@setOnKeyListener false
+    }
+}
+
+fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistrict:HashMap<String, String>,
+                           states:HashMap<String, String>, userViewModel: UserViewModel
+) {
+    spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onItemSelected(
+            parent: AdapterView<*>?,
+            view: View?,
+            position: Int,
+            id: Long
+        ) {
+            lgaAndDistrict.clear()
+            val selectedState = spinnerState.selectedItem
+            val stateID = states.get(selectedState)
+            val request = userViewModel.getLocal(stateID.toString(), "47", "")
+            val response = observeRequest(request, null, null)
+            response.observe(viewLifecycleOwner, Observer {
+                try {
+                    val (bool, result) = it
+                    val res = result as LGA
+                    res.data.associateByTo(lgaAndDistrict, {
+                        it.localGovernment
+                    }, {
+                        "${it.id} ${it.district}"
+                    })
+                    val lga = lgaAndDistrict.keys.sorted()
+                    Log.i("$this", "LGA $lga")
+                    val adapterLga = ArrayAdapter(
+                        requireContext(),
+                        R.layout.support_simple_spinner_dropdown_item,
+                        lga
+                    )
+                    spinnerLGA.adapter = adapterLga
+
+                } catch (e: Exception) {
+
+                }
+            })
+
+
+        }
+
     }
 }

@@ -18,7 +18,7 @@ class SharedPrefManager @Inject constructor(val sharedPrefs:SharedPreferences, v
             }
     }
 
-    override fun saveData(user: User?, key:String):ArrayList<String> {
+    override fun <T> saveData(user: T?, key: String): ArrayList<String> {
         val result:ArrayList<String>
         val userJson = gson.toJson(user)
         result = arrayListOf(userJson)
@@ -28,8 +28,8 @@ class SharedPrefManager @Inject constructor(val sharedPrefs:SharedPreferences, v
                 apply()
             }
         return result
-
     }
+
 
     override fun getUserData(user:String):User? {
         return gson.fromJson(user, User::class.java)

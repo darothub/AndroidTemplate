@@ -1,12 +1,11 @@
 package com.anapfoundation.covid_19volunteerapp.network.auth
 
-import com.anapfoundation.covid_19volunteerapp.model.ProfileData
-import com.anapfoundation.covid_19volunteerapp.model.Report
-import com.anapfoundation.covid_19volunteerapp.model.StatesList
-import com.anapfoundation.covid_19volunteerapp.model.TopicData
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.*
+import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
+import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import retrofit2.Call
-import retrofit2.Callback
 
 interface AuthRequestInterface {
 
@@ -14,13 +13,17 @@ interface AuthRequestInterface {
                   rating:String,
                   story:String,
                   state:String,
-                  header:String): Call<ServiceResult>
+                  mediaURL:String?,
+                  localGovernment:String?,
+                  district:String?,
+                  town:String?,
+                  header:String): Call<DefaultResponse>
 
-    fun getTopic(header: String): Call<TopicData>
+    fun getTopic(header: String): Call<TopicResponse>
 
-    fun getRating(topicID:String, header: String): Call<TopicData>
-
-    fun getStates(header: String): Call<StatesList>
+    fun getRating(topicID:String, header: String): Call<TopicResponse>
 
     fun getProfileData(header: String):Call<ProfileData>
+
+    fun getReports(header: String):Call<Reports>
 }

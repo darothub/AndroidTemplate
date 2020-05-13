@@ -32,7 +32,7 @@
         tools:layout="@layout/fragment_report_upload" >
         <argument
             android:name="report"
-            app:argType="com.anapfoundation.covid_19volunteerapp.model.Report"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.request.Report"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>

@@ -14,6 +14,7 @@ import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
+
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
@@ -101,16 +102,18 @@ class ReportFragment : DaggerFragment() {
         bottomNav.setupWithNavController(navController)
 
         Log.i(title, "OnActivity")
-        requireActivity().onBackPressedDispatcher.addCallback {
+        onBackPressed()
 
-//            findNavController().popBackStack()
+
+    }
+
+    private fun onBackPressed() {
+        requireActivity().onBackPressedDispatcher.addCallback {
 
             logout()
             showBottomSheet()
 
         }
-
-
     }
 
 
@@ -125,6 +128,7 @@ class ReportFragment : DaggerFragment() {
         super.onPause()
         Log.i(title, "OnPause")
         navController.removeOnDestinationChangedListener(uploadListener)
+        onBackPressed()
 
     }
 

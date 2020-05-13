@@ -16,17 +16,17 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
-import com.anapfoundation.covid_19volunteerapp.model.*
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.request.Report
+import com.anapfoundation.covid_19volunteerapp.model.response.Topic
+import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
+
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.utsman.recycling.setupAdapter
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.create_report_item.view.*
 import kotlinx.android.synthetic.main.fragment_create_report.*
-import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_bottom_sheet.view.*
 import kotlinx.android.synthetic.main.options_item.view.*
 import java.lang.Exception
@@ -70,7 +70,12 @@ class CreateReportFragment : DaggerFragment() {
         )
     }
     val newReport by  lazy {
-        Report("", "", "", "")
+        Report(
+            "",
+            "",
+            "",
+            ""
+        )
     }
 
     @Inject
@@ -103,6 +108,7 @@ class CreateReportFragment : DaggerFragment() {
 
     private fun extractAndSetTopics() {
         val topics = getTopic(header)
+
 
         topics.observe(viewLifecycleOwner, Observer {
 
@@ -148,15 +154,15 @@ class CreateReportFragment : DaggerFragment() {
         bottomSheetDialog.dismiss()
         Log.i(title, "Resumed")
     }
-    private fun getTopic(header:String):MediatorLiveData<TopicData>{
-        val data = MediatorLiveData<TopicData>()
+    private fun getTopic(header:String):MediatorLiveData<TopicResponse>{
+        val data = MediatorLiveData<TopicResponse>()
         val request = authViewModel.getTopic(header)
 
         val response = observeRequest(request, null, null)
 
         data.addSource(response) {
             try {
-                data.value = it.second as TopicData
+                data.value = it.second as TopicResponse
             }
             catch (e:Exception){
                Log.e(title, e.message)
@@ -170,13 +176,13 @@ class CreateReportFragment : DaggerFragment() {
 
     }
 
-    private fun getRating(topicID:String, header:String):MediatorLiveData<TopicData>{
-        val data = MediatorLiveData<TopicData>()
+    private fun getRating(topicID:String, header:String):MediatorLiveData<TopicResponse>{
+        val data = MediatorLiveData<TopicResponse>()
         val request = authViewModel.getRating(topicID, header)
         val response = observeRequest(request, null, null)
         data.addSource(response) {
             try{
-                data.value = it.second as TopicData
+                data.value = it.second as TopicResponse
             }
             catch (e:Exception){
                 Log.e(title, e.message)
@@ -210,7 +216,7 @@ class CreateReportFragment : DaggerFragment() {
                 action.report = newReport
                 findNavController().navigate(action)
             } else if (checkBoxesKeys.size != 1) {
-                requireContext().toast(requireContext().localized(R.string.pick_one_rating))
+                requireContext().toast(requireContext().getLocalisedString(R.string.pick_one_rating))
             } else {
                 bottomSheetDialog.dismiss()
                 val topicItem = checkBoxMap.values.elementAt(0)

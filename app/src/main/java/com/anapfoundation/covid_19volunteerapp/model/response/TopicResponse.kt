@@ -1,11 +1,11 @@
-package com.anapfoundation.covid_19volunteerapp.model
+package com.anapfoundation.covid_19volunteerapp.model.response
 
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.AnotherError
+import com.anapfoundation.covid_19volunteerapp.model.AnotherError
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-class TopicData (
-    val data: List<Topic>, 
+class TopicResponse (
+    val data: List<Topic>,
     message: String?,
     error: AnotherError?,
     token: String?

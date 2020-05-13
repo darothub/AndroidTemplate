@@ -1,6 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.model
 
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.AnotherError
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -22,7 +22,6 @@ open class User(
     var message = ""
     var token:String?=""
     var rememberPassword:Boolean = false
-
 
 }
 class ProfileData (

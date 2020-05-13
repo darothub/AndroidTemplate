@@ -6,15 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
 
 import com.anapfoundation.covid_19volunteerapp.R
-import com.anapfoundation.covid_19volunteerapp.model.Report
+import com.anapfoundation.covid_19volunteerapp.model.request.Report
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.utsman.recycling.setupAdapter
-import kotlinx.android.synthetic.main.create_report_questions_item.view.*
 import kotlinx.android.synthetic.main.fragment_notification.*
 import kotlinx.android.synthetic.main.notification_item.view.*
 
@@ -33,8 +30,15 @@ class NotificationFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        val myList = listOf<Report>(Report("Covid-19 process attacks", "high","This is the details. This is the details" +
-                "This is the details. This is the details. This is the details", "Yaba, Lagos"))
+        val myList = listOf<Report>(
+            Report(
+                "Covid-19 process attacks",
+                "high",
+                "This is the details. This is the details" +
+                        "This is the details. This is the details. This is the details",
+                "Yaba, Lagos"
+            )
+        )
         notificationRecyclerView.setupAdapter<Report>(R.layout.notification_item){ adapter, context, list ->
             bind { itemView, position, item ->
                 itemView.notificationHeadLine.text = item?.topic
@@ -47,7 +51,7 @@ class NotificationFragment : Fragment() {
                     itemView.notificationStatus.hide()
                 }
                 itemView.setOnClickListener {
-                    findNavController().navigate(R.id.singleReportFragment)
+                    findNavController().navigate(R.id.reportReviewFragment)
                 }
             }
 
