@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.addCallback
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 
@@ -77,16 +78,7 @@ class SigninFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        setupSignUpLink()
 
-        checkForReturninUser()
-        signinBtn.setButtonText(requireContext().getLocalisedString(R.string.signin_text))
-
-        requireActivity().onBackPressedDispatcher.addCallback {
-            requireActivity().finish()
-
-
-        }
 
 
     }
@@ -107,6 +99,15 @@ class SigninFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
         Log.i(title, "onStart")
+        setupSignUpLink()
+
+        checkForReturninUser()
+        signinBtn.setButtonText(requireContext().getLocalisedString(R.string.signin_text))
+
+        requireActivity().onBackPressedDispatcher.addCallback {
+            requireActivity().finish()
+
+        }
     }
 
     override fun onDetach() {
@@ -197,7 +198,7 @@ class SigninFragment : DaggerFragment() {
                 storageRequest.saveData(userExist, "loggedInUser")
                 Log.i("UserExist", "${userExist}")
                 Log.i(title, "message ${result.token}")
-                findNavController().navigate(R.id.reportFragment)
+                navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
             }
             else -> Log.i(title, "error $result")
         }

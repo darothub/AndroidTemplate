@@ -91,10 +91,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/yes"
-            app:layout_constraintStart_toStartOf="@id/logoutText"
+            android:textColor="@color/colorNeutral"
+            android:textAllCaps="true"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/logoutText"
             app:layout_constraintEnd_toStartOf="@id/noButton"
             android:layout_marginTop="50dp"
+
             android:background="@drawable/rounded_border_with_backgrnd"
             />
 
@@ -103,10 +106,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no"
+            android:textColor="@color/colorNeutral"
+            android:textAllCaps="true"
             app:layout_constraintStart_toEndOf="@id/yesButton"
             app:layout_constraintTop_toTopOf="@id/yesButton"
             app:layout_constraintBottom_toBottomOf="@id/yesButton"
-            app:layout_constraintEnd_toEndOf="@id/logoutText"
+            app:layout_constraintEnd_toEndOf="parent"
             android:background="@drawable/rounded_border_with_backgrnd"
             />
 

@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -101,9 +102,23 @@ class CreateReportFragment : DaggerFragment() {
 
 //        NavigationUI.setupWithNavController(createReportToolbar, nav)
 
+
+
+        requireActivity().onBackPressedDispatcher.addCallback {
+
+//            showBottomSheet()
+            findNavController().navigateUp()
+//            requireContext().toast("Create report fragment")
+
+        }
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         extractAndSetTopics()
-
-
+        bottomSheetDialog.dismiss()
+        Log.i(title, "Resumed")
     }
 
     private fun extractAndSetTopics() {
@@ -112,10 +127,14 @@ class CreateReportFragment : DaggerFragment() {
 
         topics.observe(viewLifecycleOwner, Observer {
 
+
             createReportRecyclerView.setupAdapter<Topic>(R.layout.create_report_item) { adapter, context, list ->
                 bind { itemView, position, item ->
                     itemView.createReportSubject.text = item?.topic
+
                     itemView.setOnClickListener {
+                        Log.i(title, "${item?.id}")
+                        newReport.topic = item?.id.toString()
 
                         val rating = item?.id?.let { id -> getRating(id, header) }
                         rating?.observe(viewLifecycleOwner, Observer {
@@ -149,11 +168,7 @@ class CreateReportFragment : DaggerFragment() {
         Log.i(title, "started")
 
     }
-    override fun onResume() {
-        super.onResume()
-        bottomSheetDialog.dismiss()
-        Log.i(title, "Resumed")
-    }
+
     private fun getTopic(header:String):MediatorLiveData<TopicResponse>{
         val data = MediatorLiveData<TopicResponse>()
         val request = authViewModel.getTopic(header)
@@ -220,7 +235,7 @@ class CreateReportFragment : DaggerFragment() {
             } else {
                 bottomSheetDialog.dismiss()
                 val topicItem = checkBoxMap.values.elementAt(0)
-                newReport.topic = topicItem.topic
+//                newReport.topic = topicItem.topic
                 newReport.rating = topicItem.id
                 Log.i(title, "new report " + newReport.topic + " " + newReport.rating)
                 val action = CreateReportFragmentDirections.toUploadFragment()

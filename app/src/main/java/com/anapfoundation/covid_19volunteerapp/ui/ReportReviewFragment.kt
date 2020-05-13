@@ -8,12 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.activity.addCallback
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getLocalisedString
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.setAsSpannable
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import kotlinx.android.synthetic.main.fragment_report_review.*
 
 /**
@@ -51,19 +53,42 @@ class ReportReviewFragment : Fragment() {
 //            Spanned.SPAN_MARK_MARK)
 
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+
         reviewBackBtn.setOnClickListener {
             findNavController().popBackStack()
         }
 
-//        ssb.append(requireContext().localized(R.string.report_details))
-//        reviewReportDetails.text = ssb
+
+        requireActivity().onBackPressedDispatcher.addCallback {
+
+            findNavController().popBackStack()
+
+//            requireContext().toast("Review fragment")
+
+        }
 //
-//
-        val res = detailsText.split(".").dropLastWhile { it.isEmpty() }.toTypedArray().size - 1
-        val occ = detailsText.indexOf(".", 100)
-        Log.i(title, "occ $occ")
+//        val res = detailsText.split(".").dropLastWhile { it.isEmpty() }.toTypedArray().size - 1
+//        val occ = detailsText.indexOf(".", 100)
+        Log.i(title, "OnResume")
         val approveBtn = reviewBottomLayout.findViewById<Button>(R.id.btn)
         approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i(title, "OnPause")
+
+
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(title, "OnDestroy")
+
     }
 
 }
