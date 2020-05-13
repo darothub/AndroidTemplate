@@ -1,6 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.model
 
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.AnotherError
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -9,7 +9,7 @@ class StatesList (
     message:String?,
     error: AnotherError?,
     token:String?
-):Data(message, error, token), Serializable
+): Data(message, error, token), Serializable
 class State (
     val id: String,
     val index: Long,
@@ -32,7 +32,7 @@ class LGA (
     message:String?,
     error: AnotherError?,
     token:String?
-):Data(message, error, token), Serializable
+): Data(message, error, token), Serializable
 
 
 data class LocalGovernment (

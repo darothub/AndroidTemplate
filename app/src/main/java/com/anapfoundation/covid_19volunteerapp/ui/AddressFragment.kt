@@ -21,6 +21,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.*
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.gson.Gson
@@ -98,25 +99,26 @@ class AddressFragment : DaggerFragment() {
 
 //        requireContext().setSpinnerAdapterData(spinnerState, spinnerLGA, stateLgaMap)
 
-
+        arguments?.let {
+            userData = AddressFragmentArgs.fromBundle(it).userData!!
+        }
         submitBtn.text = requireContext().getLocalisedString(R.string.submit_text)
         submitBtn.setOnClickListener {
             completeSignupRequest()
         }
         initEnterKeyToSubmitForm(streetEditText) { completeSignupRequest() }
 
-        getStateAndSendToSpinner()
-        arguments?.let {
-            userData = AddressFragmentArgs.fromBundle(it).userData!!
-        }
-
-        Log.i(title, "password ${userData.password}")
         requireActivity().onBackPressedDispatcher.addCallback {
 
             findNavController().navigate(R.id.signupFragment)
 
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getStateAndSendToSpinner()
     }
 
     private fun getStateAndSendToSpinner() {
@@ -129,7 +131,7 @@ class AddressFragment : DaggerFragment() {
 
     private fun getStates(first:String, after:String): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
-        val request = authViewModel.getStates(first, after)
+        val request = userViewModel.getStates(first, after)
         val response = observeRequest(request, null, null)
         data.addSource(response) {
             try {
@@ -160,51 +162,10 @@ class AddressFragment : DaggerFragment() {
             )
         spinnerState.adapter = adapterState
 
-        spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
-
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                lgaAndDistrict.clear()
-                val selectedState = spinnerState.selectedItem
-                val stateID = states.get(selectedState)
-                val request = authViewModel.getLocal(stateID.toString())
-                val response = observeRequest(request, null, null)
-                response.observe(viewLifecycleOwner, Observer {
-                    try {
-                        val (bool, result) = it
-                        val res = result as LGA
-                        res.data.associateByTo(lgaAndDistrict, {
-                            it.localGovernment
-                        },{
-                            "${it.id} ${it.district}"
-                        })
-                        val lga = lgaAndDistrict.keys.sorted()
-                        Log.i(title, "LGA $lga")
-                        val adapterLga = ArrayAdapter(
-                            requireContext(),
-                            R.layout.support_simple_spinner_dropdown_item,
-                            lga
-                        )
-                        spinnerLGA.adapter = adapterLga
-
-                    }catch (e:Exception){
-
-                    }
-                })
-
-
-            }
-
-        }
+        setLGASpinner(spinnerState, spinnerLGA, lgaAndDistrict, states, userViewModel)
 //        Log.i(title, "states $states")
     }
+
 
     private fun completeSignupRequest() {
 

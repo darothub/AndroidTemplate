@@ -46,6 +46,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">55dp</item>
         <item name="borderColor">@color/colorPrimaryDark</item>
+        <item name="errorTextColor">@color/colorPrimary</item>
     </style>
 
     <style name="PoppinsTextViewStyle" parent="Widget.AppCompat.TextView">

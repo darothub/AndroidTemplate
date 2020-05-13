@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.activity.addCallback
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 
@@ -59,6 +60,13 @@ class SignupFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_signup, container, false)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback {
+            findNavController().navigate(R.id.signinFragment)
+        }
+    }
+
 
     override fun onResume() {
         super.onResume()
@@ -104,7 +112,7 @@ class SignupFragment : DaggerFragment() {
 
         val firstName = firstNameEdit.text.toString().trim()
         val lastName = lastNameEdit.text.toString().trim()
-        val emailAddress = emailEdit.text.toString().trim()
+        val emailAddress = emailEdit.text.toString().trim().toLowerCase()
         val phoneNumber = phoneNumberEdit.text.toString().trim()
         val passwordString = passwordEdit.text.toString().trim()
         val cpassword = cpasswordEdit.text.toString().trim()

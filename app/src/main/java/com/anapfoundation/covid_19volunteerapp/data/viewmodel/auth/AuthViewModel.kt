@@ -4,10 +4,20 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.paging.DataSource
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReportDataFactory
 import com.anapfoundation.covid_19volunteerapp.model.*
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
+import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
+import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
+import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import retrofit2.Call
 import retrofit2.Callback
@@ -15,7 +25,8 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import javax.inject.Inject
 
-class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestInterface, val retrofit: Retrofit):
+class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestInterface, val retrofit: Retrofit,
+                                         val paging:DataSource.Factory<Long, ReportResponse>):
     ViewModel() {
 
     val title:String by lazy{
@@ -24,20 +35,20 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
     }
 
     fun addReport(topic: String, rating:String, story:String, state:String, mediaURL:String?,
-                  localGovernment:String?,
+                  localGovernment:String?, district:String?,
                   town:String?, header:String): LiveData<ServicesResponseWrapper<Data>> {
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
         )
-        val request = authRequestInterface.addReport(topic, rating, story, state, mediaURL, localGovernment, town, header)
-        request.enqueue(object:Callback<ServiceResult>{
-            override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
+        val request = authRequestInterface.addReport(topic, rating, story, state, mediaURL, localGovernment, district, town, header)
+        request.enqueue(object:Callback<DefaultResponse>{
+            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
 
-            override fun onResponse(call: Call<ServiceResult>, response: Response<ServiceResult>) {
+            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -52,12 +63,12 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         )
         val request = authRequestInterface.getTopic(header)
 
-        request.enqueue(object :Callback<TopicData>{
-            override fun onFailure(call: Call<TopicData>, t: Throwable) {
+        request.enqueue(object :Callback<TopicResponse>{
+            override fun onFailure(call: Call<TopicResponse>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
 
-            override fun onResponse(call: Call<TopicData>, response: Response<TopicData>) {
+            override fun onResponse(call: Call<TopicResponse>, response: Response<TopicResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -73,12 +84,12 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
             "Loading..."
         )
         val request = authRequestInterface.getRating(topicID, header)
-        request.enqueue(object:Callback<TopicData>{
-            override fun onFailure(call: Call<TopicData>, t: Throwable) {
+        request.enqueue(object:Callback<TopicResponse>{
+            override fun onFailure(call: Call<TopicResponse>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
 
-            override fun onResponse(call: Call<TopicData>, response: Response<TopicData>) {
+            override fun onResponse(call: Call<TopicResponse>, response: Response<TopicResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -86,48 +97,6 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         return responseLiveData
     }
 
-    fun getStates(first: String, after:String?=""): LiveData<ServicesResponseWrapper<Data>>{
-
-        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
-        responseLiveData.value = ServicesResponseWrapper.Loading(
-            null,
-            "Loading..."
-        )
-        val request = authRequestInterface.getStates(first, after)
-
-        request.enqueue(object :Callback<StatesList>{
-            override fun onFailure(call: Call<StatesList>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
-            }
-
-            override fun onResponse(call: Call<StatesList>, response: Response<StatesList>) {
-                onResponseTask(response as Response<Data>, responseLiveData)
-            }
-
-        })
-        return responseLiveData
-
-    }
-
-    fun getLocal(stateID:String): LiveData<ServicesResponseWrapper<Data>>{
-        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
-        responseLiveData.value = ServicesResponseWrapper.Loading(
-            null,
-            "Loading..."
-        )
-        val request = authRequestInterface.getLocal(stateID)
-        request.enqueue(object :Callback<LGA>{
-            override fun onFailure(call: Call<LGA>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
-            }
-
-            override fun onResponse(call: Call<LGA>, response: Response<LGA>) {
-                onResponseTask(response as Response<Data>, responseLiveData)
-            }
-
-        })
-        return responseLiveData
-    }
 
     fun getProfileData(header: String): LiveData<ServicesResponseWrapper<Data>>{
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
@@ -150,6 +119,29 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         return responseLiveData
     }
 
+    fun getReports(header: String): LiveData<ServicesResponseWrapper<Data>>{
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = authRequestInterface.getReports(header)
+        request.enqueue(object : Callback<Reports>{
+            override fun onFailure(call: Call<Reports>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(
+                call: Call<Reports>,
+                response: Response<Reports>
+            ) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
+    }
+
     private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
         val statusCode = response.code()
@@ -158,7 +150,8 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
             401 -> {
                 Log.i(title, "errorbody ${response.raw()}")
                 val a = object : Annotation{}
-                val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
+                val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                    DefaultResponse::class.java, arrayOf(a))
                 val error = converter.convert(response.errorBody())
                 Log.i(title, "message ${error?.message}")
                 responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
@@ -167,7 +160,8 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
 
                 Log.i(title, "errorbody ${response.raw()}")
                 val a = object : Annotation{}
-                val converter = retrofit.responseBodyConverter<ServiceResult>(ServiceResult::class.java, arrayOf(a))
+                val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                    DefaultResponse::class.java, arrayOf(a))
                 val error = converter.convert(response.errorBody())
                 Log.i(title, "message ${error?.message}")
                 responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
@@ -180,4 +174,13 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
 
     }
 
+    private fun configPaged(size: Int): PagedList.Config = PagedList.Config.Builder()
+        .setPageSize(size)
+        .setInitialLoadSizeHint(size * 2)
+        .setEnablePlaceholders(true)
+        .build()
+
+    fun getReportss():LiveData<PagedList<ReportResponse>>{
+        return LivePagedListBuilder(paging, configPaged(4)).build()
+    }
 }

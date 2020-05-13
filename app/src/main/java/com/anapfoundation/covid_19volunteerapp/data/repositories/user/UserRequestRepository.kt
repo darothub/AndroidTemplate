@@ -1,7 +1,8 @@
 package com.anapfoundation.covid_19volunteerapp.data.repositories.user
 
-import com.anapfoundation.covid_19volunteerapp.model.LocalGovernment
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.userservices.UserApiRequests
 import retrofit2.Call
@@ -20,7 +21,7 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
         state: String,
         localGovernment: String,
         district: String
-    ): Call<ServiceResult> {
+    ): Call<DefaultResponse> {
         return userApiRequests.registerUser(
             firstName,
             lastName,
@@ -35,7 +36,15 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
         )
     }
 
-    override fun loginRequest(username: String, password: String): Call<ServiceResult> {
+    override fun loginRequest(username: String, password: String): Call<DefaultResponse> {
         return userApiRequests.loginRequest(username, password)
+    }
+
+    override fun getStates(first: String, after: String?): Call<StatesList> {
+        return userApiRequests.getStates(first, after)
+    }
+
+    override fun getLocal(stateID: String, first: String, after: String?): Call<LGA> {
+        return userApiRequests.getLGA(stateID,first, after)
     }
 }

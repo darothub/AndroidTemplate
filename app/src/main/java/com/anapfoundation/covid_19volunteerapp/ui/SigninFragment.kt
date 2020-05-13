@@ -19,7 +19,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderF
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.User
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
@@ -78,10 +78,10 @@ class SigninFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
 
         setupSignUpLink()
-        initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
+
         checkForReturninUser()
         signinBtn.setButtonText(requireContext().getLocalisedString(R.string.signin_text))
-        submitLoginRequest()
+
         requireActivity().onBackPressedDispatcher.addCallback {
             requireActivity().finish()
 
@@ -94,6 +94,8 @@ class SigninFragment : DaggerFragment() {
     override fun onResume() {
         super.onResume()
 
+        initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
+        submitLoginRequest()
     }
 
     override fun onPause() {
@@ -178,7 +180,7 @@ class SigninFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
-                val res = result as ServiceResult
+                val res = result as DefaultResponse
                 var userExist = storageRequest.checkUser(emailAddress)
                 if (userExist != null) {
                     userExist?.loggedIn = true

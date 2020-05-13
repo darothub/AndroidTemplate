@@ -13,4 +13,5 @@ ext.versions = [
         dagger_version                : "2.27",
         room_version                  : "2.2.5",
         lifecycle_version             : "2.2.0",
+        paging_version                : "2.1.2",
 ]

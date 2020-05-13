@@ -1,9 +1,11 @@
 package com.anapfoundation.covid_19volunteerapp.network.auth
 
 import com.anapfoundation.covid_19volunteerapp.model.*
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
+import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import retrofit2.Call
-import retrofit2.Callback
 
 interface AuthRequestInterface {
 
@@ -13,16 +15,15 @@ interface AuthRequestInterface {
                   state:String,
                   mediaURL:String?,
                   localGovernment:String?,
+                  district:String?,
                   town:String?,
-                  header:String): Call<ServiceResult>
+                  header:String): Call<DefaultResponse>
 
-    fun getTopic(header: String): Call<TopicData>
+    fun getTopic(header: String): Call<TopicResponse>
 
-    fun getRating(topicID:String, header: String): Call<TopicData>
-
-    fun getStates(first: String, after:String?=""): Call<StatesList>
+    fun getRating(topicID:String, header: String): Call<TopicResponse>
 
     fun getProfileData(header: String):Call<ProfileData>
 
-    fun getLocal(stateID:String): Call<LGA>
+    fun getReports(header: String):Call<Reports>
 }

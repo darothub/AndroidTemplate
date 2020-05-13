@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.media.MediaScannerConnection
 import android.net.Uri
@@ -28,8 +27,9 @@ import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
-import com.anapfoundation.covid_19volunteerapp.model.Data
-import com.anapfoundation.covid_19volunteerapp.model.Report
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.request.Report
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
@@ -45,6 +45,7 @@ import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_upload.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
+import kotlinx.android.synthetic.main.report_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
@@ -116,15 +117,15 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     //Get logged-in user
-    val getUser by lazy {
+    private val getUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
     //Get token
-    val token by lazy {
+    private val token by lazy {
         getUser?.token
     }
     //Set header
-    val header by lazy {
+    private val header by lazy {
         "Bearer $token"
     }
 
@@ -134,9 +135,7 @@ class ReportUploadFragment : DaggerFragment() {
     val canvas by lazy {
         Canvas(capture)
     }
-    val canvas2 by lazy {
-        Canvas(capture)
-    }
+
     val firebaseStorage by lazy {
         FirebaseStorage.getInstance()
     }
@@ -154,14 +153,20 @@ class ReportUploadFragment : DaggerFragment() {
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
-    val authViewModel: AuthViewModel by lazy {
+    private val userViewModel: UserViewModel by lazy {
+        ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
+    }
+    private val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
 
     @Inject
     lateinit var storageRequest: StorageRequest
 
-    val states = hashMapOf<String, String>()
+    private val states = hashMapOf<String, String>()
+    private val lgaAndDistrict by lazy {
+        hashMapOf<String, String>()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -190,6 +195,7 @@ class ReportUploadFragment : DaggerFragment() {
 
         setOnClickEvent(uploadCard, uploadIcon) { showBottomSheet() }
         permissionRequest()
+        imagePreview.clipToOutline = true
 
     }
 
@@ -199,11 +205,17 @@ class ReportUploadFragment : DaggerFragment() {
             val story = storyEditText.text
             val stateSelected = reportUploadState.selectedItem
             val stateGUID = states.get(stateSelected)
+            val selectedLGA = reportUploadLGA.selectedItem
+            val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
+            val lgaGUID = lgaAndDistrictArray?.get(0).toString()
+            val district = lgaAndDistrictArray?.get(1).toString()
+            Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district")
             report.story = story.toString()
             report.state = "$stateGUID"
             report.mediaURL = imageUrl
             report.town = reportUploadTownEditText.text.toString()
-            report.localGovernment = "Dummy LGA"
+            report.localGovernment = lgaGUID
+            report.district = district
 
             val request = authViewModel.addReport(
                 report.topic,
@@ -212,6 +224,7 @@ class ReportUploadFragment : DaggerFragment() {
                 report.state,
                 report.mediaURL,
                 report.localGovernment,
+                report.district,
                 report.town,
                 header
             )
@@ -267,6 +280,7 @@ class ReportUploadFragment : DaggerFragment() {
                 states.keys.sorted()
             )
         reportUploadState.adapter = adapterState
+        setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel)
         Log.i(title, "states $states")
     }
 
@@ -281,7 +295,7 @@ class ReportUploadFragment : DaggerFragment() {
 
     private fun getStates(header:String): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
-        val request = authViewModel.getStates("37")
+        val request = userViewModel.getStates("37")
         val response = observeRequest(request, null, null)
         data.addSource(response) {
             data.value = it.second as StatesList
@@ -357,8 +371,7 @@ class ReportUploadFragment : DaggerFragment() {
 
     override fun onPause() {
         super.onPause()
-        //dismiss bottomSheetDialog
-//        bottomSheetDialog.dismiss()
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -449,19 +462,10 @@ class ReportUploadFragment : DaggerFragment() {
         val path = "images/report_$state _$timeStamp" + "_.jpg"
 
         Log.i(title, "ImagePicker $imagePicker")
+
+
         imagePreview.draw(canvas)
 
-//        when{
-//            imagePicker == "camera" -> {
-//
-//                cameraIcon.draw(canvas)
-//            }
-//            imagePicker == "gallery" -> {
-//
-//                galleryIcon.draw(canvas2)
-//            }
-//            else -> Log.i(title, "No image picked")
-//        }
 
         val outputStream = ByteArrayOutputStream()
         capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)

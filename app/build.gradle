@@ -73,6 +73,12 @@ dependencies {
     //recyclerView
     implementation "com.utsman.recycling:recycling:$versions.recycling"
 
+    //Paged adapter
+    implementation "com.utsman.recycling-paged:recycling:$versions.recycling"
+
+    //Pagedlist
+    implementation "androidx.paging:paging-runtime:$versions.paging_version"
+
     //material design
     implementation "com.google.android.material:material:$versions.material_design"
 
@@ -122,6 +128,7 @@ dependencies {
 
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
+
 
 
 }

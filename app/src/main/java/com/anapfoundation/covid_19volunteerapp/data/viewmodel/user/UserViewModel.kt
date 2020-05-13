@@ -4,18 +4,17 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.anapfoundation.covid_19volunteerapp.model.Data
-import com.anapfoundation.covid_19volunteerapp.model.LocalGovernment
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.lang.reflect.Type
 import javax.inject.Inject
 
 
@@ -60,12 +59,12 @@ class UserViewModel @Inject constructor(
             localGovernment,
             district
         )
-        request.enqueue(object : Callback<ServiceResult> {
-            override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
+        request.enqueue(object : Callback<DefaultResponse> {
+            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
 
-            override fun onResponse(call: Call<ServiceResult>, response: Response<ServiceResult>) {
+            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -84,12 +83,54 @@ class UserViewModel @Inject constructor(
             "Loading..."
         )
         val request = userRequestInterface.loginRequest(username, password)
-        request.enqueue(object : Callback<ServiceResult> {
-            override fun onFailure(call: Call<ServiceResult>, t: Throwable) {
+        request.enqueue(object : Callback<DefaultResponse> {
+            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
 
-            override fun onResponse(call: Call<ServiceResult>, response: Response<ServiceResult>) {
+            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
+    }
+    fun getStates(first: String, after:String?=""): LiveData<ServicesResponseWrapper<Data>>{
+
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = userRequestInterface.getStates(first, after)
+
+        request.enqueue(object :Callback<StatesList>{
+            override fun onFailure(call: Call<StatesList>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(call: Call<StatesList>, response: Response<StatesList>) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
+
+    }
+
+    fun getLocal(stateID:String,first: String, after: String?): LiveData<ServicesResponseWrapper<Data>>{
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = userRequestInterface.getLocal(stateID, first, after)
+        request.enqueue(object :Callback<LGA>{
+            override fun onFailure(call: Call<LGA>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(call: Call<LGA>, response: Response<LGA>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -97,28 +138,70 @@ class UserViewModel @Inject constructor(
         return responseLiveData
     }
 
-    private fun onResponseTask(
-        response: Response<Data>,
-        responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>
-    ) {
+//    private fun onResponseTask(
+//        response: Response<Data>,
+//        responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>
+//    ) {
+//        val res = response.body()
+//        Log.i(title, "${response.code()}")
+//        when {
+//            response.code() != 200 -> {
+//                Log.i(title, "errorbody ${response.raw()}")
+//                val a = object : Annotation {}
+//                val converter = retrofit.responseBodyConverter<Data>(
+//                    Data::class.java, arrayOf(a))
+//                val error = converter.convert(response.errorBody()!!)
+//                Log.i(title, "message ${error?.message}")
+//                responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+//            }
+//            res?.token != null -> {
+//                Log.i(title, "token ${res.token}")
+//                responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+//            }
+//            else -> {
+//                Log.i(title, "res $res")
+//                responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
+//            }
+//        }
+//
+//    }
+
+    private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
+        val statusCode = response.code()
         Log.i(title, "${response.code()}")
-        when {
-            response.code() != 200 -> {
+        when(statusCode) {
+            401 -> {
                 Log.i(title, "errorbody ${response.raw()}")
-                val a = object : Annotation {}
-                val converter = retrofit.responseBodyConverter<Data>(Data::class.java, arrayOf(a))
-                val error = converter.convert(response.errorBody()!!)
+                val a = object : Annotation{}
+                val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                    DefaultResponse::class.java, arrayOf(a))
+                val error = converter.convert(response.errorBody())
+                Log.i(title, "message ${error?.message}")
+                responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
+            }
+            in 400..500 ->{
+
+                Log.i(title, "errorbody ${response.raw()}")
+                val a = object : Annotation{}
+                val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                    DefaultResponse::class.java, arrayOf(a))
+                val error = converter.convert(response.errorBody())
                 Log.i(title, "message ${error?.message}")
                 responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
             }
-            res?.token != null -> {
-                Log.i(title, "token ${res.token}")
-                responseLiveData.postValue(ServicesResponseWrapper.Success(res))
-            }
             else -> {
-                Log.i(title, "errors ${response.errorBody()}")
-                responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
+                when{
+                    res?.token != null -> {
+                        Log.i(title, "token ${res.token}")
+                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+                    }
+                    else ->{
+                        Log.i(title, "success ${res}")
+                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+                    }
+                }
+
             }
         }
 

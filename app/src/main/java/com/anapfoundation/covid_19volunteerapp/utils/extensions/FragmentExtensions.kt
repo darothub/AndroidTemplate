@@ -11,21 +11,18 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.navigation.NavDeepLinkBuilder
 import androidx.navigation.NavDeepLinkRequest
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
-import com.anapfoundation.covid_19volunteerapp.model.Data
-import com.anapfoundation.covid_19volunteerapp.model.servicesmodel.ServiceResult
+import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
-import kotlinx.android.synthetic.main.fragment_edit_profile.*
-import kotlinx.android.synthetic.main.fragment_signup.*
+import java.lang.Exception
 
 inline fun Fragment.getName():String{
     return this::class.qualifiedName!!
@@ -103,7 +100,7 @@ inline fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner,
 }
 
 inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
-                            progressBar: ProgressBar?, button: Button?
+                                   progressBar: ProgressBar?, button: Button?
 ): LiveData<Pair<Boolean, Any?>> {
     val result = MutableLiveData<Pair<Boolean, Any?>>()
     val title:String by lazy{
@@ -158,5 +155,53 @@ inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline req
             return@setOnKeyListener true
         }
         return@setOnKeyListener false
+    }
+}
+
+fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistrict:HashMap<String, String>,
+                           states:HashMap<String, String>, userViewModel: UserViewModel
+) {
+    spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        override fun onNothingSelected(parent: AdapterView<*>?) {
+            TODO("Not yet implemented")
+        }
+
+        override fun onItemSelected(
+            parent: AdapterView<*>?,
+            view: View?,
+            position: Int,
+            id: Long
+        ) {
+            lgaAndDistrict.clear()
+            val selectedState = spinnerState.selectedItem
+            val stateID = states.get(selectedState)
+            val request = userViewModel.getLocal(stateID.toString(), "47", "")
+            val response = observeRequest(request, null, null)
+            response.observe(viewLifecycleOwner, Observer {
+                try {
+                    val (bool, result) = it
+                    val res = result as LGA
+                    res.data.associateByTo(lgaAndDistrict, {
+                        it.localGovernment
+                    }, {
+                        "${it.id} ${it.district}"
+                    })
+                    val lga = lgaAndDistrict.keys.sorted()
+                    Log.i("$this", "LGA $lga")
+                    val adapterLga = ArrayAdapter(
+                        requireContext(),
+                        R.layout.support_simple_spinner_dropdown_item,
+                        lga
+                    )
+                    spinnerLGA.adapter = adapterLga
+
+                } catch (e: Exception) {
+
+                }
+            })
+
+
+        }
+
     }
 }

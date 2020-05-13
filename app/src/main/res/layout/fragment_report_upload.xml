@@ -128,13 +128,13 @@
                 android:id="@+id/storyEditText"
                 android:layout_width="match_parent"
                 android:layout_height="150dp"
-                android:gravity="top|left"
                 android:maxLength="250"
+                android:gravity="top|left"
                 android:hint="@string/enter_your_report" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
         <Spinner
             android:id="@+id/reportUploadState"
-            android:layout_height="55dp"
+            android:layout_height="50dp"
             android:background="@drawable/spinner_backgrnd"
             android:gravity="left|center"
             android:hint="@string/states"
@@ -150,33 +150,32 @@
             android:popupTheme="@style/AppThemeActivity"
             app:layout_constraintTop_toBottomOf="@id/reportDetailField"
             />
-<!--        <Spinner-->
-<!--            android:id="@+id/reportUploadLGA"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:background="@drawable/spinner_backgrnd"-->
-<!--            android:layout_height="55dp"-->
-<!--            android:gravity="left|center"-->
-<!--            android:hint="@string/lga"-->
-<!--            android:padding="10dp"-->
-<!--            android:layout_marginLeft="@dimen/normal_margin"-->
-<!--            android:layout_marginRight="@dimen/normal_margin"-->
-<!--            style="@style/CustomEditTextStyle"-->
-<!--            android:textColor="@color/colorPrimaryDark"-->
-<!--            android:textColorHint="@color/colorTextHint"-->
-<!--            android:textSize="16sp"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/reportUploadState"-->
-<!--            />-->
+        <Spinner
+            android:id="@+id/reportUploadLGA"
+            android:layout_width="match_parent"
+            android:background="@drawable/spinner_backgrnd"
+            android:layout_height="50dp"
+            android:gravity="left|center"
+            android:hint="@string/lga"
+            android:padding="10dp"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomEditTextStyle"
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/colorTextHint"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/reportUploadState"
+            />
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/reportUploadTown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
             app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reportUploadState">
+            app:layout_constraintTop_toBottomOf="@id/reportUploadLGA">
 
             <EditText
                 android:id="@+id/reportUploadTownEditText"
@@ -186,7 +185,6 @@
                 android:textColorHint="@color/colorTextHint"
                 android:singleLine="true" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
-
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/suggestion"
             android:layout_width="match_parent"
@@ -203,12 +201,13 @@
                 android:id="@+id/suggestionEditText"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:maxLength="200"
                 android:hint="@string/street_suggestion"
                 android:textColorHint="@color/colorTextHint"
+                android:maxLength="250"
+                android:gravity="top|left"
                 android:singleLine="true" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
-        
+
         <TextView
             android:id="@+id/imageUrlField"
             android:layout_width="match_parent"
@@ -221,13 +220,16 @@
             android:text="@string/image_url"
             app:layout_constraintTop_toBottomOf="@id/suggestion"
             android:textSize="@dimen/smallest_font_size"
+            android:gravity="left|center"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="14sp"
+            android:maxLines="4"
             android:visibility="gone"
             tools:visibility="visible"
             android:focusable="true"
             android:clickable="true"
-            android:maxLines="4"
             android:ellipsize="end"/>
-
 
         <Space
             android:id="@+id/topSpace"
@@ -240,7 +242,7 @@
         <include
             android:id="@+id/reportUploadBottomLayout"
             android:layout_width="match_parent"
-            android:layout_height="180dp"
+            android:layout_height="240dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="@dimen/normal_margin"
             android:layout_marginLeft="@dimen/normal_margin"
