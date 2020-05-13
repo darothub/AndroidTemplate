@@ -158,7 +158,7 @@ class ReportHomeFragment : DaggerFragment() {
                                            val lga =res.data.filter {
                                                it.id == item?.localGovernment
                                            }
-                                           Log.i("LGA", "$lga")
+
 
                                            itemView.reportLocation.text = "${lga[0].localGovernment}, ${state[0].state}"
                                        }
