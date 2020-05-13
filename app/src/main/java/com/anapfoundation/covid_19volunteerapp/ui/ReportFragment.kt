@@ -18,6 +18,7 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report.*
@@ -99,10 +100,10 @@ class ReportFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        bottomNav.setupWithNavController(navController)
+
 
         Log.i(title, "OnActivity")
-        onBackPressed()
+//        onBackPressed()
 
 
     }
@@ -110,7 +111,8 @@ class ReportFragment : DaggerFragment() {
     private fun onBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback {
 
-            logout()
+//            requireContext().toast("Report parent fragment")
+
             showBottomSheet()
 
         }
@@ -121,6 +123,7 @@ class ReportFragment : DaggerFragment() {
         super.onResume()
         //
         Log.i(title, "OnResume")
+        bottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener(uploadListener)
     }
 
@@ -128,7 +131,7 @@ class ReportFragment : DaggerFragment() {
         super.onPause()
         Log.i(title, "OnPause")
         navController.removeOnDestinationChangedListener(uploadListener)
-        onBackPressed()
+
 
     }
 
@@ -146,7 +149,7 @@ class ReportFragment : DaggerFragment() {
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
 
-
+        logout()
 
     }
 

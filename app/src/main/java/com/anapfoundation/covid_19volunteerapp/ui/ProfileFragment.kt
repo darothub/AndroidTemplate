@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,7 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_profile.*
 import java.lang.Exception
@@ -95,6 +97,11 @@ class ProfileFragment : DaggerFragment() {
             }
 
         })
+
+        requireActivity().onBackPressedDispatcher.addCallback {
+            findNavController().navigateUp()
+
+        }
 
 
 

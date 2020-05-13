@@ -3,6 +3,7 @@ package com.anapfoundation.covid_19volunteerapp.utils.extensions
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.net.Uri
 import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
@@ -204,4 +205,10 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
         }
 
     }
+}
+fun Fragment.navigateWithUri(uri: Uri){
+    val request = NavDeepLinkRequest.Builder
+        .fromUri(uri)
+        .build()
+    findNavController().navigate(request)
 }

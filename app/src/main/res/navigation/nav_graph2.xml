@@ -9,7 +9,11 @@
         android:id="@+id/reportHomeFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportHomeFragment"
         android:label="fragment_report_home"
-        tools:layout="@layout/fragment_report_home" />
+        tools:layout="@layout/fragment_report_home">
+        <deepLink
+            android:id="@+id/deepLink3"
+            app:uri="android-app://anapfoundation.navigation/reporthomefrag" />
+    </fragment>
     <fragment
         android:id="@+id/createReportFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.CreateReportFragment"

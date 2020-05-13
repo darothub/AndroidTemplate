@@ -57,5 +57,9 @@
         android:id="@+id/reportFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportFragment"
         android:label="fragment_report"
-        tools:layout="@layout/fragment_report" />
+        tools:layout="@layout/fragment_report">
+        <deepLink
+            android:id="@+id/deepLink2"
+            app:uri="android-app://anapfoundation.navigation/reportfrag" />
+    </fragment>
 </navigation>
