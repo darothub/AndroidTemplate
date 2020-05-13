@@ -29,8 +29,8 @@ class ReportDataFactory @Inject constructor(val authApiRequests: AuthApiRequests
 }
 
 class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):ItemKeyedDataSource<Long, ReportResponse>(){
-    private var first = 20
-    private var after = 0
+    private var first = 10L
+    private var after = 0L
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
@@ -71,13 +71,19 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 when {
 
                     body != null ->  {
-                        after++
-                        responseLiveData.value = ServicesResponseWrapper.Loading(
-                            null,
-                            "Loading..."
-                        )
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(body))
-                        callback.onResult(body.data)
+                        try {
+                            after += body.data.last().index!!
+                            responseLiveData.value = ServicesResponseWrapper.Loading(
+                                null,
+                                "Loading..."
+                            )
+                            responseLiveData.postValue(ServicesResponseWrapper.Success(body))
+//                            callback.onResult(body.data)
+                        }
+                        catch (e:Exception){
+                            Log.e("Paging error", e.localizedMessage)
+                        }
+
                     }
                 }
             }

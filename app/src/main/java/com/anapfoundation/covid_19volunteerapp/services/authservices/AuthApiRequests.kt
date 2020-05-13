@@ -36,8 +36,8 @@ interface AuthApiRequests {
     fun getProfileData(@Header("Authorization") header: String): Call<ProfileData>
 
     @GET("report")
-    fun getReportss(@Header("Authorization") header: String, @Query("first") first: Int,
-                    @Query("after") after: Int?): Call<Reports>
+    fun getReportss(@Header("Authorization") header: String, @Query("first") first: Long,
+                    @Query("after") after: Long?): Call<Reports>
 
     @GET("report")
     fun getReports(@Header("Authorization") header: String): Call<Reports>
