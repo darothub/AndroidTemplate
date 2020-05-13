@@ -181,6 +181,6 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         .build()
 
     fun getReportss():LiveData<PagedList<ReportResponse>>{
-        return LivePagedListBuilder(paging, configPaged(4)).build()
+        return LivePagedListBuilder(paging, configPaged(3)).build()
     }
 }
