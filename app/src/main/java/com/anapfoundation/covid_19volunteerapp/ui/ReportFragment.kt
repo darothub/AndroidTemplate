@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.core.net.toUri
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
@@ -14,11 +15,8 @@ import androidx.navigation.ui.setupWithNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report.*
@@ -69,18 +67,6 @@ class ReportFragment : DaggerFragment() {
 
     private val uploadListener = NavController.OnDestinationChangedListener{controller, destination, arguments ->
         when(destination.id){
-            R.id.reportUploadFragment -> {
-                bottomNav.hide()
-                reportFragmentProgressView1.hide()
-            }
-            R.id.notificationFragment ->{
-                bottomNav.hide()
-                reportFragmentProgressView1.hide()
-            }
-            R.id.reportReviewFragment ->{
-                bottomNav.hide()
-                reportFragmentProgressView1.hide()
-            }
             else -> {
                 bottomNav.show()
                 reportFragmentProgressView1.show()
@@ -103,7 +89,7 @@ class ReportFragment : DaggerFragment() {
 
 
         Log.i(title, "OnActivity")
-//        onBackPressed()
+        onBackPressed()
 
 
     }
@@ -160,7 +146,7 @@ class ReportFragment : DaggerFragment() {
             storageRequest.saveData(user, "loggedOutUser")
             bottomSheetDialog.dismiss()
 //            requireActivity().finishFromChild(activity)
-            findNavController().navigate(R.id.signinFragment)
+            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
         }
 
         noButton.setOnClickListener {

@@ -42,5 +42,20 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         return authApiRequests.getReports(header)
     }
 
+    override fun updateProfile(
+        firstName: String,
+        lastName: String,
+        email: String,
+        phone: String,
+        houseNumber: String,
+        state: String?,
+        street: String,
+        header: String
+    ): Call<ProfileData> {
+        return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, header)
+    }
+
+
+
 
 }

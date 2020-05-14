@@ -98,18 +98,14 @@ class ReportUploadFragment : DaggerFragment() {
         bottomSheetView.imagePreview
     }
     //Get upload button from the included layout
-    val uploadPictureBtn by lazy {
-        bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
-    }
+    lateinit var uploadPictureBtn:Button
 
     val bottomSheetProgressBar by lazy {
         bottomSheetIncludeLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
     //Get submit button from the included layout
-    val submitBtn by lazy {
-        reportUploadBottomLayout.findViewById<Button>(R.id.includeBtn)
-    }
+    lateinit var submitBtn:Button
 
     //Get progress bar button from the included layout
     val progressBar by lazy{
@@ -186,8 +182,9 @@ class ReportUploadFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
-        reportUploadBackButton.setBackButtonNavigation()
         setButtonText()
+        uploadPictureBtn =  bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
+        reportUploadBackButton.setBackButtonNavigation()
         receiveReportFromPreviousScreen()
         getStateAndSendToSpinner()
         addReportRequest()
@@ -196,6 +193,7 @@ class ReportUploadFragment : DaggerFragment() {
         setOnClickEvent(uploadCard, uploadIcon) { showBottomSheet() }
         permissionRequest()
         imagePreview.clipToOutline = true
+
 
     }
 
@@ -269,6 +267,7 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     private fun setButtonText() {
+        submitBtn = reportUploadBottomLayout.findViewById<Button>(R.id.includeBtn)
         submitBtn.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
     }
 

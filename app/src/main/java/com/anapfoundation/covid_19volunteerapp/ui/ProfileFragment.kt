@@ -98,10 +98,6 @@ class ProfileFragment : DaggerFragment() {
 
         })
 
-        requireActivity().onBackPressedDispatcher.addCallback {
-            findNavController().navigateUp()
-
-        }
 
 
 

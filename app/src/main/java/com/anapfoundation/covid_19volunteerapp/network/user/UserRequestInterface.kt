@@ -20,4 +20,6 @@ interface UserRequestInterface {
     fun getStates(first: String, after:String?=""): Call<StatesList>
 
     fun getLocal(stateID:String, first: String, after: String?=""): Call<LGA>
+
+    fun forgotPasswordRequest(email: String):Call<DefaultResponse>
 }

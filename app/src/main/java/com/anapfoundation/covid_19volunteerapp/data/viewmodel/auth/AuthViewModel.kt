@@ -142,37 +142,91 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
         return responseLiveData
     }
 
+    fun updateProfile(
+        firstName: String,
+        lastName: String,
+        email: String,
+        phone: String,
+        houseNumber: String,
+        state: String,
+        street: String,
+        header: String
+    ): LiveData<ServicesResponseWrapper<Data>>{
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = authRequestInterface.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, header)
+        request.enqueue(object : Callback<ProfileData>{
+            override fun onFailure(call: Call<ProfileData>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
+
+            override fun onResponse(
+                call: Call<ProfileData>,
+                response: Response<ProfileData>
+            ) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
+    }
+
     private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
         val statusCode = response.code()
         Log.i(title, "${response.code()}")
+
         when(statusCode) {
+
             401 -> {
-                Log.i(title, "errorbody ${response.raw()}")
-                val a = object : Annotation{}
-                val converter = retrofit.responseBodyConverter<DefaultResponse>(
-                    DefaultResponse::class.java, arrayOf(a))
-                val error = converter.convert(response.errorBody())
-                Log.i(title, "message ${error?.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
+                try {
+                    Log.i(title, "errorbody ${response.raw()}")
+                    val a = object : Annotation{}
+                    val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                        DefaultResponse::class.java, arrayOf(a))
+                    val error = converter.convert(response.errorBody())
+                    Log.i(title, "message ${error?.message}")
+                    responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
+                }
+                catch (e:Exception){
+                    Log.i(title, e.message)
+                }
+
             }
             in 400..500 ->{
+                try {
+                    Log.i(title, "errorbody ${response.raw()}")
+                    val a = object : Annotation{}
+                    val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                        DefaultResponse::class.java, arrayOf(a))
+                    val error = converter.convert(response.errorBody())
+                    Log.i(title, "message ${error?.message}")
+                    responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+                }
+                catch (e:java.lang.Exception){
+                    Log.i(title, e.message)
+                }
 
-                Log.i(title, "errorbody ${response.raw()}")
-                val a = object : Annotation{}
-                val converter = retrofit.responseBodyConverter<DefaultResponse>(
-                    DefaultResponse::class.java, arrayOf(a))
-                val error = converter.convert(response.errorBody())
-                Log.i(title, "message ${error?.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+
             }
             else -> {
-                Log.i(title, "errors ${response.errorBody()}")
-                responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+                try {
+                    Log.i(title, "errors ${response.errorBody()}")
+                    responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+                }catch (e:java.lang.Exception){
+                    Log.i(title, e.message)
+                }
+
+
             }
         }
 
     }
+
+
 
     private fun configPaged(size: Int): PagedList.Config = PagedList.Config.Builder()
         .setPageSize(size)

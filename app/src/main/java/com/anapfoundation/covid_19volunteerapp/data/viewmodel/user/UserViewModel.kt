@@ -137,70 +137,71 @@ class UserViewModel @Inject constructor(
         })
         return responseLiveData
     }
+    fun forgotPasswordRequest(email: String): LiveData<ServicesResponseWrapper<Data>>{
+        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+        responseLiveData.value = ServicesResponseWrapper.Loading(
+            null,
+            "Loading..."
+        )
+        val request = userRequestInterface.forgotPasswordRequest(email)
+        request.enqueue(object :Callback<DefaultResponse>{
+            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            }
 
-//    private fun onResponseTask(
-//        response: Response<Data>,
-//        responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>
-//    ) {
-//        val res = response.body()
-//        Log.i(title, "${response.code()}")
-//        when {
-//            response.code() != 200 -> {
-//                Log.i(title, "errorbody ${response.raw()}")
-//                val a = object : Annotation {}
-//                val converter = retrofit.responseBodyConverter<Data>(
-//                    Data::class.java, arrayOf(a))
-//                val error = converter.convert(response.errorBody()!!)
-//                Log.i(title, "message ${error?.message}")
-//                responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
-//            }
-//            res?.token != null -> {
-//                Log.i(title, "token ${res.token}")
-//                responseLiveData.postValue(ServicesResponseWrapper.Success(res))
-//            }
-//            else -> {
-//                Log.i(title, "res $res")
-//                responseLiveData.postValue(ServicesResponseWrapper.Error(res?.message))
-//            }
-//        }
-//
-//    }
+            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+                onResponseTask(response as Response<Data>, responseLiveData)
+            }
+
+        })
+        return responseLiveData
+    }
 
     private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
         val statusCode = response.code()
         Log.i(title, "${response.code()}")
         when(statusCode) {
+
             401 -> {
-                Log.i(title, "errorbody ${response.raw()}")
-                val a = object : Annotation{}
-                val converter = retrofit.responseBodyConverter<DefaultResponse>(
-                    DefaultResponse::class.java, arrayOf(a))
-                val error = converter.convert(response.errorBody())
-                Log.i(title, "message ${error?.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
+                try {
+                    Log.i(title, "errorbody ${response.raw()}")
+                    val a = object : Annotation{}
+                    val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                        DefaultResponse::class.java, arrayOf(a))
+                    val error = converter.convert(response.errorBody())
+                    Log.i(title, "message ${error?.message}")
+                    responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
+                }
+                catch (e:Exception){
+                    Log.i(title, e.message)
+                }
+
             }
             in 400..500 ->{
+                try {
+                    Log.i(title, "errorbody ${response.raw()}")
+                    val a = object : Annotation{}
+                    val converter = retrofit.responseBodyConverter<DefaultResponse>(
+                        DefaultResponse::class.java, arrayOf(a))
+                    val error = converter.convert(response.errorBody())
+                    Log.i(title, "message ${error?.message}")
+                    responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+                }
+                catch (e:java.lang.Exception){
+                    Log.i(title, e.message)
+                }
 
-                Log.i(title, "errorbody ${response.raw()}")
-                val a = object : Annotation{}
-                val converter = retrofit.responseBodyConverter<DefaultResponse>(
-                    DefaultResponse::class.java, arrayOf(a))
-                val error = converter.convert(response.errorBody())
-                Log.i(title, "message ${error?.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
+
             }
             else -> {
-                when{
-                    res?.token != null -> {
-                        Log.i(title, "token ${res.token}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
-                    }
-                    else ->{
-                        Log.i(title, "success ${res}")
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(res))
-                    }
+                try {
+                    Log.i(title, "errors ${response.errorBody()}")
+                    responseLiveData.postValue(ServicesResponseWrapper.Success(res))
+                }catch (e:java.lang.Exception){
+                    Log.i(title, e.message)
                 }
+
 
             }
         }

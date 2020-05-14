@@ -106,8 +106,6 @@ class ReportHomeFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
 
 
-
-
     }
 
     @SuppressLint("SetTextI18n")
@@ -116,11 +114,11 @@ class ReportHomeFragment : DaggerFragment() {
         Log.i(title, "onResume")
         try {
 
+            Log.i(title, "header $header")
             recyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item){ adapter, context, list ->
 
                 bind { itemView, position, item ->
                     Log.i(title, "report items ${item}")
-                    val observerMediator = MediatorLiveData<TopicResponse>()
                     val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
                     val ratingResponse = observeRequest(ratingRequest, null, null)
                     ratingResponse.observe(viewLifecycleOwner, Observer {
@@ -159,7 +157,6 @@ class ReportHomeFragment : DaggerFragment() {
                                                it.id == item?.localGovernment
                                            }
 
-
                                            itemView.reportLocation.text = "${lga[0].localGovernment}, ${state[0].state}"
                                        }
                                    }
@@ -193,12 +190,6 @@ class ReportHomeFragment : DaggerFragment() {
         }
 
 
-        requireActivity().onBackPressedDispatcher.addCallback {
-
-            showBottomSheet()
-//            requireContext().toast("Home fragment")
-
-        }
     }
 
 
@@ -217,32 +208,7 @@ class ReportHomeFragment : DaggerFragment() {
         super.onDetach()
         Log.i(title, "detached")
     }
-    private fun showBottomSheet() {
 
-        logoutLayout.show()
-        uploadLayout.hide()
-        bottomSheetDialog.setContentView(bottomSheetView)
-        bottomSheetDialog.show()
-
-
-        logout()
-
-    }
-
-    private fun logout(){
-        yesButton.setOnClickListener {
-            val user = storageRequest.checkUser("loggedInUser")
-            user?.loggedIn = false
-            storageRequest.saveData(user, "loggedOutUser")
-            bottomSheetDialog.dismiss()
-            activity?.finish()
-//            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
-        }
-
-        noButton.setOnClickListener {
-            bottomSheetDialog.dismiss()
-        }
-    }
 
 
 }

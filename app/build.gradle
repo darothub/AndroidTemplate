@@ -129,6 +129,7 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    implementation 'com.github.NaimishTrivedi:FBToast:1.0'
 
 
 }

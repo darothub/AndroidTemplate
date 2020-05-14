@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.addCallback
+import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 
@@ -44,10 +45,8 @@ class SignupFragment : DaggerFragment() {
     val progressBar by lazy {
         signupBottom.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
-    val signupBtn by lazy {
-        signupBottom.findViewById<Button>(R.id.includeBtn)
-    }
 
+    lateinit var signupBtn:Button
 
 
 
@@ -75,6 +74,7 @@ class SignupFragment : DaggerFragment() {
 
         passwordCheckAlert()
 
+        signupBtn = signupBottom.findViewById<Button>(R.id.includeBtn)
         signupBtn.setButtonText(requireContext().getLocalisedString(R.string.proceed))
 
         sendSignupRequest()
@@ -93,6 +93,12 @@ class SignupFragment : DaggerFragment() {
                 validateEmailAndPassword(text)
             }
             return@doOnTextChanged
+        }
+//        emailEdit.doOnTextChanged { text, start, count, after ->
+//            emailEdit
+//        }
+        emailEdit.doAfterTextChanged {
+            emailEdit.text.toString().toLowerCase()
         }
     }
 
@@ -142,8 +148,6 @@ class SignupFragment : DaggerFragment() {
 
 
     }
-
-
 
     private fun validateEmailAndPassword(text: CharSequence) {
         val passwordPattern = Regex("""^[a-zA-Z0-9@$!%*#?&]{6,}$""")

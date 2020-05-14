@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
@@ -23,6 +24,7 @@ import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
+import com.tfb.fbtoast.FBCustomToast
 import java.lang.Exception
 
 inline fun Fragment.getName():String{
@@ -48,18 +50,21 @@ inline fun Context.hideKeyboard(view: View) {
 }
 
 inline fun Context.toast(message:String){
-    val toast = Toast.makeText(this, message, Toast.LENGTH_SHORT)
-    toast.setGravity(Gravity.CENTER, 0, 0)
-    val view = toast.view.findViewById<TextView>(android.R.id.message)
-    when {
-        view != null -> {
-            view.gravity = Gravity.CENTER
-            toast.show()
-        }
-        else ->{
-            toast.show()
-        }
+    val toastie = FBCustomToast(this)
+    toastie.setMsg(message)
+    toastie.setIcon(resources.getDrawable(R.drawable.applogo, theme))
+    toastie.setGravity(Gravity.CENTER_VERTICAL)
+
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+        toastie.setBackgroundColor(resources.getColor(R.color.colorNeutral, theme))
+        toastie.setToastMsgColor(resources.getColor(R.color.colorPrimaryDark, theme))
     }
+    else{
+        toastie.setBackgroundColor(resources.getColor(R.color.colorNeutral))
+        toastie.setToastMsgColor(resources.getColor(R.color.colorPrimaryDark))
+    }
+    toastie.show()
+
 }
 
 inline fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateLgaMap:HashMap<String, List<CityClass>> ) {
@@ -110,39 +115,45 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
 
     hideKeyboard()
     request.observe(viewLifecycleOwner, Observer {
-        val responseData = it.data
-        val errorResponse = it.message
-        when (it) {
-            is ServicesResponseWrapper.Loading<*> -> {
-                progressBar?.show()
-                button?.hide()
-                Log.i(title, "Loading..")
-            }
-            is ServicesResponseWrapper.Success -> {
-                progressBar?.hide()
-                button?.show()
-                result.postValue(Pair(true, responseData))
+        try {
+            val responseData = it.data
+            val errorResponse = it.message
+            when (it) {
+                is ServicesResponseWrapper.Loading<*> -> {
+                    progressBar?.show()
+                    button?.hide()
+                    Log.i(title, "Loading..")
+                }
+                is ServicesResponseWrapper.Success -> {
+                    progressBar?.hide()
+                    button?.show()
+                    result.postValue(Pair(true, responseData))
 //                requireContext().toast(requireContext().localized(R.string.successful))
-                Log.i(title, "success ${it.data}")
-            }
-            is ServicesResponseWrapper.Error -> {
-                progressBar?.hide()
-                button?.show()
-                result.postValue(Pair(false, errorResponse))
-                requireContext().toast("$errorResponse")
-                Log.i(title, "Error $errorResponse")
-            }
-            is ServicesResponseWrapper.Logout ->{
-                progressBar?.hide()
-                button?.show()
-                requireContext().toast("$errorResponse")
-                Log.i(title, "Log out $errorResponse")
-                val request = NavDeepLinkRequest.Builder
-                    .fromUri("android-app://anapfoundation.navigation/signin".toUri())
-                    .build()
-                findNavController().navigate(request)
+                    Log.i(title, "success ${it.data}")
+                }
+                is ServicesResponseWrapper.Error -> {
+                    progressBar?.hide()
+                    button?.show()
+                    result.postValue(Pair(false, errorResponse))
+                    requireContext().toast("$errorResponse")
+                    Log.i(title, "Error $errorResponse")
+                }
+                is ServicesResponseWrapper.Logout ->{
+                    progressBar?.hide()
+                    button?.show()
+                    requireContext().toast("$errorResponse")
+                    Log.i(title, "Log out $errorResponse")
+                    val request = NavDeepLinkRequest.Builder
+                        .fromUri("android-app://anapfoundation.navigation/signin".toUri())
+                        .build()
+                    findNavController().navigate(request)
+                }
             }
         }
+        catch (e:Exception){
+            Log.i(title, e.localizedMessage)
+        }
+
     })
 
     return result
@@ -212,3 +223,5 @@ fun Fragment.navigateWithUri(uri: Uri){
         .build()
     findNavController().navigate(request)
 }
+
+

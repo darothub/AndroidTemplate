@@ -26,4 +26,9 @@ interface AuthRequestInterface {
     fun getProfileData(header: String):Call<ProfileData>
 
     fun getReports(header: String):Call<Reports>
+
+    fun updateProfile(
+        firstName:String, lastName:String, email: String, phone: String,
+        houseNumber:String,  state:String?, street: String, header:String
+    ):Call<ProfileData>
 }

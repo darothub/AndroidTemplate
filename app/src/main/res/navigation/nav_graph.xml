@@ -62,4 +62,23 @@
             android:id="@+id/deepLink2"
             app:uri="android-app://anapfoundation.navigation/reportfrag" />
     </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.ResetPasswordFragment"
+        android:label="fragment_reset_password"
+        tools:layout="@layout/fragment_reset_password">
+        <deepLink
+            android:id="@+id/deepLink4"
+            app:uri="www.anapfoundation.com/reset-password?pwt={token}" />
+        <argument
+            android:name="token"
+            android:defaultValue="@null"
+            app:argType="string"
+            app:nullable="true" />
+    </fragment>
 </navigation>

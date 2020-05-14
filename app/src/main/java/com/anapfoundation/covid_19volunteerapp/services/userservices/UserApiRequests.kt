@@ -1,5 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.services.userservices
 
+import android.provider.ContactsContract
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
@@ -41,4 +42,8 @@ interface UserApiRequests {
         @Query("first") first: String,
         @Query("after") after: String?
     ): Call<LGA>
+
+    @POST("forgot-password")
+    @FormUrlEncoded
+    fun forgotPasswordRequest(@Field("email") email: String):Call<DefaultResponse>
 }

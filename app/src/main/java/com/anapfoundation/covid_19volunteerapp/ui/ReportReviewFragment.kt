@@ -62,17 +62,6 @@ class ReportReviewFragment : Fragment() {
             findNavController().popBackStack()
         }
 
-
-        requireActivity().onBackPressedDispatcher.addCallback {
-
-            findNavController().popBackStack()
-
-//            requireContext().toast("Review fragment")
-
-        }
-//
-//        val res = detailsText.split(".").dropLastWhile { it.isEmpty() }.toTypedArray().size - 1
-//        val occ = detailsText.indexOf(".", 100)
         Log.i(title, "OnResume")
         val approveBtn = reviewBottomLayout.findViewById<Button>(R.id.btn)
         approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)

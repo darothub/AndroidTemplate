@@ -24,11 +24,11 @@
         android:id="@+id/includeBtn"
         android:layout_width="match_parent"
         android:layout_height="55dp"
+        android:textAllCaps="false"
         android:background="@drawable/rounded_border_with_backgrnd"
         android:text="@string/do_something"
         app:layout_constraintTop_toTopOf="parent"
         android:textColor="@color/colorNeutral"
-        android:textAllCaps="true"
         android:layout_marginBottom="100dp"
         app:layout_constraintVertical_bias="0.23" />
 

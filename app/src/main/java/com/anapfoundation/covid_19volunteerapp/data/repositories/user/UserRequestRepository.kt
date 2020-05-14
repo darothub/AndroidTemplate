@@ -47,4 +47,8 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
     override fun getLocal(stateID: String, first: String, after: String?): Call<LGA> {
         return userApiRequests.getLGA(stateID,first, after)
     }
+
+    override fun forgotPasswordRequest(email: String): Call<DefaultResponse> {
+        return userApiRequests.forgotPasswordRequest(email)
+    }
 }
