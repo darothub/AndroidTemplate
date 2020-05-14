@@ -52,6 +52,7 @@ interface AuthApiRequests {
         @Field("houseNumber") houseNumber: String?,
         @Field("state") state: String?,
         @Field("street") street: String?,
-        @Header("Authorization") header: String
+        @Field("profile_image_url") profileImageUrl:String?,
+        @Header("Authorization") header: String?
     ): Call<ProfileData>
 }

@@ -92,6 +92,10 @@ class ReportFragment : DaggerFragment() {
         onBackPressed()
 
 
+//        val res = bottomNav.menu.findItem(R.id.createReportFragment)
+//        res.isVisible = false
+
+
     }
 
     private fun onBackPressed() {

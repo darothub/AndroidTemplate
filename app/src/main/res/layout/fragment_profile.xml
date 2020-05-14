@@ -71,7 +71,7 @@
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:background="@drawable/shadow"
-                android:scaleType="fitXY"
+                android:scaleType="centerCrop"
                 android:src="@drawable/ic_person_primary_24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

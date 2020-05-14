@@ -52,7 +52,6 @@ class UserData(
 
     val age: Long? = null,
 
-
     @SerializedName("instagram_profile_username")
     val instagramProfileUsername: String? = null,
 

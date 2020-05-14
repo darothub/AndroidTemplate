@@ -4,13 +4,19 @@ import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.net.Uri
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
+import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.karumi.dexter.Dexter
@@ -20,9 +26,16 @@ import com.karumi.dexter.listener.PermissionGrantedResponse
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
 import com.karumi.dexter.listener.single.PermissionListener
+import kotlinx.android.synthetic.main.fragment_edit_profile.*
+import kotlinx.android.synthetic.main.fragment_report_upload.*
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 inline fun Activity.getName():String{
     return this::class.qualifiedName!!
@@ -83,19 +96,36 @@ fun Context.permissionRequest() {
         }).check()
 }
 
+fun Activity.createImageFile(): Pair<File?, String> {
+    val timeStamp by lazy {
+        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    }
+    lateinit var currentPhotoPath: String
+    // Create an image file name
 
-fun Fragment.dispatchTakePictureIntent(createImageFile:()->File?, REQUEST_TAKE_PHOTO:Int) {
+    val storageDir: File? =
+        this.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val newFile = File.createTempFile(
+        "JPEG_${timeStamp}_", /* prefix */
+        ".jpg", /* suffix */
+        storageDir /* directory */
+    ).apply {
+        // Save a file: path for use with ACTION_VIEW intents
+        currentPhotoPath = absolutePath
+    }
+    return Pair(newFile, currentPhotoPath)
+}
+fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
     //Class title
     val title: String by lazy {
         getName()
     }
-    var photoString = ""
     Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
         // Ensure that there's a camera activity to handle the intent
         takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
             // Create the File where the photo should go
             val photoFile: File? = try {
-                createImageFile()
+                file
 
             } catch (ex: IOException) {
                 // Error occurred while creating the File
@@ -103,7 +133,7 @@ fun Fragment.dispatchTakePictureIntent(createImageFile:()->File?, REQUEST_TAKE_P
                 null
             }
             // Continue only if the File was successfully created
-//                Log.i(title, "File ${createImageFile()}")
+                Log.i(title, "File $file")
             photoFile?.also {
                 val photoURI: Uri = FileProvider.getUriForFile(
                     requireContext(),
@@ -117,6 +147,58 @@ fun Fragment.dispatchTakePictureIntent(createImageFile:()->File?, REQUEST_TAKE_P
 
 
 
+        }
+    }
+}
+
+
+fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, canvas:Canvas, storageRef:StorageReference, imageUrlText:TextView){
+    val timeStamp by lazy {
+        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    }
+    val title:String by lazy{
+        this.getName()
+    }
+    var imageUrl = ""
+
+    val path = path
+    val imageRef = storageRef.child(path)
+
+    imagePreview.draw(canvas)
+
+    val outputStream = ByteArrayOutputStream()
+    capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+    val data = outputStream.toByteArray()
+    val uploadTask = imageRef.putBytes(data)
+
+    uploadTask.addOnFailureListener {
+        // Handle unsuccessful uploads
+        Log.i(title, "Upload not successful")
+    }.addOnSuccessListener {
+        // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+        // ...
+        Log.i(title, "Upload successful")
+    }
+    uploadTask.continueWith { task ->
+        if (!task.isSuccessful) {
+            task.exception?.let {
+                throw it
+            }
+        }
+        imageRef.downloadUrl
+    }.addOnCompleteListener { task ->
+        if (task.isSuccessful) {
+            val downloadUri = task.result
+            downloadUri?.addOnSuccessListener {url ->
+                imageUrl = url.toString()
+                Log.i(title, "url $url")
+                imageUrlText.append(imageUrl)
+                imageUrlText.show()
+
+            }
+
+        } else {
+            Log.i(title, "uri: No url")
         }
     }
 }

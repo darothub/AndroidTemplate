@@ -1,15 +1,16 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.ProgressBar
+import android.widget.*
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -26,12 +27,23 @@ import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.storage.FirebaseStorage
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_address.*
 import kotlinx.android.synthetic.main.fragment_edit_profile.*
+import kotlinx.android.synthetic.main.fragment_report_upload.*
 import kotlinx.android.synthetic.main.fragment_signin.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
+import java.io.FileNotFoundException
 import java.lang.Exception
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -46,6 +58,9 @@ class EditProfileFragment : DaggerFragment() {
     val REQUEST_TAKE_PHOTO = 1
     val REQUEST_FROM_GALLERY = 0
 
+    val bottomSheetDialog by lazy {
+        BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
+    }
     //inflate bottomSheetView
     val bottomSheetView by lazy {
         LayoutInflater.from(requireContext()).inflate(
@@ -68,6 +83,19 @@ class EditProfileFragment : DaggerFragment() {
 
     val imagePreview by lazy {
         bottomSheetView.imagePreview
+    }
+    val capture by lazy {
+        Bitmap.createBitmap(cameraIcon.width, cameraIcon.height, Bitmap.Config.ARGB_8888)
+    }
+    val canvas by lazy {
+        Canvas(capture)
+    }
+
+    val firebaseStorage by lazy {
+        FirebaseStorage.getInstance()
+    }
+    val storageRef by lazy {
+        firebaseStorage.reference
     }
     val states = hashMapOf<String, String>()
     val lgaAndDistrict = hashMapOf<String, String>()
@@ -101,6 +129,19 @@ class EditProfileFragment : DaggerFragment() {
     val progressBar by lazy {
         editProfileBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
+    val bottomSheetProgressBar by lazy {
+        bottomSheetIncludeLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
+    }
+
+    val imageFileAndPath by lazy {
+        requireActivity().createImageFile()
+    }
+
+    val timeStamp by lazy {
+        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+    }
+    //Get upload button from the included layout
+    lateinit var uploadPictureBtn:Button
 
     lateinit var updateBtn:Button
     override fun onCreateView(
@@ -161,10 +202,24 @@ class EditProfileFragment : DaggerFragment() {
         updateBtn.setOnClickListener {
             updateProfileRequest()
         }
-
+        camerPermissionRequest()
 
         initEnterKeyToSubmitForm(editInfoStreetEditText) { updateProfileRequest()}
 
+        uploadPictureBtn =  bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
+
+        cameraIcon.setOnClickListener {
+            dispatchTakePictureIntent(imageFileAndPath.first, REQUEST_TAKE_PHOTO)
+        }
+        galleryIcon.setOnClickListener {
+
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            val mimeTypes = arrayOf("image/jpeg", "image/png")
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            startActivityForResult(intent, REQUEST_FROM_GALLERY)
+        }
+        imagePreview.clipToOutline = true
     }
 
     private fun camerPermissionRequest(){
@@ -174,77 +229,54 @@ class EditProfileFragment : DaggerFragment() {
     }
 
     private fun showBottomSheet() {
-        TODO("Not yet implemented")
-    }
+        val fullName = "${editInfoFNameEditText.text}_${editInfoLNameEditText.text}"
+        val path = "images/profile_$fullName _$timeStamp" + "_.jpg"
 
-    private fun updateProfileRequest() {
+        uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
 
-        var validation:String?=""
-        val firstName = editInfoFNameEditText.text.toString().trim()
-        val lastName = editInfoLNameEditText.text.toString().trim()
-        val emailAddress = editInfoEmailEditText.text.toString().trim().toLowerCase()
-        val phoneNumber = editInfoPhoneEditText.text.toString().trim()
-        val houseNumber = editInfoHouseNoEditText.text.toString().trim()
-        val stateSeletcted = editInfoStateSpinner.selectedItem
-        val state = states.get(stateSeletcted)
-        val street = editInfoStreetEditText.text.toString().trim()
+        bottomSheetDialog.setContentView(bottomSheetView)
+        bottomSheetDialog.show()
 
+        uploadPictureBtn.setOnClickListener {
 
-        val checkForEmpty =
-            IsEmptyCheck(editInfoFNameEditText, editInfoLNameEditText)
-        if(emailAddress.isNotEmpty()){
-            validation = IsEmptyCheck.fieldsValidation(emailAddress, null)
-        }
-        else{
-            validation = null
-        }
-
-        when {
-            checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} is empty")
+            bottomSheetProgressBar.show()
+            uploadPictureBtn.hide()
+            uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlText)
+            CoroutineScope(Dispatchers.Main).launch {
+                delay(3000)
+                bottomSheetProgressBar.hide()
+                uploadPictureBtn.show()
+                bottomSheetDialog.dismiss()
             }
-            validation != null -> requireActivity().toast("email is invalid")
-            else -> {
-                val updateProfileRequest = authViewModel.updateProfile(
-                    firstName,
-                    lastName,
-                    emailAddress,
-                    phoneNumber,
-                    houseNumber,
-                    state as String,
-                    street,
-                    header
-                )
-                val response = observeRequest(updateProfileRequest, progressBar, updateBtn)
-                response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-                    val (bool, result) = it
-                    onRequestResponseTask(
-                        bool,
-                        result
-                    )
-                })
 
-            }
-        }
-
-
-    }
-
-    private fun onRequestResponseTask(
-        bool: Boolean,
-        result: Any?
-    ) {
-        when (bool) {
-            true -> {
-                val res = result as ProfileData
-                requireContext().toast(requireContext().getLocalisedString(R.string.profile_updated))
-                findNavController().navigate(R.id.editProfileFragment)
-                Log.i(title, "result of registration ${res.data.firstName}")
-            }
-            else -> Log.i(title, "error $result")
+//            findNavController().navigate(R.id.reportUploadFragment)
         }
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as Bitmap
+            Log.i(title, "data $data")
+            bottomSheetDialog.show()
+            imagePreview.setImageBitmap(imageBitmap)
+            imagePreview.show()
+
+        }
+        else if (requestCode == REQUEST_FROM_GALLERY && resultCode == Activity.RESULT_OK) {
+            try {
+                val imageUri = data!!.data
+                imagePreview.setImageURI(imageUri)
+                imagePreview.show()
+
+            } catch (e: FileNotFoundException) {
+                e.printStackTrace()
+                Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+
+
+
     private fun getStateAndSendToSpinner() {
         val stateData = getStates("37", "")
         stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
@@ -289,6 +321,77 @@ class EditProfileFragment : DaggerFragment() {
 
         setLGASpinner(editInfoStateSpinner, editInfoLGASpinner, lgaAndDistrict, states, userViewModel)
 //        Log.i(title, "states $states")
+    }
+    private fun updateProfileRequest() {
+
+        var validation:String?=""
+        val firstName = editInfoFNameEditText.text.toString().trim()
+        val lastName = editInfoLNameEditText.text.toString().trim()
+        val emailAddress = editInfoEmailEditText.text.toString().trim().toLowerCase()
+        val phoneNumber = editInfoPhoneEditText.text.toString().trim()
+        val houseNumber = editInfoHouseNoEditText.text.toString().trim()
+        val stateSeletcted = editInfoStateSpinner.selectedItem
+        val state = states.get(stateSeletcted)
+        val street = editInfoStreetEditText.text.toString().trim()
+        val imageText = imageUrlText.text.toString()
+        val profileImageUrl = imageText.subSequence(10, imageText.length).toString()
+
+
+        val checkForEmpty =
+            IsEmptyCheck(editInfoFNameEditText, editInfoLNameEditText)
+        if(emailAddress.isNotEmpty()){
+            validation = IsEmptyCheck.fieldsValidation(emailAddress, null)
+        }
+        else{
+            validation = null
+        }
+
+        when {
+            checkForEmpty != null -> {
+                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
+                requireActivity().toast("${checkForEmpty.hint} is empty")
+            }
+            validation != null -> requireActivity().toast("email is invalid")
+            else -> {
+                val updateProfileRequest = authViewModel.updateProfile(
+                    firstName,
+                    lastName,
+                    emailAddress,
+                    phoneNumber,
+                    houseNumber,
+                    state as String,
+                    street,
+                    profileImageUrl,
+                    header
+                )
+                val response = observeRequest(updateProfileRequest, progressBar, updateBtn)
+                response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                    val (bool, result) = it
+                    onRequestResponseTask(
+                        bool,
+                        result
+                    )
+                })
+
+            }
+        }
+
+
+    }
+
+    private fun onRequestResponseTask(
+        bool: Boolean,
+        result: Any?
+    ) {
+        when (bool) {
+            true -> {
+                val res = result as ProfileData
+                requireContext().toast(requireContext().getLocalisedString(R.string.profile_updated))
+                findNavController().navigate(R.id.profileFragment)
+                Log.i(title, "result of registration ${res.data.firstName}")
+            }
+            else -> Log.i(title, "error $result")
+        }
     }
 
 }

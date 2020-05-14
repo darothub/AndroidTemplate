@@ -50,10 +50,11 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         phone: String,
         houseNumber: String,
         state: String?,
-        street: String,
+        street: String?,
+        profileImageUrl:String?,
         header: String
     ): Call<ProfileData> {
-        return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, header)
+        return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, profileImageUrl, header)
     }
 
 

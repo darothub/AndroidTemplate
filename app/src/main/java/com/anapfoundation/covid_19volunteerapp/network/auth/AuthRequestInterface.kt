@@ -30,6 +30,6 @@ interface AuthRequestInterface {
 
     fun updateProfile(
         firstName:String, lastName:String, email: String, phone: String,
-        houseNumber:String,  state:String?, street: String, header:String
+        houseNumber:String,  state:String?, street: String?, profileImageUrl:String?, header:String
     ):Call<ProfileData>
 }

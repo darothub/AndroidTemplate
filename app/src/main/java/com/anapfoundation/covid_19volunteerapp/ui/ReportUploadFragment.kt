@@ -144,7 +144,6 @@ class ReportUploadFragment : DaggerFragment() {
     }
     var imageUrl = ""
 
-    var imagePicker = "false"
 
 
     @Inject
@@ -329,12 +328,10 @@ class ReportUploadFragment : DaggerFragment() {
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
         cameraIcon.setOnClickListener {
-            imagePicker = "camera"
             dispatchTakePictureIntent()
         }
         galleryIcon.setOnClickListener {
 
-            imagePicker = "gallery"
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             val mimeTypes = arrayOf("image/jpeg", "image/png")
@@ -462,17 +459,13 @@ class ReportUploadFragment : DaggerFragment() {
     private fun uploadReportImage() {
         val state = reportUploadState.selectedItem
         val path = "images/report_$state _$timeStamp" + "_.jpg"
-
-        Log.i(title, "ImagePicker $imagePicker")
-
+        val imageRef = storageRef.child(path)
 
         imagePreview.draw(canvas)
-
 
         val outputStream = ByteArrayOutputStream()
         capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         val data = outputStream.toByteArray()
-        val imageRef = storageRef.child(path)
 
         val uploadTask = imageRef.putBytes(data)
 

@@ -47,7 +47,6 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 when {
 
                     body != null ->  {
-                        after++
                         responseLiveData.postValue(ServicesResponseWrapper.Success(body))
                         callback.onResult(body.data)
                     }
@@ -76,8 +75,7 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                                 null,
                                 "Loading..."
                             )
-                            responseLiveData.postValue(ServicesResponseWrapper.Success(body))
-                            callback.onResult(body.data)
+//                            callback.onResult(body.data)
                         }
                         catch (e:Exception){
                             Log.e("Paging error", e.localizedMessage)
