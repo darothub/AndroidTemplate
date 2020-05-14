@@ -3,6 +3,7 @@ package com.anapfoundation.covid_19volunteerapp.data.repositories.auth
 import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
@@ -21,7 +22,7 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         district:String?,
         town:String?,
         header: String
-    ): Call<DefaultResponse> {
+    ): Call<AddReportResponse> {
         return authApiRequests.addReport(topic, rating, story, state, mediaURL, localGovernment, district, town, header)
     }
 

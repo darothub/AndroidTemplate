@@ -136,7 +136,7 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
                     button?.show()
                     result.postValue(Pair(false, errorResponse))
                     requireContext().toast("$errorResponse")
-                    Log.i(title, "Error $errorResponse")
+                    Log.i(title, "Error ${it.message}")
                 }
                 is ServicesResponseWrapper.Logout ->{
                     progressBar?.hide()
@@ -222,6 +222,16 @@ fun Fragment.navigateWithUri(uri: Uri){
         .fromUri(uri)
         .build()
     findNavController().navigate(request)
+}
+
+//Event listener for upload card or upload forward icon
+fun setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
+    for (view in views) {
+        view.setOnClickListener {
+            action()
+        }
+    }
+
 }
 
 

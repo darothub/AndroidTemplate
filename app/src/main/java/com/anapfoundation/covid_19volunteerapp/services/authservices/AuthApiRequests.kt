@@ -3,6 +3,7 @@ package com.anapfoundation.covid_19volunteerapp.services.authservices
 import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import retrofit2.Call
 import retrofit2.http.*
@@ -20,7 +21,7 @@ interface AuthApiRequests {
         @Field("district") district:String?,
         @Field("town") street: String?,
         @Header("Authorization") header: String
-    ): Call<DefaultResponse>
+    ): Call<AddReportResponse>
 
     @GET("topics")
     fun getTopic(@Header("Authorization") header: String): Call<TopicResponse>

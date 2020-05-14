@@ -248,7 +248,11 @@ class ReportUploadFragment : DaggerFragment() {
                 Log.i(title, "message ${result.message}")
                 findNavController().navigate(R.id.reportHomeFragment)
             }
-            else -> Log.i(title, "error $result")
+            false ->{
+                val res = result
+                Log.i(title, "error $res")
+            }
+
         }
     }
 
@@ -453,7 +457,6 @@ class ReportUploadFragment : DaggerFragment() {
 
             }
         }
-        galleryAddPic()
     }
 
     private fun uploadReportImage() {

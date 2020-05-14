@@ -30,6 +30,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_address.*
 import kotlinx.android.synthetic.main.fragment_edit_profile.*
 import kotlinx.android.synthetic.main.fragment_signin.*
+import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -41,8 +42,32 @@ class EditProfileFragment : DaggerFragment() {
     val title: String by lazy {
         getName()
     }
-    val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
-        requireActivity().readCitiesAndLgaData()
+
+    val REQUEST_TAKE_PHOTO = 1
+    val REQUEST_FROM_GALLERY = 0
+
+    //inflate bottomSheetView
+    val bottomSheetView by lazy {
+        LayoutInflater.from(requireContext()).inflate(
+            R.layout.layout_upload_gallery,
+            requireActivity().findViewById(R.id.uploadBottomSheetContainer)
+        )
+    }
+    //Get included layout in the parent layout/* layout.fragment_report_upload */
+    val bottomSheetIncludeLayout by lazy {
+        bottomSheetView.findViewById<View>(R.id.galleryBottomSheet)
+    }
+
+    val cameraIcon by lazy {
+        bottomSheetView.cameraIcon
+    }
+
+    val galleryIcon by lazy {
+        bottomSheetView.galleryIcon
+    }
+
+    val imagePreview by lazy {
+        bottomSheetView.imagePreview
     }
     val states = hashMapOf<String, String>()
     val lgaAndDistrict = hashMapOf<String, String>()
@@ -140,6 +165,16 @@ class EditProfileFragment : DaggerFragment() {
 
         initEnterKeyToSubmitForm(editInfoStreetEditText) { updateProfileRequest()}
 
+    }
+
+    private fun camerPermissionRequest(){
+        requireContext().permissionRequest()
+        setOnClickEventForPicture(editInfoUploadCard, moreIcon){ showBottomSheet() }
+
+    }
+
+    private fun showBottomSheet() {
+        TODO("Not yet implemented")
     }
 
     private fun updateProfileRequest() {

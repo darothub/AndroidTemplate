@@ -12,6 +12,7 @@ import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
@@ -43,12 +44,12 @@ class AuthViewModel @Inject constructor (val authRequestInterface: AuthRequestIn
             "Loading..."
         )
         val request = authRequestInterface.addReport(topic, rating, story, state, mediaURL, localGovernment, district, town, header)
-        request.enqueue(object:Callback<DefaultResponse>{
-            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+        request.enqueue(object:Callback<AddReportResponse>{
+            override fun onFailure(call: Call<AddReportResponse>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
             }
 
-            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+            override fun onResponse(call: Call<AddReportResponse>, response: Response<AddReportResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
