@@ -6,7 +6,8 @@ import java.io.Serializable
 class DefaultResponse (
     message: String?,
     error: AnotherError?,
-    token: String?
+    token: String?,
+    val data:String?
 ): Data(message, error, token), Serializable
 
 class AnotherError()

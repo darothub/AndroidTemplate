@@ -1,7 +1,9 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -20,6 +22,11 @@ class MainActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        Log.i(title, "backpressed")
     }
 }
 

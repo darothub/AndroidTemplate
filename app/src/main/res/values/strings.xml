@@ -126,6 +126,10 @@
     <string name="placeholder_dash">_ _</string>
     <string name="image_url">Image url: </string>
     <string name="street_suggestion">Suggestion</string>
+    <string name="profile_updated">Profile has been updated successfully</string>
+    <string name="update_profile">Update</string>
+    <string name="forgot_password2">Forgot password</string>
+    <string name="reset_password">Reset password</string>
 
 
 </resources>

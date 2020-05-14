@@ -43,7 +43,7 @@
             />
         <ImageView
             android:id="@+id/imagePreview"
-            android:layout_width="250dp"
+            android:layout_width="100dp"
             android:layout_height="100dp"
             app:layout_constraintStart_toStartOf="@id/cameraIcon"
             app:layout_constraintEnd_toEndOf="@id/galleryIcon"
@@ -53,7 +53,7 @@
             android:src="@drawable/healthpic"
             android:visibility="gone"
             android:background="@drawable/shadow"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
            android:layout_margin="15dp"/>
 
         <include

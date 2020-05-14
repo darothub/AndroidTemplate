@@ -68,13 +68,6 @@ class NotificationFragment : Fragment() {
 //            requireContext().toast("listSize ${list?.size}")
         }
 
-        requireActivity().onBackPressedDispatcher.addCallback {
-
-            findNavController().popBackStack()
-
-//            requireContext().toast("Notification fragment")
-
-        }
     }
 
     override fun onStart() {

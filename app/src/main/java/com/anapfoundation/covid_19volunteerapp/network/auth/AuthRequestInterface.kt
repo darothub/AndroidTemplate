@@ -3,6 +3,7 @@ package com.anapfoundation.covid_19volunteerapp.network.auth
 import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import retrofit2.Call
@@ -17,7 +18,7 @@ interface AuthRequestInterface {
                   localGovernment:String?,
                   district:String?,
                   town:String?,
-                  header:String): Call<DefaultResponse>
+                  header:String): Call<AddReportResponse>
 
     fun getTopic(header: String): Call<TopicResponse>
 
@@ -26,4 +27,9 @@ interface AuthRequestInterface {
     fun getProfileData(header: String):Call<ProfileData>
 
     fun getReports(header: String):Call<Reports>
+
+    fun updateProfile(
+        firstName:String, lastName:String, email: String, phone: String,
+        houseNumber:String,  state:String?, street: String?, profileImageUrl:String?, header:String
+    ):Call<ProfileData>
 }

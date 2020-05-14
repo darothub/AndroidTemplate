@@ -51,9 +51,8 @@ class SigninFragment : DaggerFragment() {
     private val progressBar by lazy {
         signinBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
-    private val signinBtn by lazy {
-        signinBottomLayout.findViewById<Button>(R.id.includeBtn)
-    }
+
+    lateinit var signinBtn:Button
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
@@ -80,34 +79,50 @@ class SigninFragment : DaggerFragment() {
 
 
 
-
     }
 
     override fun onResume() {
         super.onResume()
-
+        signinBtn = signinBottomLayout.findViewById<Button>(R.id.includeBtn)
+        Log.i(title, "onResume")
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
         submitLoginRequest()
+        setButtonText()
     }
 
     override fun onPause() {
         super.onPause()
         Log.i(title, "onpause")
+//        setButtonText()
+
     }
 
 
+    override fun onStop() {
+        super.onStop()
+        Log.i(title, "onStop")
+//        setButtonText()
+    }
     override fun onStart() {
         super.onStart()
         Log.i(title, "onStart")
         setupSignUpLink()
 
         checkForReturninUser()
-        signinBtn.setButtonText(requireContext().getLocalisedString(R.string.signin_text))
+//        setButtonText()
 
         requireActivity().onBackPressedDispatcher.addCallback {
             requireActivity().finish()
 
         }
+        forgotPassword.setOnClickListener {
+            findNavController().navigate(R.id.forgotPasswordFragment)
+        }
+    }
+
+
+    private fun setButtonText() {
+        signinBtn.setButtonText(requireContext().getLocalisedString(R.string.signin_text))
     }
 
     override fun onDetach() {
@@ -182,20 +197,14 @@ class SigninFragment : DaggerFragment() {
         when (bool) {
             true -> {
                 val res = result as DefaultResponse
-                var userExist = storageRequest.checkUser(emailAddress)
-                if (userExist != null) {
-                    userExist?.loggedIn = true
-                    userExist?.token = res.token
-                } else {
-                    userExist = User(
-                        "Not found", "Not found",
-                        emailAddress, passwordString, "Not found"
-                    )
-                }
-                requireContext().toast(requireContext().getLocalisedString(R.string.successful))
-                userExist?.rememberPassword = signinCheckbox.isChecked
+                var userExist = User(null, null, null, null, null)
+                userExist.loggedIn = true
+                userExist.token = res.token
+
+                userExist.rememberPassword = signinCheckbox.isChecked
                 storageRequest.saveData(userExist, emailAddress)
                 storageRequest.saveData(userExist, "loggedInUser")
+                requireContext().toast(requireContext().getLocalisedString(R.string.successful))
                 Log.i("UserExist", "${userExist}")
                 Log.i(title, "message ${result.token}")
                 navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())

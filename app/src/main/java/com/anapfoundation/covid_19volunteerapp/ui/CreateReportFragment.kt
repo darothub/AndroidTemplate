@@ -104,14 +104,6 @@ class CreateReportFragment : DaggerFragment() {
 
 
 
-        requireActivity().onBackPressedDispatcher.addCallback {
-
-//            showBottomSheet()
-            findNavController().navigateUp()
-//            requireContext().toast("Create report fragment")
-
-        }
-
     }
 
     override fun onResume() {

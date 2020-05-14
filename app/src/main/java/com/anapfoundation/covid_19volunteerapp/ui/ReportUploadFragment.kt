@@ -98,18 +98,14 @@ class ReportUploadFragment : DaggerFragment() {
         bottomSheetView.imagePreview
     }
     //Get upload button from the included layout
-    val uploadPictureBtn by lazy {
-        bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
-    }
+    lateinit var uploadPictureBtn:Button
 
     val bottomSheetProgressBar by lazy {
         bottomSheetIncludeLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
     //Get submit button from the included layout
-    val submitBtn by lazy {
-        reportUploadBottomLayout.findViewById<Button>(R.id.includeBtn)
-    }
+    lateinit var submitBtn:Button
 
     //Get progress bar button from the included layout
     val progressBar by lazy{
@@ -148,7 +144,6 @@ class ReportUploadFragment : DaggerFragment() {
     }
     var imageUrl = ""
 
-    var imagePicker = "false"
 
 
     @Inject
@@ -186,8 +181,9 @@ class ReportUploadFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
-        reportUploadBackButton.setBackButtonNavigation()
         setButtonText()
+        uploadPictureBtn =  bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
+        reportUploadBackButton.setBackButtonNavigation()
         receiveReportFromPreviousScreen()
         getStateAndSendToSpinner()
         addReportRequest()
@@ -196,6 +192,7 @@ class ReportUploadFragment : DaggerFragment() {
         setOnClickEvent(uploadCard, uploadIcon) { showBottomSheet() }
         permissionRequest()
         imagePreview.clipToOutline = true
+
 
     }
 
@@ -250,7 +247,11 @@ class ReportUploadFragment : DaggerFragment() {
                 Log.i(title, "message ${result.message}")
                 findNavController().navigate(R.id.reportHomeFragment)
             }
-            else -> Log.i(title, "error $result")
+            false ->{
+                val res = result
+                Log.i(title, "error $res")
+            }
+
         }
     }
 
@@ -269,6 +270,7 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     private fun setButtonText() {
+        submitBtn = reportUploadBottomLayout.findViewById<Button>(R.id.includeBtn)
         submitBtn.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
     }
 
@@ -326,12 +328,10 @@ class ReportUploadFragment : DaggerFragment() {
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
         cameraIcon.setOnClickListener {
-            imagePicker = "camera"
             dispatchTakePictureIntent()
         }
         galleryIcon.setOnClickListener {
 
-            imagePicker = "gallery"
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             val mimeTypes = arrayOf("image/jpeg", "image/png")
@@ -454,23 +454,18 @@ class ReportUploadFragment : DaggerFragment() {
 
             }
         }
-        galleryAddPic()
     }
 
     private fun uploadReportImage() {
         val state = reportUploadState.selectedItem
         val path = "images/report_$state _$timeStamp" + "_.jpg"
-
-        Log.i(title, "ImagePicker $imagePicker")
-
+        val imageRef = storageRef.child(path)
 
         imagePreview.draw(canvas)
-
 
         val outputStream = ByteArrayOutputStream()
         capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         val data = outputStream.toByteArray()
-        val imageRef = storageRef.child(path)
 
         val uploadTask = imageRef.putBytes(data)
 

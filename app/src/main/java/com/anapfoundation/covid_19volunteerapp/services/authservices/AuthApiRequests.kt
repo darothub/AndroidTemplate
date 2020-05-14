@@ -3,13 +3,13 @@ package com.anapfoundation.covid_19volunteerapp.services.authservices
 import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
-import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
+import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import retrofit2.Call
 import retrofit2.http.*
 
 interface AuthApiRequests {
-    @POST("report")
+    @POST("reports")
     @FormUrlEncoded
     fun addReport(
         @Field("topic") topic: String,
@@ -21,7 +21,7 @@ interface AuthApiRequests {
         @Field("district") district:String?,
         @Field("town") street: String?,
         @Header("Authorization") header: String
-    ): Call<DefaultResponse>
+    ): Call<AddReportResponse>
 
     @GET("topics")
     fun getTopic(@Header("Authorization") header: String): Call<TopicResponse>
@@ -35,10 +35,24 @@ interface AuthApiRequests {
     @GET("me")
     fun getProfileData(@Header("Authorization") header: String): Call<ProfileData>
 
-    @GET("report")
-    fun getReportss(@Header("Authorization") header: String, @Query("first") first: Long,
+    @GET("reports")
+    fun getReportss(@Header("Authorization") header: String, @Query("first") first: Long?,
                     @Query("after") after: Long?): Call<Reports>
 
-    @GET("report")
+    @GET("reports")
     fun getReports(@Header("Authorization") header: String): Call<Reports>
+
+    @POST("me")
+    @FormUrlEncoded
+    fun updateProfile(
+        @Field("firstName") firstName: String,
+        @Field("lastName") lastName: String,
+        @Field("email") email: String,
+        @Field("phone") phone: String,
+        @Field("houseNumber") houseNumber: String?,
+        @Field("state") state: String?,
+        @Field("street") street: String?,
+        @Field("profile_image_url") profileImageUrl:String?,
+        @Header("Authorization") header: String?
+    ): Call<ProfileData>
 }

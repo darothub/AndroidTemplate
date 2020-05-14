@@ -1,6 +1,8 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -21,6 +23,7 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
+import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_profile.*
 import java.lang.Exception
@@ -77,14 +80,22 @@ class ProfileFragment : DaggerFragment() {
             try {
                 when(bool){
                     true ->{
+                        val imagePlaceholder:Drawable
+                        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+                            imagePlaceholder = resources.getDrawable(R.drawable.ic_person_primary_24dp, requireContext().theme)
+                        }
+                        else{
+                            imagePlaceholder = resources.getDrawable(R.drawable.ic_person_primary_24dp)
+                        }
+
                         val res = result as ProfileData
                         val user = res.data
                         profileName.text = "${user.lastName.capitalize()} ${user.firstName.capitalize()}"
                         profileEmail.text = "${user.email}"
                         profileAddress.text = "${user.houseNumber} ${user.street} ${user.state}"
                         profileUploadNumber.text = "${user.totalReports}"
-
-                        Log.i(title, "name ${user.firstName}")
+                        Picasso.get().load(user.profileImageURL).placeholder(imagePlaceholder).into(profileImage)
+                        Log.i(title, "name ${user.profileImageURL}")
 
                     }
                     false ->{
@@ -98,10 +109,6 @@ class ProfileFragment : DaggerFragment() {
 
         })
 
-        requireActivity().onBackPressedDispatcher.addCallback {
-            findNavController().navigateUp()
-
-        }
 
 
 

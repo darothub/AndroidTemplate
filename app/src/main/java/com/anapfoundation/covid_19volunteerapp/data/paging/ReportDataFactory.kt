@@ -13,7 +13,6 @@ import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequ
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
 import javax.inject.Inject
 
 
@@ -48,7 +47,6 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 when {
 
                     body != null ->  {
-                        after++
                         responseLiveData.postValue(ServicesResponseWrapper.Success(body))
                         callback.onResult(body.data)
                     }
@@ -59,7 +57,7 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
-        val request = authApiRequests.getReportss(header, first, after)
+        val request = authApiRequests.getReportss(header, 1, 0)
         request.enqueue(object : Callback<Reports>{
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
@@ -72,12 +70,11 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
 
                     body != null ->  {
                         try {
-                            after += body.data.last().index!!
+                            after++
                             responseLiveData.value = ServicesResponseWrapper.Loading(
                                 null,
                                 "Loading..."
                             )
-                            responseLiveData.postValue(ServicesResponseWrapper.Success(body))
 //                            callback.onResult(body.data)
                         }
                         catch (e:Exception){
