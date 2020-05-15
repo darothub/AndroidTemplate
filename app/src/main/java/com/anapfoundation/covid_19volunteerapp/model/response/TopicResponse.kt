@@ -15,7 +15,9 @@ data class Topic (
     val id: String,
     val index: Long,
     val topic: String,
-    val rating:String?=null,
+    val rating:String?="",
+    @SerializedName("topic_id")
+    val topicID:String?="",
 
     @SerializedName("created_at")
     val createdAt: String,

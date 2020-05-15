@@ -13,6 +13,9 @@
         <deepLink
             android:id="@+id/deepLink3"
             app:uri="android-app://anapfoundation.navigation/reporthomefrag" />
+        <action
+            android:id="@+id/toSingleReportScreen"
+            app:destination="@id/toSingleReportScreen" />
     </fragment>
     <fragment
         android:id="@+id/createReportFragment"
@@ -51,13 +54,34 @@
         android:label="fragment_edit_profile"
         tools:layout="@layout/fragment_edit_profile" />
     <fragment
-        android:id="@+id/reportReviewFragment"
-        android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportReviewFragment"
-        android:label="fragment_report_review"
-        tools:layout="@layout/fragment_report_review" />
-    <fragment
-        android:id="@+id/singleReportFragment"
+        android:id="@+id/toSingleReportScreen"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.SingleReportFragment"
         android:label="fragment_single_report"
-        tools:layout="@layout/fragment_single_report" />
+        tools:layout="@layout/fragment_single_report" >
+        <argument
+            android:name="singleReport"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewerScreenFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.ReviewerScreenFragment"
+        android:label="fragment_reviewer_screen"
+        tools:layout="@layout/fragment_reviewer_screen" >
+        <action
+            android:id="@+id/toApprovalFragment"
+            app:destination="@id/reportApprovalFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/reportApprovalFragment"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.ReportApprovalFragment"
+        android:label="fragment_report_approval"
+        tools:layout="@layout/fragment_report_approval" >
+        <argument
+            android:name="singleReport"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 </navigation>

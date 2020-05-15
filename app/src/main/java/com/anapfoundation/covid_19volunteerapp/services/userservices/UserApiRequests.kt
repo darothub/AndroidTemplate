@@ -3,6 +3,7 @@ package com.anapfoundation.covid_19volunteerapp.services.userservices
 import android.provider.ContactsContract
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import retrofit2.Call
 import retrofit2.http.*
@@ -46,4 +47,12 @@ interface UserApiRequests {
     @POST("forgot-password")
     @FormUrlEncoded
     fun forgotPasswordRequest(@Field("email") email: String):Call<DefaultResponse>
+
+    @GET("states/{stateID}")
+    fun getSingleState(
+        @Path("stateID") stateID: String
+    ): Call<Location>
+
+    @GET("local-governments/{lgaID}")
+    fun getSingLGA(@Path("lgaID") lgaID: String): Call<Location>
 }

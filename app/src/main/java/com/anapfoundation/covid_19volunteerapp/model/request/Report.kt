@@ -19,5 +19,6 @@ class Report(
     var mediaURL: String? = "",
     var localGovernment: String? = "",
     var district:String? = "",
-    var town: String?=""
+    var town: String?="",
+    var suggestion: String?=""
 ) : Serializable

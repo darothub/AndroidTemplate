@@ -14,10 +14,11 @@ class Reports (
 
 
 class ReportResponse(
-    var topic: String,
-    var rating: String,
-    var story: String,
-    var state: String,
+    var id:String?="",
+    var topic: String?="",
+    var rating: String?="",
+    var story: String?="",
+    var state: String?="",
     @SerializedName("media_url")
     var mediaURL: String? = "",
     @SerializedName("local_government")

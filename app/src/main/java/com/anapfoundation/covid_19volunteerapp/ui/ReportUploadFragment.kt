@@ -206,6 +206,7 @@ class ReportUploadFragment : DaggerFragment() {
             val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
             val lgaGUID = lgaAndDistrictArray?.get(0).toString()
             val district = lgaAndDistrictArray?.get(1).toString()
+            val suggestion = suggestionEditText.text.toString()
             Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district")
             report.story = story.toString()
             report.state = "$stateGUID"
@@ -223,6 +224,7 @@ class ReportUploadFragment : DaggerFragment() {
                 report.localGovernment,
                 report.district,
                 report.town,
+                suggestion,
                 header
             )
 
@@ -464,6 +466,7 @@ class ReportUploadFragment : DaggerFragment() {
         imagePreview.draw(canvas)
 
         val outputStream = ByteArrayOutputStream()
+
         capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
         val data = outputStream.toByteArray()
 

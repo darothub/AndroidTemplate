@@ -2,6 +2,7 @@ package com.anapfoundation.covid_19volunteerapp.data.repositories.user
 
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.userservices.UserApiRequests
@@ -50,5 +51,9 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
 
     override fun forgotPasswordRequest(email: String): Call<DefaultResponse> {
         return userApiRequests.forgotPasswordRequest(email)
+    }
+
+    override fun getSingleLGA(lgaID: String): Call<Location> {
+        return userApiRequests.getSingLGA(lgaID)
     }
 }

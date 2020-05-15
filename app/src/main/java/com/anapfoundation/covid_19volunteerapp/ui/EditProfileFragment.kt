@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.updateProfile
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
@@ -144,6 +145,7 @@ class EditProfileFragment : DaggerFragment() {
     lateinit var uploadPictureBtn:Button
 
     lateinit var updateBtn:Button
+    var imageText = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -173,6 +175,9 @@ class EditProfileFragment : DaggerFragment() {
                     true ->{
                         val res = result as ProfileData
                         val user = res.data
+                        val loggedInUser = storageRequest.checkUser("loggedInUser")
+                        imageUrlText.append(user.profileImageURL)
+                        imageUrlText.show()
                         editInfoFNameEditText.setText(user.firstName)
                         editInfoLNameEditText.setText(user.lastName)
                         editInfoEmailEditText.setText(user.email)
@@ -333,7 +338,7 @@ class EditProfileFragment : DaggerFragment() {
         val stateSeletcted = editInfoStateSpinner.selectedItem
         val state = states.get(stateSeletcted)
         val street = editInfoStreetEditText.text.toString().trim()
-        val imageText = imageUrlText.text.toString()
+         imageText = imageUrlText.text.toString()
         val profileImageUrl = imageText.subSequence(10, imageText.length).toString()
 
 
@@ -387,8 +392,11 @@ class EditProfileFragment : DaggerFragment() {
             true -> {
                 val res = result as ProfileData
                 requireContext().toast(requireContext().getLocalisedString(R.string.profile_updated))
-                findNavController().navigate(R.id.profileFragment)
                 Log.i(title, "result of registration ${res.data.firstName}")
+                var user = storageRequest.checkUser("loggedInUser")
+                user?.imageUrl = imageText.subSequence(10, imageText.length).toString()
+                storageRequest.saveData(user, "loggedInUser")
+                findNavController().navigate(R.id.profileFragment)
             }
             else -> Log.i(title, "error $result")
         }

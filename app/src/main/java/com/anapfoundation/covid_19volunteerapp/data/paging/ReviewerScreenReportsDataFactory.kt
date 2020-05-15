@@ -16,28 +16,28 @@ import retrofit2.Response
 import javax.inject.Inject
 
 
-class ReportDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
-    val pagingLiveData = MutableLiveData<ReportsDataSource>()
+class ReviewerScreenReportsDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
+    val pagingLiveData = MutableLiveData<ReviewerScreenReportsDataSource>()
     override fun create(): DataSource<Long, ReportResponse> {
         val user = storageRequest.checkUser("loggedInUser")
         val header = "Bearer ${user?.token}"
-        val data = ReportsDataSource(authApiRequests, header)
+        val data = ReviewerScreenReportsDataSource(authApiRequests, header)
         pagingLiveData.postValue(data)
         return data
     }
 }
 
-class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):ItemKeyedDataSource<Long, ReportResponse>(){
-    private var first = 20.toLong()
-    private var after = 0.toLong()
-    var t :Long? = after
+class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
+    ItemKeyedDataSource<Long, ReportResponse>(){
+    private var first = 10L
+    private var after = 0L
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
     ) {
-        val request = authApiRequests.getReportss(header, first, after)
-        request.enqueue(object : Callback<Reports>{
+        val request = authApiRequests.getUnapprovedReports(header, first, after)
+        request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
                 responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
@@ -49,7 +49,6 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
 
                     body != null ->  {
                         responseLiveData.postValue(ServicesResponseWrapper.Success(body))
-                        t = body.data.toList().last().index
                         callback.onResult(body.data)
                     }
                 }
@@ -59,9 +58,8 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
-
-        val request = authApiRequests.getReportss(header, 2, t)
-        request.enqueue(object : Callback<Reports>{
+        val request = authApiRequests.getUnapprovedReports(header, first, after)
+        request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
                 responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
@@ -73,13 +71,12 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
 
                     body != null ->  {
                         try {
+                            after++
                             responseLiveData.value = ServicesResponseWrapper.Loading(
                                 null,
                                 "Loading..."
                             )
-
                             callback.onResult(body.data)
-                            t = body.data.toList().last().index
                         }
                         catch (e:Exception){
                             Log.e("Paging error", e.localizedMessage)

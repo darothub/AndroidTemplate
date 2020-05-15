@@ -20,6 +20,7 @@ interface AuthApiRequests {
         @Field("localGovernment") lga: String?,
         @Field("district") district:String?,
         @Field("town") street: String?,
+        @Field("suggestion") suggestion:String?,
         @Header("Authorization") header: String
     ): Call<AddReportResponse>
 
@@ -40,7 +41,8 @@ interface AuthApiRequests {
                     @Query("after") after: Long?): Call<Reports>
 
     @GET("reports")
-    fun getReports(@Header("Authorization") header: String): Call<Reports>
+    fun getReports(@Header("Authorization") header: String, @Query("first") first: Long?,
+                   @Query("after") after: Long?): Call<Reports>
 
     @POST("me")
     @FormUrlEncoded
@@ -55,4 +57,15 @@ interface AuthApiRequests {
         @Field("profile_image_url") profileImageUrl:String?,
         @Header("Authorization") header: String?
     ): Call<ProfileData>
+
+    @PUT("reset-password")
+    @FormUrlEncoded
+    fun resetPassword(@Field("newPassword") newPassword:String, @Field("token") token: String):Call<DefaultResponse>
+
+    @GET("review/reports")
+    fun getUnapprovedReports(@Header("Authorization") header: String, @Query("first") first: Long?,
+                             @Query("after") after: Long?): Call<Reports>
+    @PUT("review/reports")
+    @FormUrlEncoded
+    fun approveReport(@Field("id") id:String, @Header("Authorization") header: String):Call<DefaultResponse>
 }

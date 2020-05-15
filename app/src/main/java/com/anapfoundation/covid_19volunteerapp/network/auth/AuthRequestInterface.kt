@@ -18,6 +18,7 @@ interface AuthRequestInterface {
                   localGovernment:String?,
                   district:String?,
                   town:String?,
+                  suggestion:String?,
                   header:String): Call<AddReportResponse>
 
     fun getTopic(header: String): Call<TopicResponse>
@@ -26,10 +27,18 @@ interface AuthRequestInterface {
 
     fun getProfileData(header: String):Call<ProfileData>
 
-    fun getReports(header: String):Call<Reports>
+    fun getReports(header: String, first:Long?, after:Long?):Call<Reports>
 
     fun updateProfile(
         firstName:String, lastName:String, email: String, phone: String,
         houseNumber:String,  state:String?, street: String?, profileImageUrl:String?, header:String
     ):Call<ProfileData>
+
+    fun resetPassword(newPassword:String, token: String):Call<DefaultResponse>
+
+    fun approveReport(id:String, header: String):Call<DefaultResponse>
+
+    fun getUnapprovedReports(header: String, first:Long?, after:Long?):Call<Reports>
+
+
 }

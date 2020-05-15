@@ -157,7 +157,7 @@ class UserViewModel @Inject constructor(
         return responseLiveData
     }
 
-    private fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
+    internal fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
         val statusCode = response.code()
         Log.i(title, "${response.code()}")
@@ -178,7 +178,7 @@ class UserViewModel @Inject constructor(
                 }
 
             }
-            in 400..500 ->{
+            in 400..501 ->{
                 try {
                     Log.i(title, "errorbody ${response.raw()}")
                     val a = object : Annotation{}

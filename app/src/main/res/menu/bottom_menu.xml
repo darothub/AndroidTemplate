@@ -16,7 +16,10 @@
         android:title="Profile"
         android:icon="@drawable/profile_icon"/>
 
-
+    <item
+        android:id="@+id/reviewerScreenFragment"
+        android:title="Reviewer"
+        android:icon="@drawable/man"/>
 
 
 </menu>
