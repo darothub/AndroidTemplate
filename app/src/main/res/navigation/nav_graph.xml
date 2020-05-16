@@ -29,6 +29,9 @@
         <deepLink
             android:id="@+id/deepLink"
             app:uri="android-app://anapfoundation.navigation/signin" />
+        <action
+            android:id="@+id/fromSigninToReportFragment"
+            app:destination="@id/reportFragment" />
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
@@ -80,5 +83,8 @@
             android:defaultValue="@null"
             app:argType="string"
             app:nullable="true" />
+        <action
+            android:id="@+id/fromResetToSignin"
+            app:destination="@id/signinFragment" />
     </fragment>
 </navigation>

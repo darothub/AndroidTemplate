@@ -56,6 +56,7 @@
             android:spinnerMode="dropdown"
             style="@style/CustomEditTextStyle"
             android:textColor="@color/colorPrimaryDark"
+
             app:layout_constraintStart_toStartOf="parent"
             android:dropDownVerticalOffset="95dp"
             app:layout_constraintEnd_toEndOf="parent"

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelModules
+import com.anapfoundation.covid_19volunteerapp.di.datasourcefactory.DataSourceFactoryModule
 import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.*
 import com.anapfoundation.covid_19volunteerapp.di.networkmodules.auth.AuthRequestModule
 import com.anapfoundation.covid_19volunteerapp.di.networkmodules.user.UserRequestModule
@@ -38,7 +39,11 @@ abstract class ActivityBuilderModule {
             ProfileFragmentModule::class,
             AddressFragmentModule::class,
             EditProfileFragmentModule::class,
-            ForgotPasswordFragmentModule::class
+            ForgotPasswordFragmentModule::class,
+            ResetPasswordFragmentModule::class,
+            ReviewerScreenModule::class,
+            ReportApprovalFragmentModule::class,
+            DataSourceFactoryModule::class
 
         ]
     )

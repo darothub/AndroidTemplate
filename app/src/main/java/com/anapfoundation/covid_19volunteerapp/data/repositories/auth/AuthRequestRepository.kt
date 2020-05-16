@@ -21,9 +21,10 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         localGovernment:String?,
         district:String?,
         town:String?,
+        suggestion:String?,
         header: String
     ): Call<AddReportResponse> {
-        return authApiRequests.addReport(topic, rating, story, state, mediaURL, localGovernment, district, town, header)
+        return authApiRequests.addReport(topic, rating, story, state, mediaURL, localGovernment, district, town, suggestion, header)
     }
 
     override fun getTopic(header: String): Call<TopicResponse> {
@@ -39,9 +40,10 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         return authApiRequests.getProfileData(header)
     }
 
-    override fun getReports(header: String): Call<Reports> {
-        return authApiRequests.getReports(header)
+    override fun getReports(header: String, first: Long?, after: Long?): Call<Reports> {
+        return authApiRequests.getReports(header, first, after)
     }
+
 
     override fun updateProfile(
         firstName: String,
@@ -57,7 +59,17 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, profileImageUrl, header)
     }
 
+    override fun resetPassword(newPassword: String, token: String): Call<DefaultResponse> {
+        return authApiRequests.resetPassword(newPassword, token)
+    }
 
+    override fun approveReport(id: String, header: String): Call<DefaultResponse> {
+        return authApiRequests.approveReport(id, header)
+    }
+
+    override fun getUnapprovedReports(header: String, first: Long?, after: Long?): Call<Reports> {
+        return authApiRequests.getUnapprovedReports(header, first, after)
+    }
 
 
 }

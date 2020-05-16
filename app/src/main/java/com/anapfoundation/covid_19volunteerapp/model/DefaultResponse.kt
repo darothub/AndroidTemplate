@@ -7,8 +7,10 @@ class DefaultResponse (
     message: String?,
     error: AnotherError?,
     token: String?,
-    val data:String?
+    val data:AnotherData?
 ): Data(message, error, token), Serializable
 
 class AnotherError()
+
+class AnotherData()
 

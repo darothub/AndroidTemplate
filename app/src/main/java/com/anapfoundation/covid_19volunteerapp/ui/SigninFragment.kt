@@ -13,6 +13,7 @@ import android.widget.ProgressBar
 import androidx.activity.addCallback
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -164,10 +165,10 @@ class SigninFragment : DaggerFragment() {
 
     fun loginRequest() {
         val emailAddress = signinEmailEdit.text.toString().trim()
-        val passwordString = signinPasswordEdit.text.toString().trim()
+        val passwordString = signinPasswordEdit.text.toString()
 
         val checkForEmpty = IsEmptyCheck(signinEmailEdit, signinPasswordEdit)
-        val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
+        val validation = IsEmptyCheck.fieldsValidation(emailAddress, null)
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
@@ -207,7 +208,10 @@ class SigninFragment : DaggerFragment() {
                 requireContext().toast(requireContext().getLocalisedString(R.string.successful))
                 Log.i("UserExist", "${userExist}")
                 Log.i(title, "message ${result.token}")
+
+
                 navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
+                findNavController().popBackStack(R.id.reportFragment, false)
             }
             else -> Log.i(title, "error $result")
         }

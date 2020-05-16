@@ -27,8 +27,8 @@ import retrofit2.Retrofit
 import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(
-    val authRequestInterface: AuthRequestInterface, val retrofit: Retrofit,
-    val paging: DataSource.Factory<Long, ReportResponse>
+    val authRequestInterface: AuthRequestInterface, val retrofit: Retrofit
+
 ) :
     ViewModel() {
 
@@ -40,7 +40,7 @@ class AuthViewModel @Inject constructor(
     fun addReport(
         topic: String, rating: String, story: String, state: String, mediaURL: String?,
         localGovernment: String?, district: String?,
-        town: String?, header: String
+        town: String?, suggestion:String?, header: String
     ): LiveData<ServicesResponseWrapper<Data>> {
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
@@ -56,6 +56,7 @@ class AuthViewModel @Inject constructor(
             localGovernment,
             district,
             town,
+            suggestion,
             header
         )
         request.enqueue(object : Callback<AddReportResponse> {
@@ -138,13 +139,13 @@ class AuthViewModel @Inject constructor(
         return responseLiveData
     }
 
-    fun getReports(header: String): LiveData<ServicesResponseWrapper<Data>> {
+    fun getReports(header: String, first:Long?, after:Long?): LiveData<ServicesResponseWrapper<Data>> {
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
             null,
             "Loading..."
         )
-        val request = authRequestInterface.getReports(header)
+        val request = authRequestInterface.getReports(header, first, after)
         request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
@@ -161,50 +162,9 @@ class AuthViewModel @Inject constructor(
         return responseLiveData
     }
 
-    fun updateProfile(
-        firstName: String,
-        lastName: String,
-        email: String,
-        phone: String,
-        houseNumber: String,
-        state: String,
-        street: String?,
-        profileImageUrl: String?,
-        header: String
-    ): LiveData<ServicesResponseWrapper<Data>> {
-        val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
-        responseLiveData.value = ServicesResponseWrapper.Loading(
-            null,
-            "Loading..."
-        )
-        val request = authRequestInterface.updateProfile(
-            firstName,
-            lastName,
-            email,
-            phone,
-            houseNumber,
-            state,
-            street,
-            profileImageUrl,
-            header
-        )
-        request.enqueue(object : Callback<ProfileData> {
-            override fun onFailure(call: Call<ProfileData>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
-            }
 
-            override fun onResponse(
-                call: Call<ProfileData>,
-                response: Response<ProfileData>
-            ) {
-                onResponseTask(response as Response<Data>, responseLiveData)
-            }
 
-        })
-        return responseLiveData
-    }
-
-    private fun onResponseTask(
+    internal fun onResponseTask(
         response: Response<Data>,
         responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>
     ) {
@@ -240,7 +200,7 @@ class AuthViewModel @Inject constructor(
                     Log.i(title, "message ${error?.message}")
                     responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
                 } catch (e: java.lang.Exception) {
-                    Log.i(title, e.message)
+                    Log.i(title, "Caught ${e.message}")
                 }
 
 
@@ -266,7 +226,12 @@ class AuthViewModel @Inject constructor(
         .setEnablePlaceholders(true)
         .build()
 
-    fun getReportss(): LiveData<PagedList<ReportResponse>> {
-        return LivePagedListBuilder(paging, configPaged(3)).build()
+    fun getReportss(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>> {
+
+        return LivePagedListBuilder(dataSourceFactory, configPaged(3)).build()
     }
+    fun getUnapprovedPagingReports(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>>{
+        return LivePagedListBuilder(dataSourceFactory, configPaged(3)).build()
+    }
+
 }

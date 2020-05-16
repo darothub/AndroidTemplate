@@ -9,7 +9,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.ProgressBar
+import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
@@ -90,7 +92,7 @@ class SignupFragment : DaggerFragment() {
     private fun passwordCheckAlert() {
         passwordEdit.doOnTextChanged { text, start, count, after ->
             if (text != null) {
-                validateEmailAndPassword(text)
+                validateEmailAndPassword(text, passwordStandard)
             }
             return@doOnTextChanged
         }
@@ -149,7 +151,7 @@ class SignupFragment : DaggerFragment() {
 
     }
 
-    private fun validateEmailAndPassword(text: CharSequence) {
+    fun validateEmailAndPassword(text: CharSequence, passwordStandard:TextView) {
         val passwordPattern = Regex("""^[a-zA-Z0-9@$!%*#?&]{6,}$""")
         val matchedPassword = passwordPattern.matches(text)
         if (!matchedPassword) {

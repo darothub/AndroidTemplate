@@ -117,11 +117,11 @@
             app:layout_constraintTop_toBottomOf="@id/bottomSpace"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:borderColor="@color/colorPrimaryDark"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
             app:cornerRadius="10dp"
+            style="@style/CustomInputLayoutStyle"
 
             >
             <EditText
@@ -172,7 +172,6 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
-            app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/reportUploadLGA">
@@ -192,7 +191,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
-            app:borderColor="@color/colorPrimaryDark"
+            style="@style/CustomInputLayoutStyle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/reportUploadTown">
@@ -203,7 +202,7 @@
                 android:layout_height="100dp"
                 android:hint="@string/street_suggestion"
                 android:textColorHint="@color/colorTextHint"
-                android:maxLength="250"
+                android:maxLength="150"
                 android:gravity="top|left"
                 android:singleLine="true" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
@@ -214,7 +213,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginRight="@dimen/normal_margin"
+             android:layout_marginRight="@dimen/normal_margin"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/image_url"

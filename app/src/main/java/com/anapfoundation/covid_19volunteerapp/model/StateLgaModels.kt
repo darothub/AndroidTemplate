@@ -38,11 +38,50 @@ class LGA (
 data class LocalGovernment (
     val id: String,
     val index: Long,
+    val state: String?,
+    val district: String?,
+
+    @SerializedName("local_government")
+    val localGovernment: String,
+
+    val country: String?,
+    @SerializedName("created_at")
+    val createdAt: String,
+
+    @SerializedName("updated_at")
+    val updatedAt: String,
+
+    @SerializedName("deleted_at")
+    val deletedAt: Any? = null
+
+):Serializable
+
+class Location(
+    val data: LocationData,
+    message:String?,
+    error: AnotherError?,
+    token:String?
+): Data(message, error, token), Serializable
+
+data class LocationData(
+    val id: String,
+    val index: Long,
     val state: String,
     val district: String,
 
     @SerializedName("local_government")
-    val localGovernment: String,
+    val localGovernment: String?,
+
+    @SerializedName("state_name")
+    val stateName:String?,
+
+    @SerializedName("district_name")
+    val districtName:String?,
+
+    @SerializedName("district_count")
+    val districtCount:Long?,
+    @SerializedName("lg_count")
+    val lgCount:Long?,
 
     @SerializedName("created_at")
     val createdAt: String,
@@ -52,4 +91,5 @@ data class LocalGovernment (
 
     @SerializedName("deleted_at")
     val deletedAt: Any? = null
-):Serializable
+
+)

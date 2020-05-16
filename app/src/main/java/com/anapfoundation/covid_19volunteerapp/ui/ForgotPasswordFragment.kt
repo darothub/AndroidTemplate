@@ -107,6 +107,7 @@ class ForgotPasswordFragment : DaggerFragment() {
             true -> {
                 val res = result as DefaultResponse
                 requireActivity().toast("${res.data}")
+                findNavController().popBackStack()
             }
             else -> Log.i(title, "error $result")
         }

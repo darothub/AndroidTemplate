@@ -135,7 +135,7 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
                     progressBar?.hide()
                     button?.show()
                     result.postValue(Pair(false, errorResponse))
-                    requireContext().toast("$errorResponse")
+//                    requireContext().toast("$errorResponse")
                     Log.i(title, "Error ${it.message}")
                 }
                 is ServicesResponseWrapper.Logout ->{
@@ -221,6 +221,7 @@ fun Fragment.navigateWithUri(uri: Uri){
     val request = NavDeepLinkRequest.Builder
         .fromUri(uri)
         .build()
+
     findNavController().navigate(request)
 }
 

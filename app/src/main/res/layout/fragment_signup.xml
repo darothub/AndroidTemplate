@@ -43,7 +43,7 @@
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/firstNameField"
             style="@style/CustomInputLayoutStyle"
-            app:borderColor="@color/colorPrimaryDark"
+
             app:layout_constraintBottom_toTopOf="@+id/lastNameField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -64,7 +64,7 @@
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/lastNameField"
             style="@style/CustomInputLayoutStyle"
-            app:borderColor="@color/colorPrimaryDark"
+
             app:layout_constraintBottom_toTopOf="@+id/emailFieldForSignUp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -86,7 +86,6 @@
             android:id="@+id/emailFieldForSignUp"
             style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
-            app:borderColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -105,7 +104,7 @@
             android:id="@+id/passwordFieldForSignup"
             style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
-            app:borderColor="@color/colorPrimaryDark"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
@@ -137,7 +136,7 @@
             android:id="@+id/cpasswordField"
             style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
-            app:borderColor="@color/colorPrimaryDark"
+
             app:layout_constraintBottom_toTopOf="@+id/phoneNumberField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -157,7 +156,7 @@
             android:id="@+id/phoneNumberField"
             style="@style/CustomInputLayoutStyle"
             android:layout_marginTop="10dp"
-            app:borderColor="@color/colorPrimaryDark"
+
             app:layout_constraintBottom_toTopOf="@+id/cpasswordField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"

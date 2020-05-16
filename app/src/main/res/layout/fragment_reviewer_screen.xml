@@ -4,16 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorNeutral"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".ui.ReportHomeFragment">
+    tools:context=".ui.ReviewerScreenFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/reportAppBar"
+            android:id="@+id/reviewerScreenAppBar"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@null"
@@ -23,7 +22,7 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/reportToolbar"
+                android:id="@+id/reviewerScreenToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
@@ -56,28 +55,29 @@
         </com.google.android.material.appbar.AppBarLayout>
 
         <TextView
-            android:id="@+id/reportHeading"
+            android:id="@+id/reviewerScreenHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:text="@string/recent_report"
+            android:text="@string/report_review"
             android:textColor="@color/colorPrimaryDark"
             android:textSize="@dimen/medium_margin_size"
-            app:layout_constraintBottom_toTopOf="@id/recyclerView"
+            app:layout_constraintBottom_toTopOf="@id/reviewerRecyclerView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reportAppBar" />
+            app:layout_constraintTop_toBottomOf="@id/reviewerScreenAppBar" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/reviewerRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reportHeading"
+            app:layout_constraintTop_toBottomOf="@id/reviewerScreenHeading"
             tools:listitem="@layout/report_item" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.core.widget.NestedScrollView>
+

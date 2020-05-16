@@ -22,6 +22,7 @@ open class User(
     var message = ""
     var token:String?=""
     var rememberPassword:Boolean = false
+    var imageUrl = ""
 
 }
 class ProfileData (
@@ -59,6 +60,8 @@ class UserData(
     val twitterProfileUsername: String? = null,
 
     val specialization: String? = null,
+
+    val isReviewer:Boolean?=false,
 
     @SerializedName("profile_image_url")
     val profileImageURL: String? = null,

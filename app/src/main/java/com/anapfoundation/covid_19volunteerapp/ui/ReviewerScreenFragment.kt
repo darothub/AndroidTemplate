@@ -1,56 +1,42 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
-import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
-import androidx.core.net.toUri
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavDeepLinkBuilder
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
-import androidx.paging.PagedList
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 
 import com.anapfoundation.covid_19volunteerapp.R
-import com.anapfoundation.covid_19volunteerapp.data.paging.ReportDataFactory
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerScreenReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.getUnApprovedReports
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.getSingleLGA
-import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.Location
-import com.anapfoundation.covid_19volunteerapp.model.StatesList
-import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
 import com.squareup.picasso.Picasso
 import com.utsman.recycling.extentions.Recycling
 import com.utsman.recycling.paged.setupAdapterPaged
 import com.utsman.recycling.setupAdapter
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.fragment_report_home.*
-import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
  */
-class ReportHomeFragment : DaggerFragment() {
+class ReviewerScreenFragment : DaggerFragment() {
 
     @Inject
     lateinit var storageRequest: StorageRequest
@@ -66,20 +52,11 @@ class ReportHomeFragment : DaggerFragment() {
     val header by lazy {
         "Bearer $token"
     }
-    private val bottomSheetDialog by lazy {
-        BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-    }
-    //inflate bottomSheetView
-    private val bottomSheetView by lazy {
-        LayoutInflater.from(requireContext()).inflate(
-            R.layout.layout_upload_gallery,
-            requireActivity().findViewById(R.id.uploadBottomSheetContainer)
-        )
-    }
-
+    var singleReport = ReportResponse()
 
     @Inject
-    lateinit var reportDataFactory: ReportDataFactory
+    lateinit var reviewerScreenReportsDataFactory: ReviewerScreenReportsDataFactory
+
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
@@ -91,35 +68,28 @@ class ReportHomeFragment : DaggerFragment() {
     val title: String by lazy {
         getName()
     }
-    var singleReport = ReportResponse()
+
+    var lga = ""
+    var state = ""
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_report_home, container, false)
+        return inflater.inflate(R.layout.fragment_reviewer_screen, container, false)
     }
 
-    @SuppressLint("SetTextI18n")
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-
-    }
-    var lga = ""
-    var state = ""
-
-    @SuppressLint("SetTextI18n")
     override fun onResume() {
         super.onResume()
-        Log.i(title, "onResume")
+
+        reviewerRecyclerView
         try {
 
             Log.i(title, "header $header")
-            recyclerView.setupAdapter<ReportResponse>(R.layout.report_item){ adapter, context, list ->
+            reviewerRecyclerView.setupAdapter<ReportResponse>(R.layout.report_item){ adapter, context, list ->
+
                 bind { itemView, position, item ->
                     Log.i(title, "report items ${item}")
-
                     val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
                     val ratingResponse = observeRequest(ratingRequest, null, null)
                     ratingResponse.observe(viewLifecycleOwner, Observer {
@@ -143,8 +113,8 @@ class ReportHomeFragment : DaggerFragment() {
                         when(bool){
                             true -> {
                                 val res = result as Location
-                                 lga = res.data.localGovernment.toString()
-                                 state = res.data.stateName.toString()
+                                lga = res.data.localGovernment.toString()
+                                state = res.data.stateName.toString()
                                 Log.i("State", "${res.data.stateName}")
                                 itemView.reportLocation.text = "$lga, $state"
 
@@ -155,8 +125,6 @@ class ReportHomeFragment : DaggerFragment() {
 
                     itemView.reportStory.text = item?.story
 
-                    Log.i(title, "${singleReport.mediaURL}")
-
                     itemView.setOnClickListener {
                         singleReport.id = item?.id
                         singleReport.topic = itemView.reportTopic.text.toString()
@@ -165,11 +133,9 @@ class ReportHomeFragment : DaggerFragment() {
 
                         singleReport.localGovernment = lga
                         singleReport.state = state
-                        val action = ReportHomeFragmentDirections.toSingleReportScreen()
+                        val action = ReviewerScreenFragmentDirections.toApprovalFragment()
                         action.singleReport = singleReport
                         Navigation.findNavController(requireView()).navigate(action)
-
-                        Log.i(title, "report items ${singleReport.localGovernment}")
                     }
 
                     Picasso.get().load(item?.mediaURL)
@@ -178,27 +144,22 @@ class ReportHomeFragment : DaggerFragment() {
                     itemView.reportImage.clipToOutline = true
                 }
 
-
                 setupData(this, 100, 0)
-
+//                authViewModel.getUnapprovedReports(reviewerScreenReportsDataFactory).observe(viewLifecycleOwner, Observer {
+//
+//                    submitList(it)
+//                })
 
             }
 
         }catch (e:Exception){
             Log.e(title, e.message)
         }
-
-        notificationIcon.setOnClickListener {
-            findNavController().navigate(R.id.notificationFragment)
-        }
-
-
-
     }
 
     // function for setup data
     private fun setupData(recycling: Recycling<ReportResponse>, first: Long?, after:Long?) {
-        val request =  authViewModel.getReports(header, first, after)
+        val request =  authViewModel.getUnApprovedReports(header, first, after)
         val response = observeRequest(request, null, null)
         response.observe(viewLifecycleOwner, Observer {
             val (bool, result) = it
@@ -214,22 +175,4 @@ class ReportHomeFragment : DaggerFragment() {
         })
 
     }
-    override fun onPause() {
-        super.onPause()
-        Log.i(title, "onpause")
-    }
-
-
-    override fun onStart() {
-        super.onStart()
-        Log.i(title, "onStart")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.i(title, "detached")
-    }
-
-
-
 }
