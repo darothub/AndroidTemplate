@@ -15,29 +15,27 @@ import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-
-class ReportDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
-    val pagingLiveData = MutableLiveData<ReportsDataSource>()
+class ReviewerApprovedReportsDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
+    val pagingLiveData = MutableLiveData<ReviewerApprovedReportsDataSource>()
     override fun create(): DataSource<Long, ReportResponse> {
         val user = storageRequest.checkUser("loggedInUser")
         val header = "Bearer ${user?.token}"
-        val data = ReportsDataSource(authApiRequests, header)
+        Log.i("userToken", "$header")
+        val data = ReviewerApprovedReportsDataSource(authApiRequests, header)
         pagingLiveData.postValue(data)
         return data
     }
 }
 
-class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):ItemKeyedDataSource<Long, ReportResponse>(){
-    private var first = 10.toLong()
-    private var after = 0.toLong()
-    var index :Long? = 0
+class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
+    ItemKeyedDataSource<Long, ReportResponse>() {
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
     ) {
-        val request = authApiRequests.getReport(header, params.requestedLoadSize.toLong())
-        request.enqueue(object : Callback<Reports>{
+        val request = authApiRequests.getApprovedReports(header, params.requestedLoadSize.toLong())
+        request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
                 responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
@@ -47,10 +45,8 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 val body = response.body()
                 when {
 
-                    body != null ->  {
+                    body != null -> {
                         responseLiveData.postValue(ServicesResponseWrapper.Success(body))
-                        index = params.requestedInitialKey
-                        Log.i("last index", "$index")
                         callback.onResult(body.data)
                     }
                 }
@@ -60,12 +56,14 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
-
-        val request = authApiRequests.getReportAfter(header, params.requestedLoadSize.toLong(), params.key)
-        request.enqueue(object : Callback<Reports>{
+        val request = authApiRequests.getApprovedReportsAfter(
+            header,
+            params.requestedLoadSize.toLong(),
+            params.key
+        )
+        request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
-
                 responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
             }
 
@@ -73,17 +71,15 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 val body = response.body()
                 when {
 
-                    body != null ->  {
+                    body != null -> {
                         try {
+
                             responseLiveData.value = ServicesResponseWrapper.Loading(
                                 null,
                                 "Loading..."
                             )
                             callback.onResult(body.data)
-                            index = params.key
-                            Log.i("load after index", "$index")
-                        }
-                        catch (e:Exception){
+                        } catch (e: Exception) {
                             Log.e("Paging error", e.localizedMessage)
                         }
 
@@ -97,5 +93,5 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
     override fun loadBefore(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {}
 
     override fun getKey(item: ReportResponse): Long = item.index!!
-
 }
+

@@ -132,6 +132,10 @@
     <string name="reset_password">Reset password</string>
     <string name="password_invalid">Password is invalid</string>
     <string name="report_review">Report review</string>
+    <string name="approved_successful">Approved successfully</string>
+    <string name="approved_report">Approved reports</string>
+    <string name="unapproved_report">Unapproved reports</string>
+    <string name="no_report_approved">No approved reports</string>
 
 
 </resources>

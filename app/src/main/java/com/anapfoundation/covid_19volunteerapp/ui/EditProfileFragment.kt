@@ -343,6 +343,8 @@ class EditProfileFragment : DaggerFragment() {
          imageText = imageUrlText.text.toString()
         val profileImageUrl = imageText.subSequence(10, imageText.length).toString()
 
+        Log.i(title, "imageUrl $profileImageUrl")
+
 
         val checkForEmpty =
             IsEmptyCheck(editInfoFNameEditText, editInfoLNameEditText)

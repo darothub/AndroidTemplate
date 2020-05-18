@@ -39,7 +39,7 @@ interface AuthRequestInterface {
 
     fun approveReport(id:String, header: String):Call<DefaultResponse>
 
-    fun getUnapprovedReports(header: String, first:Long?, after:Long?):Call<Reports>
+//    fun getUnapprovedReports(header: String, first:Long?, after:Long?):Call<Reports>
 
 
 }

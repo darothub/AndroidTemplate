@@ -48,6 +48,9 @@ class ReportApprovalFragment : DaggerFragment() {
         Bitmap.createBitmap(reportApprovalImage.width, reportApprovalImage.height, Bitmap.Config.ARGB_8888)
     }
 
+    val canvas by lazy {
+        Canvas(capture)
+    }
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
@@ -83,28 +86,19 @@ class ReportApprovalFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_report_approval, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-
-    }
-
     override fun onResume() {
         super.onResume()
 
-        reportApprovalBackBtn.setOnClickListener {
-            findNavController().popBackStack()
-        }
 
         Log.i(title, "OnResume")
-        approveBtn = reportApprovalBottomLayout.findViewById<Button>(R.id.includeBtn)
-        approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
+
 
         arguments?.let {
             singleReport = ReportApprovalFragmentArgs.fromBundle(it).singleReport!!
         }
 
 
+        Log.i(title, "reportID ${singleReport.id}")
         reportApprovalReportTopic.text = singleReport.topic
         reportApprovalHeadline.text = singleReport.topic
         reportApprovalReportLocation.text = "${singleReport.localGovernment}, ${singleReport.state}"
@@ -115,8 +109,13 @@ class ReportApprovalFragment : DaggerFragment() {
             .into(reportApprovalImage)
 
 
-        val imageDrawable = reportApprovalImage.drawable
-        reportApprovalappBar.background = imageDrawable
+        Picasso.get().load(singleReport.mediaURL)
+            .placeholder(R.drawable.applogo)
+            .into(appBarImage)
+
+        approveBtn = reportApprovalBottomLayout.findViewById<Button>(R.id.btn)
+        approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
+
         approveBtn.setOnClickListener {
             Log.i(title, "id ${singleReport.id}")
             val request = authViewModel.approveReport(singleReport.id.toString(), header)
@@ -129,7 +128,7 @@ class ReportApprovalFragment : DaggerFragment() {
                     true -> {
                         val res = result as DefaultResponse
                         Log.i(title, res.data.toString())
-                        requireContext().toast(res.data.toString())
+                        requireContext().toast(requireContext().getLocalisedString(R.string.approved_successful))
 
                     }
                     else -> Log.i(title, "error $result")
@@ -144,18 +143,18 @@ class ReportApprovalFragment : DaggerFragment() {
 
 
     }
-
-    override fun onPause() {
-        super.onPause()
-        Log.i(title, "OnPause")
-
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(title, "OnDestroy")
-
-    }
+//
+//    override fun onPause() {
+//        super.onPause()
+//        Log.i(title, "OnPause")
+//
+//
+//    }
+//
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        Log.i(title, "OnDestroy")
+//
+//    }
 
 }

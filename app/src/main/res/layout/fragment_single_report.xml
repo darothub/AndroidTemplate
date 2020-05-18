@@ -15,7 +15,7 @@
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/singleReportappBar"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="200dp"
             android:background="@drawable/healthpic"
             android:fitsSystemWindows="true"
             app:layout_constraintTop_toTopOf="parent">
@@ -207,6 +207,7 @@
                 app:layout_constraintTop_toBottomOf="@id/singleReportStory"
                 app:layout_constraintVertical_bias="0"
                 app:srcCompat="@drawable/healthpic" />
+
 
             <TextView
                 android:id="@+id/singleReportStoryContd"

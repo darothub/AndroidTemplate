@@ -70,9 +70,9 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         return authApiRequests.approveReport(id, header)
     }
 
-    override fun getUnapprovedReports(header: String, first: Long?, after: Long?): Call<Reports> {
-        return authApiRequests.getUnapprovedReports(header, first, after)
-    }
+//    override fun getUnapprovedReports(header: String, first: Long?, after: Long?): Call<Reports> {
+//        return authApiRequests.getUnapprovedReports(header, first, after)
+//    }
 
 
 }

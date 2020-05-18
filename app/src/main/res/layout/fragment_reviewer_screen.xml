@@ -58,22 +58,101 @@
             android:id="@+id/reviewerScreenHeading"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginStart="16dp"
+
             android:text="@string/report_review"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/medium_margin_size"
+            android:textSize="20sp"
             app:layout_constraintBottom_toTopOf="@id/reviewerRecyclerView"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reviewerScreenAppBar" />
+            app:layout_constraintTop_toBottomOf="@id/reviewerScreenAppBar"
+            app:layout_constraintVertical_bias="0.052" />
+
+        <RelativeLayout
+            android:id="@+id/approvedReportHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
+            app:layout_constraintTop_toBottomOf="@id/reviewerScreenHeading"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_border_with_backgrnd_white"
+            android:elevation="5dp"
+           >
+            <TextView
+               android:layout_alignParentStart="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/approved_report"
+                android:gravity="center"
+
+                />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/approvedReportRecyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            app:layout_constraintVertical_bias="0"
+            app:layout_constraintBottom_toTopOf="@id/reviewerRecyclerView"
+            app:layout_constraintTop_toBottomOf="@id/approvedReportHeading"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:orientation="horizontal"
+            tools:listitem="@layout/approved_report_item"/>
+        <TextView
+            android:id="@+id/noReportText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/approvedReportHeading"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/unApprovedReportHeading"
+            android:visibility="gone"
+            android:textSize="@dimen/large_font_size"
+            android:layout_marginTop="@dimen/normal_margin"
+            android:layout_marginBottom="@dimen/normal_margin"
+            android:text="@string/no_report_approved"/>
+
+
+        <RelativeLayout
+            android:id="@+id/unApprovedReportHeading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
+            app:layout_constraintTop_toBottomOf="@id/approvedReportRecyclerview"
+            app:layout_constraintBottom_toTopOf="@id/reviewerRecyclerView"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="parent"
+            android:elevation="5dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/rounded_border_with_backgrnd_white"
+
+            >
+            <TextView
+                android:layout_alignParentStart="true"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/unapproved_report"
+                android:gravity="center"
+
+                />
+        </RelativeLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reviewerRecyclerView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
+
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/reviewerScreenHeading"
+            app:layout_constraintTop_toBottomOf="@id/unApprovedReportHeading"
             tools:listitem="@layout/report_item" />
 
 

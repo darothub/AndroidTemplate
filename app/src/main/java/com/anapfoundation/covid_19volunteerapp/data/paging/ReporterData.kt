@@ -16,29 +16,27 @@ import retrofit2.Response
 import javax.inject.Inject
 
 
-class ReviewerScreenReportsDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
-    val pagingLiveData = MutableLiveData<ReviewerScreenReportsDataSource>()
+class ReportDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
+    val pagingLiveData = MutableLiveData<ReportsDataSource>()
     override fun create(): DataSource<Long, ReportResponse> {
         val user = storageRequest.checkUser("loggedInUser")
         val header = "Bearer ${user?.token}"
-        val data = ReviewerScreenReportsDataSource(authApiRequests, header)
+        val data = ReportsDataSource(authApiRequests, header)
         pagingLiveData.postValue(data)
         return data
     }
 }
 
-class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
-    ItemKeyedDataSource<Long, ReportResponse>(){
-    private var first = 10L
-    private var after = 0L
-    var index :Long? = after
+class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):ItemKeyedDataSource<Long, ReportResponse>(){
+
+    var index :Long? = 0
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
     ) {
-        val request = authApiRequests.getUnapprovedReports(header, first, after)
-        request.enqueue(object : Callback<Reports> {
+        val request = authApiRequests.getReport(header, params.requestedLoadSize.toLong())
+        request.enqueue(object : Callback<Reports>{
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
                 responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
@@ -50,7 +48,8 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
 
                     body != null ->  {
                         responseLiveData.postValue(ServicesResponseWrapper.Success(body))
-                        index = body.data.toList().last().index
+                        index = params.requestedInitialKey
+                        Log.i("last index", "$index")
                         callback.onResult(body.data)
                     }
                 }
@@ -60,10 +59,12 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
-        val request = authApiRequests.getUnapprovedReports(header, 1, index)
-        request.enqueue(object : Callback<Reports> {
+
+        val request = authApiRequests.getReportAfter(header, params.requestedLoadSize.toLong(), params.key)
+        request.enqueue(object : Callback<Reports>{
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
+
                 responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
             }
 
@@ -73,13 +74,13 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
 
                     body != null ->  {
                         try {
-                            after++
                             responseLiveData.value = ServicesResponseWrapper.Loading(
                                 null,
                                 "Loading..."
                             )
                             callback.onResult(body.data)
-                            index = body.data.toList().last().index
+                            index = params.key
+                            Log.i("load after index", "$index")
                         }
                         catch (e:Exception){
                             Log.e("Paging error", e.localizedMessage)

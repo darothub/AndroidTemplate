@@ -68,8 +68,19 @@ interface AuthApiRequests {
     fun resetPassword(@Field("newPassword") newPassword:String, @Field("token") token: String):Call<DefaultResponse>
 
     @GET("review/reports")
-    fun getUnapprovedReports(@Header("Authorization") header: String, @Query("first") first: Long?,
+    fun getUnapprovedReports(@Header("Authorization") header: String, @Query("first") first: Long?): Call<Reports>
+
+    @GET("review/reports")
+    fun getUnapprovedReportsAfter(@Header("Authorization") header: String, @Query("first") first: Long?,
                              @Query("after") after: Long?): Call<Reports>
+
+    @GET("review/reports/approved")
+    fun getApprovedReports(@Header("Authorization") header: String, @Query("first") first: Long?): Call<Reports>
+
+    @GET("review/reports/approved")
+    fun getApprovedReportsAfter(@Header("Authorization") header: String, @Query("first") first: Long?,
+                                  @Query("after") after: Long?): Call<Reports>
+
     @PUT("review/reports")
     @FormUrlEncoded
     fun approveReport(@Field("id") id:String, @Header("Authorization") header: String):Call<DefaultResponse>

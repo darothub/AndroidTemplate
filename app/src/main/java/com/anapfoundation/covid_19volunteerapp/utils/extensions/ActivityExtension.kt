@@ -192,6 +192,8 @@ fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, ca
             downloadUri?.addOnSuccessListener {url ->
                 imageUrl = url.toString()
                 Log.i(title, "url $url")
+                imageUrlText.text = ""
+                imageUrlText.text = "imageUrl: "
                 imageUrlText.append(imageUrl)
                 imageUrlText.show()
 

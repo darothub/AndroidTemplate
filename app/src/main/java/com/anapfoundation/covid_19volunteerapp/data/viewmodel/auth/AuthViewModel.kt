@@ -231,8 +231,11 @@ class AuthViewModel @Inject constructor(
 
         return LivePagedListBuilder(dataSourceFactory, configPaged(3)).build()
     }
-    fun getUnapprovedPagingReports(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>>{
+    fun getUnapprovedReports(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>>{
         return LivePagedListBuilder(dataSourceFactory, configPaged(3)).build()
+    }
+    fun getApprovedReports(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>>{
+        return LivePagedListBuilder(dataSourceFactory, configPaged(2)).build()
     }
 
 }
