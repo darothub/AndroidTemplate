@@ -38,6 +38,7 @@ class UserViewModel @Inject constructor(
         street: String,
         state: String,
         localGovernment: String,
+        zone:String,
         district:String
 
     ): LiveData<ServicesResponseWrapper<Data>> {
@@ -57,6 +58,7 @@ class UserViewModel @Inject constructor(
             street,
             state,
             localGovernment,
+            zone,
             district
         )
         request.enqueue(object : Callback<DefaultResponse> {

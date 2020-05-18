@@ -20,6 +20,7 @@ interface AuthApiRequests {
         @Field("localGovernment") lga: String?,
         @Field("district") district:String?,
         @Field("town") street: String?,
+        @Field("zone") zone: String?,
         @Field("suggestion") suggestion:String?,
         @Header("Authorization") header: String
     ): Call<AddReportResponse>
@@ -37,8 +38,11 @@ interface AuthApiRequests {
     fun getProfileData(@Header("Authorization") header: String): Call<ProfileData>
 
     @GET("reports")
-    fun getReportss(@Header("Authorization") header: String, @Query("first") first: Long?,
+    fun getReportAfter(@Header("Authorization") header: String, @Query("first") first: Long?,
                     @Query("after") after: Long?): Call<Reports>
+
+    @GET("reports")
+    fun getReport(@Header("Authorization") header: String, @Query("first") first: Long?): Call<Reports>
 
     @GET("reports")
     fun getReports(@Header("Authorization") header: String, @Query("first") first: Long?,
@@ -54,6 +58,7 @@ interface AuthApiRequests {
         @Field("houseNumber") houseNumber: String?,
         @Field("state") state: String?,
         @Field("street") street: String?,
+        @Field("zone") zone: String?,
         @Field("profile_image_url") profileImageUrl:String?,
         @Header("Authorization") header: String?
     ): Call<ProfileData>

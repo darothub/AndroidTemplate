@@ -3,7 +3,9 @@ package com.anapfoundation.covid_19volunteerapp.ui
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.content.DialogInterface
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.media.MediaScannerConnection
@@ -11,6 +13,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +22,8 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
@@ -51,6 +56,7 @@ import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.*
+import java.security.Permission
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -142,6 +148,12 @@ class ReportUploadFragment : DaggerFragment() {
     val timeStamp by lazy {
         SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
     }
+
+    private val cameraPermission by lazy {
+        net.codecision.startask.permissions.Permission.Builder(Manifest.permission.CAMERA)
+            .setRequestCode(REQUEST_TAKE_PHOTO)
+            .build()
+    }
     var imageUrl = ""
 
 
@@ -193,6 +205,18 @@ class ReportUploadFragment : DaggerFragment() {
         permissionRequest()
         imagePreview.clipToOutline = true
 
+        cameraIcon.setOnClickListener {
+            checkCameraPermission()
+        }
+        galleryIcon.setOnClickListener {
+
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            val mimeTypes = arrayOf("image/jpeg", "image/png")
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            startActivityForResult(intent, REQUEST_FROM_GALLERY)
+        }
+
 
     }
 
@@ -200,8 +224,11 @@ class ReportUploadFragment : DaggerFragment() {
     private fun addReportRequest() {
         submitBtn.setOnClickListener {
             val story = storyEditText.text
-            val stateSelected = reportUploadState.selectedItem
-            val stateGUID = states.get(stateSelected)
+
+            val selectedState = reportUploadState.selectedItem
+            val valueOfStateSelected = states.get(selectedState)?.split(" ")
+            val stateGUID = valueOfStateSelected?.get(0).toString()
+            val zoneGUID = valueOfStateSelected?.get(1).toString()
             val selectedLGA = reportUploadLGA.selectedItem
             val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
             val lgaGUID = lgaAndDistrictArray?.get(0).toString()
@@ -224,6 +251,7 @@ class ReportUploadFragment : DaggerFragment() {
                 report.localGovernment,
                 report.district,
                 report.town,
+                zoneGUID,
                 suggestion,
                 header
             )
@@ -292,7 +320,7 @@ class ReportUploadFragment : DaggerFragment() {
         it.data.associateByTo(states, {
             it.state /* key */
         }, {
-            it.id /* value */
+            "${it.id} ${it.zone}" /* value */
         })
     }
 
@@ -310,6 +338,7 @@ class ReportUploadFragment : DaggerFragment() {
 
 
     private fun showBottomSheet() {
+//        checkCameraPermission()
 
         uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
 
@@ -329,46 +358,64 @@ class ReportUploadFragment : DaggerFragment() {
 
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
-        cameraIcon.setOnClickListener {
-            dispatchTakePictureIntent()
-        }
-        galleryIcon.setOnClickListener {
 
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            val mimeTypes = arrayOf("image/jpeg", "image/png")
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-            startActivityForResult(intent, REQUEST_FROM_GALLERY)
-        }
 
     }
 
     private fun permissionRequest() {
-        Dexter.withContext(requireContext())
-            .withPermission(Manifest.permission.CAMERA)
-            .withListener(object : PermissionListener {
-                override fun onPermissionGranted(response: PermissionGrantedResponse?) {
 
-                }
-                override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                    val dialogPermissionListener: PermissionListener =
-                        DialogOnDeniedPermissionListener.Builder
-                            .withContext(context)
-                            .withTitle("Camera permission")
-                            .withMessage("Camera permission is needed to take picture for your report")
-                            .withButtonText(android.R.string.ok)
-                            .withIcon(android.R.drawable.ic_menu_camera)
-                            .build()
-                    dialogPermissionListener.onPermissionDenied(response)
-                }
+    }
 
-                override fun onPermissionRationaleShouldBeShown(
-                    permission: PermissionRequest?,
-                    token: PermissionToken?
-                ) {
+    private fun checkCameraPermission() {
+        cameraPermission.check(this)
+            .onGranted {
+                dispatchTakePictureIntent()
+            }.onShowRationale {
+                showRationaleDialog()
+            }
+    }
 
+    private fun showRationaleDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Camera permission")
+            .setMessage("Allow app to use your camera to take photos and record videos.")
+            .setPositiveButton("Allow") { _, _ ->
+                cameraPermission.request(this)
+            }
+            .setNegativeButton("Deny") { _, _ ->
+
+            }
+            .create()
+            .show()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if(requestCode == REQUEST_TAKE_PHOTO){
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                Log.i(title, "herePermissionResultGranted")
+            }
+            else{
+                if(!ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), Manifest.permission.CAMERA)){
+                    Log.i(title, "herePermissionResult")
+                    AlertDialog.Builder(requireActivity())
+                        .setMessage("Permanently denied request")
+                        .setPositiveButton("Go to setting") { dialog, which ->
+                            val intent = Intent()
+                            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                            val uri = Uri.fromParts("package", activity?.packageName, null)
+                            intent.data = uri
+                            startActivity(intent)
+                        }
                 }
-            }).check()
+            }
+        }
     }
 
     override fun onPause() {
@@ -382,6 +429,7 @@ class ReportUploadFragment : DaggerFragment() {
             bottomSheetDialog.show()
             imagePreview.setImageBitmap(imageBitmap)
             imagePreview.show()
+            galleryAddPic()
 
         }
         else if (requestCode == REQUEST_FROM_GALLERY && resultCode == RESULT_OK) {
@@ -448,6 +496,7 @@ class ReportUploadFragment : DaggerFragment() {
                         it
                     )
 
+
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                 }
@@ -507,21 +556,21 @@ class ReportUploadFragment : DaggerFragment() {
 
     // Add taken picture to gallery
     private fun galleryAddPic() {
-//        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-//            val f = File(currentPhotoPath)
-//            mediaScanIntent.data = Uri.fromFile(f)
-//            requireActivity().sendBroadcast(mediaScanIntent)
-//            Log.i(title, "new uri ${Uri.fromFile(f)}")
-//        }
-        MediaScannerConnection.scanFile(
-            requireContext(), arrayOf<String>(currentPhotoPath),
-            null
-        ) { path, uri ->
-            Log.i(
-                title,
-                "file $path was scanned seccessfully: $uri"
-            )
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            mediaScanIntent.data = Uri.fromFile(f)
+            requireActivity().sendBroadcast(mediaScanIntent)
+            Log.i(title, "new uri ${Uri.fromFile(f)}")
         }
+//        MediaScannerConnection.scanFile(
+//            requireContext(), arrayOf<String>(currentPhotoPath),
+//            null
+//        ) { path, uri ->
+//            Log.i(
+//                title,
+//                "file $path was scanned seccessfully: $uri"
+//            )
+//        }
     }
 
 

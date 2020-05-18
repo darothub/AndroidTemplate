@@ -12,6 +12,7 @@ import retrofit2.Call
 import javax.inject.Inject
 
 class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequests):AuthRequestInterface  {
+
     override fun addReport(
         topic: String,
         rating: String,
@@ -21,10 +22,11 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         localGovernment:String?,
         district:String?,
         town:String?,
+        zone:String?,
         suggestion:String?,
         header: String
     ): Call<AddReportResponse> {
-        return authApiRequests.addReport(topic, rating, story, state, mediaURL, localGovernment, district, town, suggestion, header)
+        return authApiRequests.addReport(topic, rating, story, state, mediaURL, localGovernment, district, town, zone, suggestion, header)
     }
 
     override fun getTopic(header: String): Call<TopicResponse> {
@@ -53,10 +55,11 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         houseNumber: String,
         state: String?,
         street: String?,
+        zone: String?,
         profileImageUrl:String?,
         header: String
     ): Call<ProfileData> {
-        return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, profileImageUrl, header)
+        return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, zone, profileImageUrl, header)
     }
 
     override fun resetPassword(newPassword: String, token: String): Call<DefaultResponse> {

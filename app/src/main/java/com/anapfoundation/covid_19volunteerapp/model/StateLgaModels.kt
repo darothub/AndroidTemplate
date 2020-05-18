@@ -15,6 +15,7 @@ class State (
     val index: Long,
     val state: String,
     val country: String,
+    val zone:String,
 
     @SerializedName("created_at")
     val createdAt: String,

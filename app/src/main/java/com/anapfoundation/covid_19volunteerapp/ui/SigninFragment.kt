@@ -213,7 +213,10 @@ class SigninFragment : DaggerFragment() {
                 navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
                 findNavController().popBackStack(R.id.reportFragment, false)
             }
-            else -> Log.i(title, "error $result")
+            else -> {
+                requireContext().toast("$result")
+                Log.i(title, "error $result")
+            }
         }
     }
 

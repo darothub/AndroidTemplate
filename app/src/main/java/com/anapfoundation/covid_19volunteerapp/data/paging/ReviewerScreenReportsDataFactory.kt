@@ -31,6 +31,7 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
     ItemKeyedDataSource<Long, ReportResponse>(){
     private var first = 10L
     private var after = 0L
+    var index :Long? = after
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
@@ -49,6 +50,7 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
 
                     body != null ->  {
                         responseLiveData.postValue(ServicesResponseWrapper.Success(body))
+                        index = body.data.toList().last().index
                         callback.onResult(body.data)
                     }
                 }
@@ -58,7 +60,7 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
-        val request = authApiRequests.getUnapprovedReports(header, first, after)
+        val request = authApiRequests.getUnapprovedReports(header, 1, index)
         request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
@@ -77,6 +79,7 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
                                 "Loading..."
                             )
                             callback.onResult(body.data)
+                            index = body.data.toList().last().index
                         }
                         catch (e:Exception){
                             Log.e("Paging error", e.localizedMessage)

@@ -66,16 +66,6 @@ class ReportHomeFragment : DaggerFragment() {
     val header by lazy {
         "Bearer $token"
     }
-    private val bottomSheetDialog by lazy {
-        BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-    }
-    //inflate bottomSheetView
-    private val bottomSheetView by lazy {
-        LayoutInflater.from(requireContext()).inflate(
-            R.layout.layout_upload_gallery,
-            requireActivity().findViewById(R.id.uploadBottomSheetContainer)
-        )
-    }
 
 
     @Inject
@@ -116,70 +106,35 @@ class ReportHomeFragment : DaggerFragment() {
         try {
 
             Log.i(title, "header $header")
-            recyclerView.setupAdapter<ReportResponse>(R.layout.report_item){ adapter, context, list ->
+            recyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item){ adapter, context, list ->
                 bind { itemView, position, item ->
                     Log.i(title, "report items ${item}")
 
-                    val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
-                    val ratingResponse = observeRequest(ratingRequest, null, null)
-                    ratingResponse.observe(viewLifecycleOwner, Observer {
-                        val(bool, result) = it
-                        when(bool){
-                            true -> {
-                                val res = result as TopicResponse
-                                val topic =res.data.filter {
-                                    it.topic != ""
-                                }
-                                itemView.reportTopic.text = topic[0].topic
+                    getTopicAndRatingById(item, itemView)
 
-                            }
-                        }
-                    })
-
-                    val locationRequest = userViewModel.getSingleLGA("${item?.localGovernment}")
-                    val stateResponse = observeRequest(locationRequest, null, null)
-                    stateResponse.observe(viewLifecycleOwner, Observer {
-                        val(bool, result) = it
-                        when(bool){
-                            true -> {
-                                val res = result as Location
-                                 lga = res.data.localGovernment.toString()
-                                 state = res.data.stateName.toString()
-                                Log.i("State", "${res.data.stateName}")
-                                itemView.reportLocation.text = "$lga, $state"
-
-
-                            }
-                        }
-                    })
+                    getStateAndLgaById(item, itemView)
 
                     itemView.reportStory.text = item?.story
 
                     Log.i(title, "${singleReport.mediaURL}")
 
                     itemView.setOnClickListener {
-                        singleReport.id = item?.id
-                        singleReport.topic = itemView.reportTopic.text.toString()
-                        singleReport.story = itemView.reportStory.text.toString()
-                        singleReport.mediaURL = item?.mediaURL
-
-                        singleReport.localGovernment = lga
-                        singleReport.state = state
-                        val action = ReportHomeFragmentDirections.toSingleReportScreen()
-                        action.singleReport = singleReport
-                        Navigation.findNavController(requireView()).navigate(action)
+                        prepareReportForReading(item, itemView)
+                        sendReportToSingleReportScreen()
 
                         Log.i(title, "report items ${singleReport.localGovernment}")
                     }
 
-                    Picasso.get().load(item?.mediaURL)
-                        .placeholder(R.drawable.applogo)
-                        .into(itemView.reportImage)
-                    itemView.reportImage.clipToOutline = true
+                    loadItemImage(item, itemView)
                 }
 
 
-                setupData(this, 100, 0)
+                authViewModel.getReportss(reportDataFactory).observe(viewLifecycleOwner, Observer {
+                    submitList(it)
+                })
+
+
+//                setupData(this, 100, 0)
 
 
             }
@@ -194,6 +149,78 @@ class ReportHomeFragment : DaggerFragment() {
 
 
 
+    }
+
+    private fun loadItemImage(
+        item: ReportResponse?,
+        itemView: View
+    ) {
+        Picasso.get().load(item?.mediaURL)
+            .placeholder(R.drawable.applogo)
+            .into(itemView.reportImage)
+        itemView.reportImage.clipToOutline = true
+    }
+
+    private fun sendReportToSingleReportScreen() {
+        val action = ReportHomeFragmentDirections.toSingleReportScreen()
+        action.singleReport = singleReport
+        Navigation.findNavController(requireView()).navigate(action)
+    }
+
+    private fun prepareReportForReading(
+        item: ReportResponse?,
+        itemView: View
+    ) {
+        singleReport.id = item?.id
+        singleReport.topic = itemView.reportTopic.text.toString()
+        singleReport.story = itemView.reportStory.text.toString()
+        singleReport.mediaURL = item?.mediaURL
+
+        singleReport.localGovernment = lga
+        singleReport.state = state
+    }
+
+    private fun getTopicAndRatingById(
+        item: ReportResponse?,
+        itemView: View
+    ) {
+        val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
+        val ratingResponse = observeRequest(ratingRequest, null, null)
+        ratingResponse.observe(viewLifecycleOwner, Observer {
+            val (bool, result) = it
+            when (bool) {
+                true -> {
+                    val res = result as TopicResponse
+                    val topic = res.data.filter {
+                        it.topic != ""
+                    }
+                    itemView.reportTopic.text = topic[0].topic
+
+                }
+            }
+        })
+    }
+
+    private fun getStateAndLgaById(
+        item: ReportResponse?,
+        itemView: View
+    ) {
+        val locationRequest = userViewModel.getSingleLGA("${item?.localGovernment}")
+        val stateResponse = observeRequest(locationRequest, null, null)
+        stateResponse.observe(viewLifecycleOwner, Observer {
+            val (bool, result) = it
+            when (bool) {
+                true -> {
+                    val res = result as Location
+                    lga = res.data.localGovernment.toString()
+                    state = res.data.stateName.toString()
+                    Log.i("State", "${res.data.stateName}")
+                    itemView.reportLocation.text = "$lga, $state"
+
+
+                }
+            }
+        })
     }
 
     // function for setup data

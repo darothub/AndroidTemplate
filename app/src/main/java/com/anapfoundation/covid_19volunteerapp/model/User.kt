@@ -42,7 +42,7 @@ class UserData(
     val phone: String,
 
     @SerializedName("password")
-    var password:String?="",
+    var password:String="",
 
     @SerializedName("house_number")
     val houseNumber: String? = "",

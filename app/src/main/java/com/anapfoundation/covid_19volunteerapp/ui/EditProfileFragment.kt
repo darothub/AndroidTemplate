@@ -310,7 +310,7 @@ class EditProfileFragment : DaggerFragment() {
         it.data.associateByTo(states, {
             it.state /* key */
         }, {
-            it.id /* value */
+            "${it.id} ${it.zone}" /* value */
         })
     }
 
@@ -335,8 +335,10 @@ class EditProfileFragment : DaggerFragment() {
         val emailAddress = editInfoEmailEditText.text.toString().trim().toLowerCase()
         val phoneNumber = editInfoPhoneEditText.text.toString().trim()
         val houseNumber = editInfoHouseNoEditText.text.toString().trim()
-        val stateSeletcted = editInfoStateSpinner.selectedItem
-        val state = states.get(stateSeletcted)
+        val selectedState = editInfoStateSpinner.selectedItem
+        val valueOfStateSelected = states.get(selectedState)?.split(" ")
+        val state = valueOfStateSelected?.get(0).toString()
+        val zoneGUID = valueOfStateSelected?.get(1).toString()
         val street = editInfoStreetEditText.text.toString().trim()
          imageText = imageUrlText.text.toString()
         val profileImageUrl = imageText.subSequence(10, imageText.length).toString()
@@ -366,6 +368,7 @@ class EditProfileFragment : DaggerFragment() {
                     houseNumber,
                     state as String,
                     street,
+                    zoneGUID,
                     profileImageUrl,
                     header
                 )

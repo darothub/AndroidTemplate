@@ -1,7 +1,7 @@
 
 ext.versions = [
 
-        appcompat                     : '1.1.0',
+        appcompat                     : '1.2.0-beta01',
         navigation_fragment           : '2.3.0-alpha06',
         lifecyklelog                  : '3.0.0',
         orhanobut                     : "2.2.0",

@@ -186,7 +186,8 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
         ) {
             lgaAndDistrict.clear()
             val selectedState = spinnerState.selectedItem
-            val stateID = states.get(selectedState)
+            val valueOfStateSelected = states.get(selectedState)?.split(" ")
+            val stateID = valueOfStateSelected?.get(0).toString()
             val request = userViewModel.getLocal(stateID.toString(), "47", "")
             val response = observeRequest(request, null, null)
             response.observe(viewLifecycleOwner, Observer {

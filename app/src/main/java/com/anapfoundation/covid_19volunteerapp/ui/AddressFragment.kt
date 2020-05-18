@@ -149,8 +149,9 @@ class AddressFragment : DaggerFragment() {
         it.data.associateByTo(states, {
             it.state /* key */
         }, {
-            it.id /* value */
+            "${it.id} ${it.zone}" /* value */
         })
+        Log.i(title, "${states.get("Bauchi")?.split(" ")?.get(0)}")
     }
 
     private fun setupSpinner() {
@@ -179,10 +180,14 @@ class AddressFragment : DaggerFragment() {
             else -> {
                 val selectedState = spinnerState.selectedItem
                 val selectedLGA = spinnerLGA.selectedItem
-                val stateGUID = states.get(selectedState)
+                val valueOfStateSelected = states.get(selectedState)?.split(" ")
+                val stateGUID = valueOfStateSelected?.get(0).toString()
+                val zoneGUID = valueOfStateSelected?.get(1).toString()
                 val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
                 val lgaGUID = lgaAndDistrictArray?.get(0).toString()
                 val district = lgaAndDistrictArray?.get(1).toString()
+
+                Log.i(title, "ZoneGUID $zoneGUID")
 
                 val houseNumber = houseNumberEditText.text.toString()
                 val street = streetEditText.text.toString()
@@ -192,11 +197,12 @@ class AddressFragment : DaggerFragment() {
                     userData.lastName,
                     userData.email,
                     userData.phone,
-                    userData.password.toString(),
+                    userData.password,
                     houseNumber,
                     street,
-                    stateGUID.toString(),
+                    stateGUID,
                     lgaGUID,
+                    zoneGUID,
                     district
                 )
                 val response = observeRequest(request, progressBar, submitBtn)

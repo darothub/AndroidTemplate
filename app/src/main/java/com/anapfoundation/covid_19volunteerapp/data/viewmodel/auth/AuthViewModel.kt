@@ -40,7 +40,7 @@ class AuthViewModel @Inject constructor(
     fun addReport(
         topic: String, rating: String, story: String, state: String, mediaURL: String?,
         localGovernment: String?, district: String?,
-        town: String?, suggestion:String?, header: String
+        town: String?, zone:String?, suggestion:String?, header: String
     ): LiveData<ServicesResponseWrapper<Data>> {
         val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
         responseLiveData.value = ServicesResponseWrapper.Loading(
@@ -56,6 +56,7 @@ class AuthViewModel @Inject constructor(
             localGovernment,
             district,
             town,
+            zone,
             suggestion,
             header
         )

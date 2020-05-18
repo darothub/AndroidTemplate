@@ -42,6 +42,7 @@ fun AuthViewModel.updateProfile(
     houseNumber: String,
     state: String,
     street: String?,
+    zone:String?,
     profileImageUrl: String?,
     header: String
 ): LiveData<ServicesResponseWrapper<Data>> {
@@ -58,6 +59,7 @@ fun AuthViewModel.updateProfile(
         houseNumber,
         state,
         street,
+        zone,
         profileImageUrl,
         header
     )

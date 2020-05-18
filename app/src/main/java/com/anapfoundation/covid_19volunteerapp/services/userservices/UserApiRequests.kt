@@ -21,6 +21,7 @@ interface UserApiRequests {
         @Field("street") street:String,
         @Field("state") state:String,
         @Field("localGovernment") localGovernment:String,
+        @Field("zone") zone:String,
         @Field("district") district:String
     ): Call<DefaultResponse>
 

@@ -21,6 +21,7 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
         street: String,
         state: String,
         localGovernment: String,
+        zone:String,
         district: String
     ): Call<DefaultResponse> {
         return userApiRequests.registerUser(
@@ -33,6 +34,7 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
             street,
             state,
             localGovernment,
+            zone,
             district
         )
     }
