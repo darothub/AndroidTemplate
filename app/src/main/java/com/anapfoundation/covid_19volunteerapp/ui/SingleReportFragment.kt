@@ -1,5 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
@@ -73,6 +74,10 @@ class SingleReportFragment : Fragment() {
         singleReportBackBtn.setOnClickListener {
             findNavController().popBackStack()
         }
+
+
     }
+
+
 
 }

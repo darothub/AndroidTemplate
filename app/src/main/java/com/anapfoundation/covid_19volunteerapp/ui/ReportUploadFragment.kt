@@ -499,21 +499,27 @@ class ReportUploadFragment : DaggerFragment() {
 
     // Add taken picture to gallery
     private fun galleryAddPic() {
-        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-            val f = File(currentPhotoPath)
-            mediaScanIntent.data = Uri.fromFile(f)
-            requireActivity().sendBroadcast(mediaScanIntent)
-            Log.i(title, "new uri ${Uri.fromFile(f)}")
-        }
-//        MediaScannerConnection.scanFile(
-//            requireContext(), arrayOf<String>(currentPhotoPath),
-//            null
-//        ) { path, uri ->
-//            Log.i(
-//                title,
-//                "file $path was scanned seccessfully: $uri"
-//            )
+//        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+//            val f = File(currentPhotoPath)
+//            mediaScanIntent.data = Uri.fromFile(f)
+//            requireActivity().sendBroadcast(mediaScanIntent)
+//            Log.i(title, "new uri ${Uri.fromFile(f)}")
 //        }
+
+        val client = object :MediaScannerConnection.MediaScannerConnectionClient{
+            override fun onMediaScannerConnected() {
+                Log.i(title, "Scan connected")
+            }
+
+            override fun onScanCompleted(path: String?, uri: Uri?) {
+                Log.i(title, "Scan completed")
+            }
+
+        }
+       val h =  MediaScannerConnection(requireContext(), client)
+        h.scanFile(currentPhotoPath, "image/*")
+        h.connect()
+
     }
 
 
