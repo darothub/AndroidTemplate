@@ -135,10 +135,12 @@ class ReportFragment : DaggerFragment() {
                     }
                     R.id.profileFragment -> {
                         requireActivity().onBackPressedDispatcher.addCallback {
-
-
                             navController.navigate(R.id.reportHomeFragment)
-
+                        }
+                    }
+                    R.id.reviewerScreenFragment->{
+                        requireActivity().onBackPressedDispatcher.addCallback {
+                            navController.navigate(R.id.reportHomeFragment)
                         }
                     }
                     else -> {
@@ -184,7 +186,6 @@ class ReportFragment : DaggerFragment() {
                             screen.isVisible = false
                         }
                     }
-                    requireContext().toast(requireContext().getLocalisedString(R.string.successful))
                     Log.i(title, "Reviewer ${res.data.isReviewer}")
                 }
                 else -> Log.i(title, "error $result")

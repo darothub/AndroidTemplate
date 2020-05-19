@@ -40,13 +40,6 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.storage.FirebaseStorage
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
-import com.karumi.dexter.listener.single.PermissionListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_upload.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
@@ -157,6 +150,9 @@ class ReportUploadFragment : DaggerFragment() {
     var imageUrl = ""
 
 
+    val imageFileAndPath by lazy {
+        requireActivity().createImageFile()
+    }
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
@@ -202,7 +198,6 @@ class ReportUploadFragment : DaggerFragment() {
         initEnterKeyToSubmitForm(reportUploadTownEditText) {  addReportRequest() }
 
         setOnClickEvent(uploadCard, uploadIcon) { showBottomSheet() }
-        permissionRequest()
         imagePreview.clipToOutline = true
 
         cameraIcon.setOnClickListener {
@@ -362,14 +357,12 @@ class ReportUploadFragment : DaggerFragment() {
 
     }
 
-    private fun permissionRequest() {
 
-    }
 
     private fun checkCameraPermission() {
         cameraPermission.check(this)
             .onGranted {
-                dispatchTakePictureIntent()
+                dispatchTakePictureIntent(imageFileAndPath.first, REQUEST_TAKE_PHOTO)
             }.onShowRationale {
                 showRationaleDialog()
             }
@@ -455,57 +448,7 @@ class ReportUploadFragment : DaggerFragment() {
 
     }
 
-    @SuppressLint("SimpleDateFormat")
-    @Throws(IOException::class)
-    private fun createImageFile(): File {
-        // Create an image file name
 
-        val storageDir: File? =
-            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
-        ).apply {
-            // Save a file: path for use with ACTION_VIEW intents
-            currentPhotoPath = absolutePath
-        }
-    }
-
-
-    private fun dispatchTakePictureIntent() {
-        var photoString = ""
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            // Ensure that there's a camera activity to handle the intent
-            takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
-                // Create the File where the photo should go
-                val photoFile: File? = try {
-                    createImageFile()
-
-                } catch (ex: IOException) {
-                    // Error occurred while creating the File
-                    Log.i(title, ex.localizedMessage)
-                    null
-                }
-                // Continue only if the File was successfully created
-//                Log.i(title, "File ${createImageFile()}")
-                photoFile?.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                        requireContext(),
-                        "com.anapfoundation.android.fileprovider",
-                        it
-                    )
-
-
-                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                }
-
-
-
-            }
-        }
-    }
 
     private fun uploadReportImage() {
         val state = reportUploadState.selectedItem

@@ -129,7 +129,7 @@ class ReportApprovalFragment : DaggerFragment() {
                         val res = result as DefaultResponse
                         Log.i(title, res.data.toString())
                         requireContext().toast(requireContext().getLocalisedString(R.string.approved_successful))
-
+                        findNavController().navigate(R.id.reviewerScreenFragment)
                     }
                     else -> Log.i(title, "error $result")
                 }

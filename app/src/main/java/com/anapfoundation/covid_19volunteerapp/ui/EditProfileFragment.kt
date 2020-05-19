@@ -1,5 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -141,6 +143,11 @@ class EditProfileFragment : DaggerFragment() {
     val timeStamp by lazy {
         SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
     }
+    private val cameraPermission by lazy {
+        net.codecision.startask.permissions.Permission.Builder(Manifest.permission.CAMERA)
+            .setRequestCode(REQUEST_TAKE_PHOTO)
+            .build()
+    }
     //Get upload button from the included layout
     lateinit var uploadPictureBtn:Button
 
@@ -213,8 +220,16 @@ class EditProfileFragment : DaggerFragment() {
 
         uploadPictureBtn =  bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
 
+        galleryIcon.setOnClickListener {
+
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            val mimeTypes = arrayOf("image/jpeg", "image/png")
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
+            startActivityForResult(intent, REQUEST_FROM_GALLERY)
+        }
         cameraIcon.setOnClickListener {
-            dispatchTakePictureIntent(imageFileAndPath.first, REQUEST_TAKE_PHOTO)
+            checkCameraPermission()
         }
         galleryIcon.setOnClickListener {
 
@@ -228,7 +243,6 @@ class EditProfileFragment : DaggerFragment() {
     }
 
     private fun camerPermissionRequest(){
-        requireContext().permissionRequest()
         setOnClickEventForPicture(editInfoUploadCard, moreIcon){ showBottomSheet() }
 
     }
@@ -256,6 +270,29 @@ class EditProfileFragment : DaggerFragment() {
 
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
+    }
+
+    private fun checkCameraPermission() {
+        cameraPermission.check(this)
+            .onGranted {
+                dispatchTakePictureIntent(imageFileAndPath.first, REQUEST_TAKE_PHOTO)
+            }.onShowRationale {
+                showRationaleDialog()
+            }
+    }
+
+    private fun showRationaleDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Camera permission")
+            .setMessage("Allow app to use your camera to take photos and record videos.")
+            .setPositiveButton("Allow") { _, _ ->
+                cameraPermission.request(this)
+            }
+            .setNegativeButton("Deny") { _, _ ->
+
+            }
+            .create()
+            .show()
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {

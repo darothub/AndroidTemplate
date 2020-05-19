@@ -19,13 +19,6 @@ import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
-import com.karumi.dexter.listener.single.PermissionListener
 import kotlinx.android.synthetic.main.fragment_edit_profile.*
 import kotlinx.android.synthetic.main.fragment_report_upload.*
 import java.io.ByteArrayOutputStream
@@ -68,33 +61,6 @@ inline fun Activity.readCitiesAndLgaData():HashMap<String, List<CityClass>>{
     return stateLgaMap
 }
 
-fun Context.permissionRequest() {
-    Dexter.withContext(this)
-        .withPermission(Manifest.permission.CAMERA)
-        .withListener(object : PermissionListener {
-            override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-
-            }
-            override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                val dialogPermissionListener: PermissionListener =
-                    DialogOnDeniedPermissionListener.Builder
-                        .withContext(this@permissionRequest)
-                        .withTitle("Camera permission")
-                        .withMessage("Camera permission is needed to take picture for your report")
-                        .withButtonText(android.R.string.ok)
-                        .withIcon(android.R.drawable.ic_menu_camera)
-                        .build()
-                dialogPermissionListener.onPermissionDenied(response)
-            }
-
-            override fun onPermissionRationaleShouldBeShown(
-                permission: PermissionRequest?,
-                token: PermissionToken?
-            ) {
-
-            }
-        }).check()
-}
 
 fun Activity.createImageFile(): Pair<File?, String> {
     val timeStamp by lazy {

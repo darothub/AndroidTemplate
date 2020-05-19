@@ -41,6 +41,10 @@
             android:gravity="center"
             android:textStyle="bold"
             android:textSize="@dimen/smallest_font_size"
+            android:shadowColor="@color/colorPrimaryDark"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="30"
             android:textColor="@color/colorNeutral"
             android:elevation="10dp"/>
 
@@ -54,6 +58,10 @@
             android:textStyle="bold"
             android:includeFontPadding="false"
             android:textSize="10sp"
+            android:shadowColor="@color/colorPrimaryDark"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="50"
             android:textColor="@color/colorNeutral"
             android:elevation="3dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>

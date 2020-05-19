@@ -131,7 +131,7 @@
     <string name="forgot_password2">Forgot password</string>
     <string name="reset_password">Reset password</string>
     <string name="password_invalid">Password is invalid</string>
-    <string name="report_review">Report review</string>
+    <string name="report_review">Review</string>
     <string name="approved_successful">Approved successfully</string>
     <string name="approved_report">Approved reports</string>
     <string name="unapproved_report">Unapproved reports</string>

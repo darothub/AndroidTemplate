@@ -109,9 +109,7 @@ dependencies {
 
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle_version"
-
-    //Dexter permission
-    implementation 'com.karumi:dexter:6.1.0'
+    
 
     //Cloudinary
     implementation group: 'com.cloudinary', name: 'cloudinary-android', version: '1.27.0'
@@ -132,6 +130,7 @@ dependencies {
     implementation 'com.github.NaimishTrivedi:FBToast:1.0'
 
     implementation "com.github.illiashenkoo:startask-permissions:1.0.6"
+
 
 
 }

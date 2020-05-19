@@ -72,6 +72,9 @@
         <action
             android:id="@+id/toApprovalFragment"
             app:destination="@id/reportApprovalFragment" />
+        <action
+            android:id="@+id/fromReviewToSingleReport"
+            app:destination="@id/toSingleReportScreen" />
     </fragment>
     <fragment
         android:id="@+id/reportApprovalFragment"

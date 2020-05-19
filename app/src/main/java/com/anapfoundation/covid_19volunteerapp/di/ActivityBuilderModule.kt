@@ -43,7 +43,9 @@ abstract class ActivityBuilderModule {
             ResetPasswordFragmentModule::class,
             ReviewerScreenModule::class,
             ReportApprovalFragmentModule::class,
-            DataSourceFactoryModule::class
+            DataSourceFactoryModule::class,
+            UnapprovedReportFragmentModule::class,
+            ApprovedReportFragmentModule::class
 
         ]
     )

@@ -12,6 +12,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.adapter.ViewPagerAdapter
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerApprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
@@ -26,6 +27,7 @@ import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
+import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import com.utsman.recycling.extentions.Recycling
 import com.utsman.recycling.paged.setupAdapterPaged
@@ -76,6 +78,8 @@ class ReviewerScreenFragment : DaggerFragment() {
 
     var lga = ""
     var state = ""
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -87,162 +91,17 @@ class ReviewerScreenFragment : DaggerFragment() {
     override fun onResume() {
         super.onResume()
 
-        setRecyclerViewForUnapprovedReports()
-        setRecyclerViewForApprovedReports()
+        val pageAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+        viewPager2.adapter = pageAdapter
+        var names = arrayListOf<String>("Unapproved reports", "Approved reports")
+        TabLayoutMediator(tabLayout, viewPager2){tab, position ->
+            tab.text = names[position]
+        }.attach()
+
     }
 
-    private fun setRecyclerViewForApprovedReports() {
-        try {
-            approvedReportRecyclerview.setupAdapterPaged<ReportResponse>(R.layout.approved_report_item) { adapter, context, list ->
-
-                bind { itemView, position, item ->
-
-                    Log.i(title, "approved items ${item}")
-                    val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
-                    val ratingResponse = observeRequest(ratingRequest, null, null)
-                    ratingResponse.observe(viewLifecycleOwner, Observer {
-                        val (bool, result) = it
-                        when (bool) {
-                            true -> {
-                                val res = result as TopicResponse
-                                val topic = res.data.filter {
-                                    it.topic != ""
-                                }
-                                itemView.approvedReportTopic.text = topic[0].topic
-
-                            }
-                        }
-                    })
-
-                    val locationRequest = userViewModel.getSingleLGA("${item?.localGovernment}")
-                    val stateResponse = observeRequest(locationRequest, null, null)
-                    stateResponse.observe(viewLifecycleOwner, Observer {
-                        val (bool, result) = it
-                        when (bool) {
-                            true -> {
-                                val res = result as Location
-                                lga = res.data.localGovernment.toString()
-                                state = res.data.stateName.toString()
-                                Log.i("State", "${res.data.stateName}")
-                                itemView.approvedReportLocation.text = "$lga, $state"
-
-
-                            }
-                        }
-                    })
-
-//                    itemView.reportStory.text = item?.story
-
-                    itemView.setOnClickListener {
-                        singleReport.id = item?.id
-                        singleReport.topic = itemView.approvedReportTopic.text.toString()
-                        singleReport.story = item?.story
-                        singleReport.mediaURL = item?.mediaURL
-
-                        singleReport.localGovernment = lga
-                        singleReport.state = state
-                        val action = ReviewerScreenFragmentDirections.toApprovalFragment()
-                        action.singleReport = singleReport
-                        Navigation.findNavController(requireView()).navigate(action)
-                    }
-
-                    Picasso.get().load(item?.mediaURL)
-                        .placeholder(R.drawable.applogo)
-                        .into(itemView.approvedReportImage)
-                    itemView.approvedReportImage.clipToOutline = true
-                }
-
-
-                val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-                setLayoutManager(layoutManager)
-                authViewModel.getApprovedReports(reviewerApprovedReportsDataFactory)
-                    .observe(viewLifecycleOwner, Observer {
-
-                        submitList(it)
-                    })
-
-            }
-
-        } catch (e: Exception) {
-            Log.e(title, "Erro1 ${e.message.toString()}")
-        }
-    }
-
-    private fun setRecyclerViewForUnapprovedReports() {
-        try {
-
-            Log.i(title, "header $header")
-            reviewerRecyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item) { adapter, context, list ->
-
-                bind { itemView, position, item ->
-
-                    val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
-                    val ratingResponse = observeRequest(ratingRequest, null, null)
-                    ratingResponse.observe(viewLifecycleOwner, Observer {
-                        val (bool, result) = it
-                        when (bool) {
-                            true -> {
-                                val res = result as TopicResponse
-                                val topic = res.data.filter {
-                                    it.topic != ""
-                                }
-                                itemView.reportTopic.text = topic[0].topic
-
-                            }
-                        }
-                    })
-
-                    val locationRequest = userViewModel.getSingleLGA("${item?.localGovernment}")
-                    val stateResponse = observeRequest(locationRequest, null, null)
-                    stateResponse.observe(viewLifecycleOwner, Observer {
-                        val (bool, result) = it
-                        when (bool) {
-                            true -> {
-                                val res = result as Location
-                                lga = res.data.localGovernment.toString()
-                                state = res.data.stateName.toString()
-                                Log.i("State", "${res.data.stateName}")
-                                itemView.reportLocation.text = "$lga, $state"
-
-
-                            }
-                        }
-                    })
-
-                    itemView.reportStory.text = item?.story
-
-                    itemView.setOnClickListener {
-                        singleReport.id = item?.id
-                        singleReport.topic = itemView.reportTopic.text.toString()
-                        singleReport.story = itemView.reportStory.text.toString()
-                        singleReport.mediaURL = item?.mediaURL
-
-                        singleReport.localGovernment = lga
-                        singleReport.state = state
-                        val action = ReviewerScreenFragmentDirections.toApprovalFragment()
-                        action.singleReport = singleReport
-                        Navigation.findNavController(requireView()).navigate(action)
-                    }
-
-                    Picasso.get().load(item?.mediaURL)
-                        .placeholder(R.drawable.applogo)
-                        .into(itemView.reportImage)
-                    itemView.reportImage.clipToOutline = true
-                }
 
 
 
-                authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory)
-                    .observe(viewLifecycleOwner, Observer {
-
-                        submitList(it)
-                    })
-
-            }
-
-        } catch (e: Exception) {
-            Log.e(title, e.message.toString())
-        }
-    }
 
 }
