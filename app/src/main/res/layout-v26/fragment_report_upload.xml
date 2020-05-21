@@ -224,8 +224,7 @@
                 android:hint="@string/street_suggestion"
                 android:textColorHint="@color/colorTextHint"
                 android:maxLength="150"
-                android:gravity="top|left"
-                android:singleLine="true" />
+                android:gravity="top|left" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
         <TextView

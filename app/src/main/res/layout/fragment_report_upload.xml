@@ -225,7 +225,7 @@
                 android:textColorHint="@color/colorTextHint"
                 android:maxLength="150"
                 android:gravity="top|left"
-                android:singleLine="true" />
+                 />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
         <TextView
