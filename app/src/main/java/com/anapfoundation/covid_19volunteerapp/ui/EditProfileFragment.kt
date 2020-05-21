@@ -187,13 +187,13 @@ class EditProfileFragment : DaggerFragment() {
 
                         imageUrlText.append(user.profileImageURL)
                         imageUrlText.show()
-                        editInfoFNameEditText.setText("user.firstName")
-//                        editInfoLNameEditText.setText(user.lastName)
-//                        editInfoEmailEditText.setText(user.email)
-//                        editInfoPhoneEditText.setText(user.phone)
-//                        editInfoHouseNoEditText.setText(user.houseNumber)
-//                        editInfoStateSpinner.prompt = user.state
-//                        editInfoStreetEditText.setText(user.street)
+                        editInfoFNameEditText.setText(user.firstName)
+                        editInfoLNameEditText.setText(user.lastName)
+                        editInfoEmailEditText.setText(user.email)
+                        editInfoPhoneEditText.setText(user.phone)
+                        editInfoHouseNoEditText.setText(user.houseNumber)
+                        editInfoStateSpinner.prompt = user.state
+                        editInfoStreetEditText.setText(user.street)
 
                     }
                     false ->{

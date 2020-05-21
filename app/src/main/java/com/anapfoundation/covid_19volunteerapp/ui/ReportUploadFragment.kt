@@ -159,6 +159,8 @@ class ReportUploadFragment : DaggerFragment() {
         requireActivity().createImageFile()
     }
 
+    var path =""
+
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     private val userViewModel: UserViewModel by lazy {
@@ -347,11 +349,11 @@ class ReportUploadFragment : DaggerFragment() {
 
     private fun showBottomSheet() {
         uploadPictureText.text = requireContext().getLocalisedString(R.string.upload_picture)
-        val state = reportUploadState.selectedItem
-        val path = "images/report_$state _$timeStamp" + "_.jpg"
+//        val state = reportUploadState.selectedItem
 
 
-        uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
+
+        uploadPictureBtn.text = requireContext().getLocalisedString(R.string.upload_image)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
@@ -438,14 +440,7 @@ class ReportUploadFragment : DaggerFragment() {
             bottomSheetDialog.show()
             imagePreview.setImageBitmap(imageBitmap)
             imagePreview.show()
-           uploadPictureBtn.setOnClickListener {
-               imagePreview.hide()
-               bottomSheetDialog.dismiss()
-               imageUploadPreview.setImageBitmap(imageBitmap)
-               imageUploadPreview.show()
-               uploadPictureText.setText(requireContext().getLocalisedString(R.string.new_picture))
-
-           }
+            uploadPictureEvent(imageBitmap, null)
 
         }
         else if (requestCode == REQUEST_FROM_GALLERY && resultCode == RESULT_OK) {
@@ -453,11 +448,42 @@ class ReportUploadFragment : DaggerFragment() {
                 val imageUri = data!!.data
                 imagePreview.setImageURI(imageUri)
                 imagePreview.show()
+                if (imageUri != null) {
+                    uploadPictureEvent(null, imageUri)
+                }
 
             } catch (e: FileNotFoundException) {
                 e.printStackTrace()
                 Toast.makeText(requireContext(), "Something went wrong", Toast.LENGTH_LONG).show()
             }
+        }
+    }
+
+    private fun uploadPictureEvent(imageBitmap: Bitmap?, uri:Uri?) {
+        path = "images/report_$timeStamp" + "_.jpg"
+        uploadPictureBtn.setOnClickListener {
+            imagePreview.hide()
+
+            bottomSheetProgressBar.show()
+            uploadPictureBtn.hide()
+            uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlField)
+            CoroutineScope(Main).launch {
+                delay(3000)
+                bottomSheetProgressBar.hide()
+                uploadPictureBtn.show()
+                if (imageBitmap != null){
+                    imageUploadPreview.setImageBitmap(imageBitmap)
+                    imageUploadPreview.show()
+                }
+                else{
+                    imageUploadPreview.setImageURI(uri)
+                    imageUploadPreview.show()
+                }
+
+                uploadPictureText.setText(requireContext().getLocalisedString(R.string.new_picture))
+                bottomSheetDialog.dismiss()
+            }
+
         }
     }
 

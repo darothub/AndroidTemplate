@@ -139,6 +139,7 @@
     <string name="logout">Log out</string>
     <string name="exit">Exit</string>
     <string name="new_picture">New picture uploaded</string>
+    <string name="upload_image">Upload</string>
 
 
 </resources>

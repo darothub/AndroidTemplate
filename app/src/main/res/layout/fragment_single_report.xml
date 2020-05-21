@@ -180,7 +180,7 @@
                 android:id="@+id/singleReportReportLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
+                android:textAllCaps="false"
                 android:text="@string/location"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/medium_font_size"

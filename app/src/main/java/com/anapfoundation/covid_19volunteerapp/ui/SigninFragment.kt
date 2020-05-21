@@ -34,6 +34,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -95,8 +96,10 @@ class SigninFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
+
+        val localTime = Locale.getDefault().displayLanguage
         signinBtn = signinBottomLayout.findViewById<Button>(R.id.includeBtn)
-        Log.i(title, "onResume")
+        Log.i(title, "onResume $localTime")
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
         submitLoginRequest()
         setButtonText()
@@ -148,15 +151,16 @@ class SigninFragment : DaggerFragment() {
     }
 
     private fun checkForReturninUser() {
-        val returningUser = storageRequest.checkUser("loggedOutUser")
-        signinEmailEdit.setText(returningUser?.email)
-
+        val returningUser = storageRequest.checkUser("loggedInUser")
 
         if (returningUser != null) {
             Log.i("returning", "user $returningUser")
 //            requireContext().toast("$returningUser")
             when {
-                returningUser.rememberPassword -> signinPasswordEdit.setText(returningUser.password)
+                returningUser.rememberPassword -> {
+                    signinEmailEdit.setText(returningUser?.email)
+                    signinPasswordEdit.setText(returningUser.password)
+                }
             }
 
         }
@@ -209,7 +213,7 @@ class SigninFragment : DaggerFragment() {
         when (bool) {
             true -> {
                 val res = result as UserResponse
-                var userExist = User(null, null, null, null, null)
+                var userExist = User(null, null, emailAddress, passwordString, null)
                 userExist.loggedIn = true
                 userExist.token = res.data
 

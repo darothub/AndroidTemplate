@@ -56,6 +56,7 @@ class HomeFragment : DaggerFragment() {
     }
 
     fun loadProgressBar(){
+
         val myThread = Thread(){
             try {
                 kotlin.run {
