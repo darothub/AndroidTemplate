@@ -71,8 +71,6 @@ class ProfileFragment : DaggerFragment() {
         navigateToEditProfile()
 
 
-
-
         val request = authViewModel.getProfileData(header)
         val response = observeRequest(request, null, null)
         response.observe(viewLifecycleOwner, Observer {
@@ -95,7 +93,7 @@ class ProfileFragment : DaggerFragment() {
                         profileAddress.text = "${user.houseNumber} ${user.street} ${user.state}"
                         profileUploadNumber.text = "${user.totalReports}"
                         Picasso.get().load(user.profileImageURL).placeholder(imagePlaceholder).into(profileImage)
-                        Log.i(title, "name ${user.profileImageURL}")
+                        Log.i(title, "name ${user.firstName}")
 
                     }
                     false ->{

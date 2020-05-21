@@ -36,15 +36,19 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.request.Report
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.storage.FirebaseStorage
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_edit_profile.*
 import kotlinx.android.synthetic.main.fragment_report_upload.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -147,7 +151,8 @@ class ReportUploadFragment : DaggerFragment() {
             .setRequestCode(REQUEST_TAKE_PHOTO)
             .build()
     }
-    var imageUrl = ""
+    var imageUrl:String?=null
+    var suggestion:String?=null
 
 
     val imageFileAndPath by lazy {
@@ -228,8 +233,16 @@ class ReportUploadFragment : DaggerFragment() {
             val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
             val lgaGUID = lgaAndDistrictArray?.get(0).toString()
             val district = lgaAndDistrictArray?.get(1).toString()
-            val suggestion = suggestionEditText.text.toString()
-            Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district")
+            suggestion = suggestionEditText.text.toString()
+            imageUrl = imageUrlField.text.toString().substring(10)
+
+
+            if (suggestion!!.isEmpty()){
+                suggestion = null
+            }
+            if (imageUrl!!.isEmpty()){
+                imageUrl = null
+            }
             report.story = story.toString()
             report.state = "$stateGUID"
             report.mediaURL = imageUrl
@@ -250,7 +263,7 @@ class ReportUploadFragment : DaggerFragment() {
                 suggestion,
                 header
             )
-
+            Log.i(title, "mediaURL $imageUrl suggestion $suggestion")
             val response = observeRequest(request, progressBar, submitBtn)
 
             response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
@@ -268,7 +281,7 @@ class ReportUploadFragment : DaggerFragment() {
 
             true -> {
                 requireContext().toast(requireContext().getLocalisedString(R.string.upload_successful))
-                val res = result as Data
+                val res = result as AddReportResponse
                 Log.i(title, "message ${result.message}")
                 findNavController().navigate(R.id.reportHomeFragment)
             }
@@ -333,26 +346,29 @@ class ReportUploadFragment : DaggerFragment() {
 
 
     private fun showBottomSheet() {
-//        checkCameraPermission()
+        uploadPictureText.text = requireContext().getLocalisedString(R.string.upload_picture)
+        val state = reportUploadState.selectedItem
+        val path = "images/report_$state _$timeStamp" + "_.jpg"
+
 
         uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
-        uploadPictureBtn.setOnClickListener {
-
-            bottomSheetProgressBar.show()
-            uploadPictureBtn.hide()
-            uploadReportImage()
-            CoroutineScope(Main).launch {
-                delay(3000)
-                bottomSheetProgressBar.hide()
-                uploadPictureBtn.show()
-                bottomSheetDialog.dismiss()
-            }
-
-//            findNavController().navigate(R.id.reportUploadFragment)
-        }
+//        uploadPictureBtn.setOnClickListener {
+//
+//            bottomSheetProgressBar.show()
+//            uploadPictureBtn.hide()
+//            uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlField)
+//            CoroutineScope(Main).launch {
+//                delay(3000)
+//                bottomSheetProgressBar.hide()
+//                uploadPictureBtn.show()
+//                bottomSheetDialog.dismiss()
+//            }
+//
+////            findNavController().navigate(R.id.reportUploadFragment)
+//        }
 
 
     }
@@ -422,7 +438,14 @@ class ReportUploadFragment : DaggerFragment() {
             bottomSheetDialog.show()
             imagePreview.setImageBitmap(imageBitmap)
             imagePreview.show()
-            galleryAddPic()
+           uploadPictureBtn.setOnClickListener {
+               imagePreview.hide()
+               bottomSheetDialog.dismiss()
+               imageUploadPreview.setImageBitmap(imageBitmap)
+               imageUploadPreview.show()
+               uploadPictureText.setText(requireContext().getLocalisedString(R.string.new_picture))
+
+           }
 
         }
         else if (requestCode == REQUEST_FROM_GALLERY && resultCode == RESULT_OK) {
@@ -449,76 +472,34 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
 
-
-    private fun uploadReportImage() {
-        val state = reportUploadState.selectedItem
-        val path = "images/report_$state _$timeStamp" + "_.jpg"
-        val imageRef = storageRef.child(path)
-
-        imagePreview.draw(canvas)
-
-        val outputStream = ByteArrayOutputStream()
-
-        capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        val data = outputStream.toByteArray()
-
-        val uploadTask = imageRef.putBytes(data)
-
-        uploadTask.addOnFailureListener {
-            // Handle unsuccessful uploads
-            Log.i(title, "Upload not successful")
-        }.addOnSuccessListener {
-            // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-            // ...
-            Log.i(title, "Upload successful")
-        }
-        uploadTask.continueWith { task ->
-            if (!task.isSuccessful) {
-                task.exception?.let {
-                    throw it
-                }
-            }
-            imageRef.downloadUrl
-        }.addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val downloadUri = task.result
-                downloadUri?.addOnSuccessListener {url ->
-                    imageUrl = url.toString()
-                    Log.i(title, "url $url")
-                    imageUrlField.append(imageUrl)
-                    imageUrlField.show()
-
-                }
-
-            } else {
-                Log.i(title, "uri: No url")
-            }
-        }
-
-    }
-
     // Add taken picture to gallery
     private fun galleryAddPic() {
-//        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-//            val f = File(currentPhotoPath)
-//            mediaScanIntent.data = Uri.fromFile(f)
-//            requireActivity().sendBroadcast(mediaScanIntent)
-//            Log.i(title, "new uri ${Uri.fromFile(f)}")
+        currentPhotoPath = imageFileAndPath.second
+        Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+            val f = File(currentPhotoPath)
+            mediaScanIntent.data = Uri.fromFile(f)
+            requireActivity().sendBroadcast(mediaScanIntent)
+            Log.i(title, "new uri ${Uri.fromFile(f)}")
+        }
+
+//        CoroutineScope(IO).launch {
+//            val client = object :MediaScannerConnection.MediaScannerConnectionClient{
+//                override fun onMediaScannerConnected() {
+//                    Log.i(title, "Scan connected")
+//                }
+//
+//                override fun onScanCompleted(path: String?, uri: Uri?) {
+//                    Log.i(title, "Scan completed")
+//                }
+//
+//            }
+//            currentPhotoPath = imageFileAndPath.second
+//            Log.i(title, "Path $currentPhotoPath")
+//            val h =  MediaScannerConnection(requireContext(), client)
+//            h.scanFile(currentPhotoPath, "image/*")
+//            h.connect()
 //        }
 
-        val client = object :MediaScannerConnection.MediaScannerConnectionClient{
-            override fun onMediaScannerConnected() {
-                Log.i(title, "Scan connected")
-            }
-
-            override fun onScanCompleted(path: String?, uri: Uri?) {
-                Log.i(title, "Scan completed")
-            }
-
-        }
-       val h =  MediaScannerConnection(requireContext(), client)
-        h.scanFile(currentPhotoPath, "image/*")
-        h.connect()
 
     }
 

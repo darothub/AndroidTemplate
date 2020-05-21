@@ -4,11 +4,10 @@ import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import java.io.Serializable
 
 class DefaultResponse (
-    message: String?,
-    error: AnotherError?,
-    token: String?,
+    val message: String?,
+    val error: AnotherError?,
     val data:AnotherData?
-): Data(message, error, token), Serializable
+): Data, Serializable
 
 class AnotherError()
 

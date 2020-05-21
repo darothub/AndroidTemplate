@@ -22,6 +22,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.gson.Gson
@@ -191,7 +192,7 @@ class AddressFragment : DaggerFragment() {
 
                 val houseNumber = houseNumberEditText.text.toString()
                 val street = streetEditText.text.toString()
-                Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district")
+                Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district zone $zoneGUID")
                 val request = userViewModel.registerUser(
                     userData.firstName,
                     userData.lastName,
@@ -224,10 +225,10 @@ class AddressFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
-                val res = result as Data
+                val res = result as UserResponse
                 requireContext().toast(requireContext().getLocalisedString(R.string.signup_successful))
                 findNavController().navigate(R.id.signinFragment)
-                Log.i(title, "result of registration ${res.token}")
+                Log.i(title, "result of registration ${res.data}")
             }
             else -> Log.i(title, "error $result")
         }

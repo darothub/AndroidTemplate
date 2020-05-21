@@ -14,12 +14,12 @@ interface AuthRequestInterface {
                   rating:String,
                   story:String,
                   state:String,
-                  mediaURL:String?,
+                  mediaURL:String?="",
                   localGovernment:String?,
                   district:String?,
                   town:String?,
                   zone:String?,
-                  suggestion:String?,
+                  suggestion:String?="",
                   header:String): Call<AddReportResponse>
 
     fun getTopic(header: String): Call<TopicResponse>

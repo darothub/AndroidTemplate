@@ -1,6 +1,7 @@
 package com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth
 
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -20,6 +21,7 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,7 +40,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun addReport(
-        topic: String, rating: String, story: String, state: String, mediaURL: String?,
+        topic: String, rating: String, story: String, state: String, mediaURL: String?="",
         localGovernment: String?, district: String?,
         town: String?, zone:String?, suggestion:String?, header: String
     ): LiveData<ServicesResponseWrapper<Data>> {
@@ -184,7 +186,7 @@ class AuthViewModel @Inject constructor(
                     )
                     val error = converter.convert(response.errorBody())
                     Log.i(title, "message ${error?.message}")
-                    responseLiveData.postValue(ServicesResponseWrapper.Logout(error?.message.toString()))
+                    responseLiveData.postValue(ServicesResponseWrapper.Logout("${response.message()} ${error?.message.toString()}"))
                 } catch (e: Exception) {
                     Log.i(title, e.message)
                 }
@@ -204,11 +206,10 @@ class AuthViewModel @Inject constructor(
                     Log.i(title, "Caught ${e.message}")
                 }
 
-
             }
             else -> {
                 try {
-                    Log.i(title, "errors ${response.errorBody()}")
+                    Log.i(title, "token ${res}")
                     responseLiveData.postValue(ServicesResponseWrapper.Success(res))
                 } catch (e: java.lang.Exception) {
                     Log.i(title, e.message)

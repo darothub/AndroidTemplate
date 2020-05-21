@@ -136,6 +136,9 @@
     <string name="approved_report">Approved reports</string>
     <string name="unapproved_report">Unapproved reports</string>
     <string name="no_report_approved">No approved reports</string>
+    <string name="logout">Log out</string>
+    <string name="exit">Exit</string>
+    <string name="new_picture">New picture uploaded</string>
 
 
 </resources>

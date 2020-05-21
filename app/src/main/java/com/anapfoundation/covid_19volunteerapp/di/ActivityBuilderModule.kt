@@ -45,7 +45,9 @@ abstract class ActivityBuilderModule {
             ReportApprovalFragmentModule::class,
             DataSourceFactoryModule::class,
             UnapprovedReportFragmentModule::class,
-            ApprovedReportFragmentModule::class
+            ApprovedReportFragmentModule::class,
+            HomeFragmentModules::class,
+            SingleReportFragmentModule::class
 
         ]
     )

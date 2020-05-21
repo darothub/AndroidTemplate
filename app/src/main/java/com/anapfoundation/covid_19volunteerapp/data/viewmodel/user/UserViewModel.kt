@@ -8,6 +8,7 @@ import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
@@ -85,12 +86,13 @@ class UserViewModel @Inject constructor(
             "Loading..."
         )
         val request = userRequestInterface.loginRequest(username, password)
-        request.enqueue(object : Callback<DefaultResponse> {
-            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+        request.enqueue(object : Callback<UserResponse> {
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+                Log.i(title, "Error $t")
             }
 
-            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -193,7 +195,6 @@ class UserViewModel @Inject constructor(
                 catch (e:java.lang.Exception){
                     Log.i(title, e.message)
                 }
-
 
             }
             else -> {

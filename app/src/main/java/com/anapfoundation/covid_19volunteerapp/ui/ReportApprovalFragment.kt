@@ -16,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.approveReport
@@ -34,47 +35,49 @@ import javax.inject.Inject
  */
 class ReportApprovalFragment : DaggerFragment() {
 
-    val title:String by lazy {
+    val title: String by lazy {
         getName()
     }
-    val detailsText:String by lazy {
+    val detailsText: String by lazy {
         requireContext().getLocalisedString(R.string.report_details)
     }
     val spannableString: SpannableString by lazy {
         detailsText.setAsSpannable()
     }
 
-    val capture by lazy {
-        Bitmap.createBitmap(reportApprovalImage.width, reportApprovalImage.height, Bitmap.Config.ARGB_8888)
-    }
 
-    val canvas by lazy {
-        Canvas(capture)
-    }
+    @Inject
+    lateinit var reviewerUnapprovedReportsDataFactory: ReviewerUnapprovedReportsDataFactory
+
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
+
     @Inject
     lateinit var storageRequest: StorageRequest
+
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
+
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
+
     //Set header
     val header by lazy {
         "Bearer $token"
     }
-    lateinit var singleReport:ReportResponse
-    lateinit var  approveBtn:Button
+    lateinit var singleReport: ReportResponse
+    lateinit var approveBtn: Button
     val progressBar by lazy {
         reportApprovalBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
+    var total = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -116,10 +119,28 @@ class ReportApprovalFragment : DaggerFragment() {
         approveBtn = reportApprovalBottomLayout.findViewById<Button>(R.id.btn)
         approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
 
+        approveReport()
+
+        reportApprovalBackBtn.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        this.displayNotificationBell(
+            authViewModel,
+            loggedInUser,
+            reviewerUnapprovedReportsDataFactory,
+            reportApprovalNotificationIcon,
+            reportApprovalNotificationCount
+        )
+
+
+    }
+
+    private fun approveReport() {
         approveBtn.setOnClickListener {
             Log.i(title, "id ${singleReport.id}")
             val request = authViewModel.approveReport(singleReport.id.toString(), header)
-            val response    = observeRequest(request, progressBar, approveBtn)
+            val response = observeRequest(request, progressBar, approveBtn)
 
             response.observe(viewLifecycleOwner, Observer {
                 val (bool, result) = it
@@ -136,13 +157,9 @@ class ReportApprovalFragment : DaggerFragment() {
 
             })
         }
-
-        reportApprovalBackBtn.setOnClickListener {
-            findNavController().popBackStack()
-        }
-
-
     }
+
+
 //
 //    override fun onPause() {
 //        super.onPause()

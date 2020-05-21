@@ -4,6 +4,7 @@ import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import retrofit2.Call
 
 
@@ -14,7 +15,7 @@ interface UserRequestInterface {
         return TODO()
     }
 
-    fun loginRequest(username:String, password: String): Call<DefaultResponse> {
+    fun loginRequest(username:String, password: String): Call<UserResponse> {
         return TODO()
     }
 

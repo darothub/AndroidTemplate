@@ -40,7 +40,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:autoSizeTextType="uniform"
             android:autoSizeMinTextSize="12sp"
-            android:autoSizeMaxTextSize="14sp"
+            android:autoSizeMaxTextSize="13sp"
             android:autoSizeStepGranularity="1sp"
             android:textStyle="normal" />
 

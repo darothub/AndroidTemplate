@@ -32,15 +32,35 @@
                     android:layout_height="match_parent">
 
                     <ImageView
-                        android:id="@+id/singleReportNotificationImage"
+                        android:id="@+id/singleReportNotificationIcon"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="15dp"
                         android:elevation="10dp"
                         android:scaleType="fitXY"
+                        android:visibility="gone"
+                        tools:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/bell_drawable" />
+
+                    <TextView
+                        android:id="@+id/singleReportNotificationCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="2"
+                        android:elevation="2dp"
+                        android:visibility="gone"
+                        tools:visibility="visible"
+                        android:textSize="12sp"
+                        android:textColor="@android:color/holo_red_dark"
+                        app:layout_constraintStart_toStartOf="@id/singleReportNotificationIcon"
+                        app:layout_constraintEnd_toEndOf="@id/singleReportNotificationIcon"
+                        app:layout_constraintHorizontal_bias=".8"
+                        android:layout_marginTop="12dp"
+
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:textStyle="bold"/>
 
                     <ImageView
                         android:id="@+id/singleReportBackBtn"
@@ -182,6 +202,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
+                android:visibility="gone"
                 app:layout_constraintTop_toBottomOf="@id/singleReportReportTopic" />
 
             <TextView
@@ -201,6 +222,7 @@
                 android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:scaleType="fitXY"
+                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toTopOf="@id/singleReportStoryContd"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -220,17 +242,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/singleReportImage" />
 
-            <TextView
-                android:id="@+id/sourceText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:text="@string/source_text"
-                android:textColor="@color/colorPrimary"
-                android:textSize="@dimen/smallest_font_size"
-                android:textStyle="normal"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/singleReportStoryContd" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

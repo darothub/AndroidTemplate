@@ -23,14 +23,14 @@ open class User(
     var token:String?=""
     var rememberPassword:Boolean = false
     var imageUrl = ""
+    var isReviewer:Boolean = false
 
 }
 class ProfileData (
     val data: UserData,
-    message: String?,
-    error: AnotherError?,
-    token: String?
-):Serializable, Data(message, error, token)
+    val message: String?,
+    val error: AnotherError?
+):Serializable, Data
 
 class UserData(
     @SerializedName("first_name")

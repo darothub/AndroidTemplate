@@ -115,14 +115,14 @@ class EditProfileFragment : DaggerFragment() {
     lateinit var storageRequest: StorageRequest
 
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
 
         storageRequest.checkUser("loggedInUser")
     }
 
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
 
     //Set header
@@ -173,6 +173,7 @@ class EditProfileFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        Log.i(title, "onStart")
         val request = authViewModel.getProfileData(header)
         val response = observeRequest(request, null, null)
         response.observe(viewLifecycleOwner, Observer {
@@ -182,18 +183,18 @@ class EditProfileFragment : DaggerFragment() {
                     true ->{
                         val res = result as ProfileData
                         val user = res.data
-                        val loggedInUser = storageRequest.checkUser("loggedInUser")
+                        Log.i(title, "name ${user.firstName}")
+
                         imageUrlText.append(user.profileImageURL)
                         imageUrlText.show()
-                        editInfoFNameEditText.setText(user.firstName)
-                        editInfoLNameEditText.setText(user.lastName)
-                        editInfoEmailEditText.setText(user.email)
-                        editInfoPhoneEditText.setText(user.phone)
-                        editInfoHouseNoEditText.setText(user.houseNumber)
-                        editInfoStateSpinner.prompt = user.state
-                        editInfoStreetEditText.setText(user.street)
+                        editInfoFNameEditText.setText("user.firstName")
+//                        editInfoLNameEditText.setText(user.lastName)
+//                        editInfoEmailEditText.setText(user.email)
+//                        editInfoPhoneEditText.setText(user.phone)
+//                        editInfoHouseNoEditText.setText(user.houseNumber)
+//                        editInfoStateSpinner.prompt = user.state
+//                        editInfoStreetEditText.setText(user.street)
 
-                        Log.i(title, "name ${user.firstName}")
                     }
                     false ->{
                         Log.i(title, "false")
@@ -220,14 +221,7 @@ class EditProfileFragment : DaggerFragment() {
 
         uploadPictureBtn =  bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
 
-        galleryIcon.setOnClickListener {
 
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
-            val mimeTypes = arrayOf("image/jpeg", "image/png")
-            intent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes)
-            startActivityForResult(intent, REQUEST_FROM_GALLERY)
-        }
         cameraIcon.setOnClickListener {
             checkCameraPermission()
         }

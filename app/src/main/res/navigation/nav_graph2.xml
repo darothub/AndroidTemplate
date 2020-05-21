@@ -63,6 +63,11 @@
             app:argType="com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse"
             app:nullable="true"
             android:defaultValue="@null" />
+        <argument
+            android:name="uri"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/reviewerScreenFragment"

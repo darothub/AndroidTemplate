@@ -17,6 +17,7 @@ import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
 import dagger.android.support.DaggerAppCompatActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_report.*
+import java.util.*
 
 class MainActivity : DaggerAppCompatActivity() {
 
@@ -45,30 +46,31 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
-        destinationChangedListener =
-            NavController.OnDestinationChangedListener { controller, destination, arguments ->
-                when (destination.id) {
-                    R.id.notificationFragment -> {
-                        this.onBackPressedDispatcher.addCallback {
-
-                            navController.navigateUp()
-
-                        }
-
-                    }
-
-                }
-            }
+//        destinationChangedListener =
+//            NavController.OnDestinationChangedListener { controller, destination, arguments ->
+//                when (destination.id) {
+//                    R.id.notificationFragment -> {
+//                        this.onBackPressedDispatcher.addCallback {
+//
+//                            navController.navigateUp()
+//
+//                        }
+//
+//                    }
+//
+//                }
+//            }
     }
 
     override fun onResume() {
         super.onResume()
-        navController.addOnDestinationChangedListener(destinationChangedListener)
+
+//        navController.addOnDestinationChangedListener(destinationChangedListener)
     }
     override fun onPause() {
         super.onPause()
         Log.i(title, "OnPause")
-        navController.removeOnDestinationChangedListener(destinationChangedListener)
+//        navController.removeOnDestinationChangedListener(destinationChangedListener)
 
 
     }

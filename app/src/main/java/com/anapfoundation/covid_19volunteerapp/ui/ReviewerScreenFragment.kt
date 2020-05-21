@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -23,17 +24,17 @@ import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.hide
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import com.utsman.recycling.extentions.Recycling
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.approved_report_item.view.*
+import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.reviewerNotificationCount
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.reviewerNotificationIcon
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
 
@@ -44,14 +45,17 @@ class ReviewerScreenFragment : DaggerFragment() {
 
     @Inject
     lateinit var storageRequest: StorageRequest
+
     //Get logged-in user
-    val getUser by lazy {
+    val user by lazy {
         storageRequest.checkUser("loggedInUser")
     }
+
     //Get token
     val token by lazy {
-        getUser?.token
+        user?.token
     }
+
     //Set header
     val header by lazy {
         "Bearer $token"
@@ -78,6 +82,7 @@ class ReviewerScreenFragment : DaggerFragment() {
 
     var lga = ""
     var state = ""
+    var total = 0
 
 
     override fun onCreateView(
@@ -94,14 +99,20 @@ class ReviewerScreenFragment : DaggerFragment() {
         val pageAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         viewPager2.adapter = pageAdapter
         var names = arrayListOf<String>("Unapproved reports", "Approved reports")
-        TabLayoutMediator(tabLayout, viewPager2){tab, position ->
+        TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
             tab.text = names[position]
         }.attach()
 
+        this.displayNotificationBell(
+            authViewModel,
+            user,
+            reviewerUnapprovedReportsDataFactory,
+            reviewerNotificationIcon,
+            reviewerNotificationCount
+        )
+
+
     }
-
-
-
 
 
 }

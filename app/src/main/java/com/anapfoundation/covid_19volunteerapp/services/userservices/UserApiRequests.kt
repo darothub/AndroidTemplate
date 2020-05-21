@@ -1,10 +1,10 @@
 package com.anapfoundation.covid_19volunteerapp.services.userservices
 
-import android.provider.ContactsContract
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -30,7 +30,7 @@ interface UserApiRequests {
     fun loginRequest(
         @Field("username") email:String,
         @Field("password") password:String
-    ):Call<DefaultResponse>
+    ):Call<UserResponse>
 
     @GET("states")
     fun getStates(

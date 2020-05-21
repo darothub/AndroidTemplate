@@ -119,9 +119,7 @@ fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
 
 
 fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, canvas:Canvas, storageRef:StorageReference, imageUrlText:TextView){
-    val timeStamp by lazy {
-        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-    }
+
     val title:String by lazy{
         this.getName()
     }

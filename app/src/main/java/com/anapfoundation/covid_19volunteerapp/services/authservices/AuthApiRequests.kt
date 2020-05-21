@@ -16,12 +16,12 @@ interface AuthApiRequests {
         @Field("rating") rating: String,
         @Field("story") story: String,
         @Field("state") state: String,
-        @Field("mediaURL") mediaURL: String?,
+        @Field("mediaURL") mediaURL: String?=null,
         @Field("localGovernment") lga: String?,
         @Field("district") district:String?,
         @Field("town") street: String?,
         @Field("zone") zone: String?,
-        @Field("suggestion") suggestion:String?,
+        @Field("suggestion") suggestion:String?=null,
         @Header("Authorization") header: String
     ): Call<AddReportResponse>
 

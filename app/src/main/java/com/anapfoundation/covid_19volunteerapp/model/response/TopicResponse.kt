@@ -6,10 +6,9 @@ import java.io.Serializable
 
 class TopicResponse (
     val data: List<Topic>,
-    message: String?,
-    error: AnotherError?,
-    token: String?
-): Data(message, error, token), Serializable
+    val message: String?,
+    val error: AnotherError?
+): Data, Serializable
 
 data class Topic (
     val id: String,

@@ -6,10 +6,9 @@ import java.io.Serializable
 
 class StatesList (
     val data: List<State>,
-    message:String?,
-    error: AnotherError?,
-    token:String?
-): Data(message, error, token), Serializable
+    val message:String?,
+    val error: AnotherError?
+): Data, Serializable
 class State (
     val id: String,
     val index: Long,
@@ -30,10 +29,9 @@ class State (
 
 class LGA (
     val data: List<LocalGovernment>,
-    message:String?,
-    error: AnotherError?,
-    token:String?
-): Data(message, error, token), Serializable
+    val message:String?,
+    val error: AnotherError?
+): Data, Serializable
 
 
 data class LocalGovernment (
@@ -59,10 +57,9 @@ data class LocalGovernment (
 
 class Location(
     val data: LocationData,
-    message:String?,
-    error: AnotherError?,
-    token:String?
-): Data(message, error, token), Serializable
+    val message:String?,
+    val error: AnotherError?
+): Data, Serializable
 
 data class LocationData(
     val id: String,

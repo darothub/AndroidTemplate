@@ -18,13 +18,18 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagedList
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.tfb.fbtoast.FBCustomToast
+import kotlinx.android.synthetic.main.fragment_single_report.*
 import java.lang.Exception
 
 inline fun Fragment.getName():String{
@@ -135,12 +140,13 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
                     progressBar?.hide()
                     button?.show()
                     result.postValue(Pair(false, errorResponse))
-//                    requireContext().toast("$errorResponse")
+                    requireContext().toast("$errorResponse")
                     Log.i(title, "Error ${it.message}")
                 }
                 is ServicesResponseWrapper.Logout ->{
                     progressBar?.hide()
                     button?.show()
+                    result.postValue(Pair(false, errorResponse))
                     requireContext().toast("$errorResponse")
                     Log.i(title, "Log out $errorResponse")
                     val request = NavDeepLinkRequest.Builder
@@ -235,5 +241,37 @@ fun setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
     }
 
 }
+
+internal fun Fragment.displayNotificationBell(
+    authViewModel: AuthViewModel, loggedInUser: User?,
+    dataFactory: ReviewerUnapprovedReportsDataFactory, icon: ImageView, countTextView: TextView
+) {
+    var total = 0
+    when (loggedInUser?.isReviewer) {
+        true -> {
+
+            authViewModel.getUnapprovedReports(dataFactory)
+                .observe(viewLifecycleOwner, Observer {
+                    it.addWeakCallback(null, object : PagedList.Callback() {
+                        override fun onChanged(position: Int, count: Int) {}
+                        override fun onInserted(position: Int, count: Int) {
+                            total += count
+                            countTextView.text = total.toString()
+                        }
+                        override fun onRemoved(position: Int, count: Int) {}
+
+                    })
+
+                })
+            icon.show()
+            countTextView.show()
+        }
+        false -> {
+            icon.hide()
+            countTextView.hide()
+        }
+    }
+}
+
 
 
