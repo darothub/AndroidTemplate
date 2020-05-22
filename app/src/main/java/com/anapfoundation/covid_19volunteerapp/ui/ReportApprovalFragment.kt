@@ -100,20 +100,31 @@ class ReportApprovalFragment : DaggerFragment() {
             singleReport = ReportApprovalFragmentArgs.fromBundle(it).singleReport!!
         }
 
+        val story = singleReport.story
+        val storyLen = story?.length
+        if (storyLen != null) {
+            when{
+                storyLen <= 80 -> reportApprovalStory.text = story
+                storyLen > 80 -> {
+                    val fullStopIndex = story.indexOf(".", 100)
+                    val contdText = story.substring(fullStopIndex+1)
+                    reportApprovalStory.text = story.substring(0..fullStopIndex)
+                    reportApprovalStoryContd.text = contdText
+                    reportApprovalStoryContd.show()
+                }
+            }
+        }
 
         Log.i(title, "reportID ${singleReport.id}")
         reportApprovalReportTopic.text = singleReport.topic
-        reportApprovalHeadline.text = singleReport.topic
         reportApprovalReportLocation.text = "${singleReport.localGovernment}, ${singleReport.state}"
-        reportApprovalStory.text = singleReport.story
-        reportApprovalStoryContd.text = ""
         Picasso.get().load(singleReport.mediaURL)
-            .placeholder(R.drawable.applogo)
+            .placeholder(R.drawable.no_image_icon)
             .into(reportApprovalImage)
 
 
         Picasso.get().load(singleReport.mediaURL)
-            .placeholder(R.drawable.applogo)
+            .placeholder(R.drawable.no_image_icon)
             .into(appBarImage)
 
         approveBtn = reportApprovalBottomLayout.findViewById<Button>(R.id.btn)

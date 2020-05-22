@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -19,6 +20,7 @@ import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedRep
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
+import com.anapfoundation.covid_19volunteerapp.model.UserData
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.displayNotificationBell
 
@@ -61,6 +63,7 @@ class ProfileFragment : DaggerFragment() {
     val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
+    lateinit var profileData: UserData
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,7 +78,7 @@ class ProfileFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
 
         profileImage.clipToOutline = true
-        navigateToEditProfile()
+
 
 
         val request = authViewModel.getProfileData(header)
@@ -107,6 +110,10 @@ class ProfileFragment : DaggerFragment() {
                             .into(profileImage)
                         Log.i(title, "name ${user.firstName}")
 
+
+                        navigateToEditProfile(user)
+
+
                     }
                     false -> {
                         Log.i(title, "false")
@@ -136,9 +143,11 @@ class ProfileFragment : DaggerFragment() {
         }
     }
 
-    private fun navigateToEditProfile() {
+    private fun navigateToEditProfile(user:UserData) {
         editProfileBtn.setOnClickListener {
-            findNavController().navigate(R.id.editProfileFragment)
+            val action = ProfileFragmentDirections.toEditProfile()
+            action.profileData = user
+            Navigation.findNavController(requireView()).navigate(action)
         }
     }
 }

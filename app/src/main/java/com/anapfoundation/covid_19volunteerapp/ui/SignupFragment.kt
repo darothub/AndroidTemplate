@@ -152,7 +152,7 @@ class SignupFragment : DaggerFragment() {
     }
 
     fun validateEmailAndPassword(text: CharSequence, passwordStandard:TextView) {
-        val passwordPattern = Regex("""^[a-zA-Z0-9@$!%*#?&]{6,}$""")
+        val passwordPattern = Regex("""^[a-zA-Z0-9@$.!%*#?&]{6,}$""")
         val matchedPassword = passwordPattern.matches(text)
         if (!matchedPassword) {
             passwordStandard.show()

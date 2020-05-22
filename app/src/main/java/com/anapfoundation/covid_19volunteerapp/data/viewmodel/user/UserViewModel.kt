@@ -62,12 +62,12 @@ class UserViewModel @Inject constructor(
             zone,
             district
         )
-        request.enqueue(object : Callback<DefaultResponse> {
-            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+        request.enqueue(object : Callback<UserResponse> {
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                onFailureResponse(responseLiveData, t)
             }
 
-            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -88,7 +88,7 @@ class UserViewModel @Inject constructor(
         val request = userRequestInterface.loginRequest(username, password)
         request.enqueue(object : Callback<UserResponse> {
             override fun onFailure(call: Call<UserResponse>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+                onFailureResponse(responseLiveData, t)
                 Log.i(title, "Error $t")
             }
 
@@ -110,7 +110,7 @@ class UserViewModel @Inject constructor(
 
         request.enqueue(object :Callback<StatesList>{
             override fun onFailure(call: Call<StatesList>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+                onFailureResponse(responseLiveData, t)
             }
 
             override fun onResponse(call: Call<StatesList>, response: Response<StatesList>) {
@@ -131,7 +131,7 @@ class UserViewModel @Inject constructor(
         val request = userRequestInterface.getLocal(stateID, first, after)
         request.enqueue(object :Callback<LGA>{
             override fun onFailure(call: Call<LGA>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+                onFailureResponse(responseLiveData, t)
             }
 
             override fun onResponse(call: Call<LGA>, response: Response<LGA>) {
@@ -150,7 +150,7 @@ class UserViewModel @Inject constructor(
         val request = userRequestInterface.forgotPasswordRequest(email)
         request.enqueue(object :Callback<DefaultResponse>{
             override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+                onFailureResponse(responseLiveData, t)
             }
 
             override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
@@ -161,6 +161,12 @@ class UserViewModel @Inject constructor(
         return responseLiveData
     }
 
+    internal fun onFailureResponse(
+        responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>,
+        t: Throwable
+    ) {
+        responseLiveData.postValue(ServicesResponseWrapper.Error(t.localizedMessage, 502, null))
+    }
     internal fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
         val statusCode = response.code()

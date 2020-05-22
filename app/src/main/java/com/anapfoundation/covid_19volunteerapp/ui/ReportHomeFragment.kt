@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -33,6 +35,7 @@ import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 /**
  * A simple [Fragment] subclass.
@@ -54,7 +57,7 @@ class ReportHomeFragment : DaggerFragment() {
         "Bearer $token"
     }
 
-    var total = 0
+
 
     @Inject
     lateinit var reportDataFactory: ReportDataFactory
@@ -71,9 +74,10 @@ class ReportHomeFragment : DaggerFragment() {
     val title: String by lazy {
         getName()
     }
-    var singleReport = ReportResponse()
+
     var lga = ""
     var state = ""
+    var total = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,7 +89,7 @@ class ReportHomeFragment : DaggerFragment() {
     @SuppressLint("SetTextI18n")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
+        getReportCount()
     }
 
     @SuppressLint("SetTextI18n")
@@ -106,10 +110,9 @@ class ReportHomeFragment : DaggerFragment() {
 
                     itemView.reportStory.text = item?.story
 
-                    Log.i(title, "${singleReport.mediaURL}")
 
                     itemView.setOnClickListener {
-                        prepareReportForReading(item, itemView)
+                        var singleReport = prepareSingleReport(item, itemView)
                         val action = ReportHomeFragmentDirections.toSingleReportScreen()
                         action.singleReport = singleReport
                         Navigation.findNavController(requireView()).navigate(action)
@@ -120,8 +123,15 @@ class ReportHomeFragment : DaggerFragment() {
 
                     loadItemImage(item, itemView)
                 }
+                addLoader(R.layout.network_state_loader) {
+                    idLoader = R.id.progress_circular
+                    idTextError = R.id.error_text_view
+                }
                 authViewModel.getReportss(reportDataFactory).observe(viewLifecycleOwner, Observer {
                     submitList(it)
+                })
+                authViewModel.getReporterLoader(reportDataFactory).observe(viewLifecycleOwner, Observer {
+                    submitNetwork(it)
                 })
 
             }
@@ -130,22 +140,33 @@ class ReportHomeFragment : DaggerFragment() {
             Log.e(title, e.message)
         }
 
-        when(loggedInUser?.isReviewer){
-            true -> {
 
+
+        reporterNotificationIcon.setOnClickListener {
+            findNavController().navigate(R.id.reviewerScreenFragment)
+        }
+
+
+    }
+
+    private fun getReportCount():LiveData<Int> {
+        var countInt = MutableLiveData<Int>()
+        when (loggedInUser?.isReviewer) {
+            true -> {
                 authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory)
                     .observe(viewLifecycleOwner, Observer {
-                        it.addWeakCallback(null, object :PagedList.Callback(){
+                        it.addWeakCallback(null, object : PagedList.Callback() {
                             override fun onChanged(position: Int, count: Int) {
-
+                                Log.e(title, "changed $count")
                             }
                             override fun onInserted(position: Int, count: Int) {
                                 total += count
+                                Log.e(title, "count $count")
                                 reporterNotificationCount.text = total.toString()
-
                             }
-                            override fun onRemoved(position: Int, count: Int) {
 
+                            override fun onRemoved(position: Int, count: Int) {
+                                Log.e(title, "remmoved $count")
                             }
 
                         })
@@ -156,12 +177,25 @@ class ReportHomeFragment : DaggerFragment() {
             }
             false -> reporterNotificationIcon.hide()
         }
+        return countInt
+    }
 
-        reporterNotificationIcon.setOnClickListener {
-            findNavController().navigate(R.id.reviewerScreenFragment)
-        }
-
-
+    private fun prepareSingleReport(
+        item: ReportResponse?,
+        itemView: View
+    ): ReportResponse {
+        var singleReport = ReportResponse()
+        singleReport.id = item?.id
+        singleReport.topic = itemView.reportTopic.text.toString()
+        singleReport.story = itemView.reportStory.text.toString()
+        singleReport.mediaURL = item?.mediaURL
+        val location = itemView.reportLocation.text.toString()
+        val lga = location.split(",")[0]
+        val state = location.split(",")[1]
+        singleReport.localGovernment = lga
+        Log.i(title, "LGA ${singleReport.localGovernment}  lga $lga")
+        singleReport.state = state
+        return singleReport
     }
 
     private fun loadItemImage(
@@ -169,7 +203,7 @@ class ReportHomeFragment : DaggerFragment() {
         itemView: View
     ) {
         Picasso.get().load(item?.mediaURL)
-            .placeholder(R.drawable.applogo)
+            .placeholder(R.drawable.no_image_icon)
             .into(itemView.reportImage)
         itemView.reportImage.clipToOutline = true
     }
@@ -178,18 +212,6 @@ class ReportHomeFragment : DaggerFragment() {
 
     }
 
-    private fun prepareReportForReading(
-        item: ReportResponse?,
-        itemView: View
-    ) {
-        singleReport.id = item?.id
-        singleReport.topic = itemView.reportTopic.text.toString()
-        singleReport.story = itemView.reportStory.text.toString()
-        singleReport.mediaURL = item?.mediaURL
-
-        singleReport.localGovernment = lga
-        singleReport.state = state
-    }
 
     private fun getTopicAndRatingById(
         item: ReportResponse?,
@@ -234,24 +256,6 @@ class ReportHomeFragment : DaggerFragment() {
         })
     }
 
-    // function for setup data
-    private fun setupData(recycling: Recycling<ReportResponse>, first: Long?, after:Long?) {
-        val request =  authViewModel.getReports(header, first, after)
-        val response = observeRequest(request, null, null)
-        response.observe(viewLifecycleOwner, Observer {
-            val (bool, result) = it
-            when(bool){
-                true -> {
-                    val res = result as Reports
-                    // submit list from viewmodel into recycling
-                    recycling.submitList(result.data)
-                }
-            }
-
-
-        })
-
-    }
     override fun onPause() {
         super.onPause()
         Log.i(title, "onpause")

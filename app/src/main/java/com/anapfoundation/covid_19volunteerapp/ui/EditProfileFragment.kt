@@ -17,6 +17,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
@@ -153,6 +154,7 @@ class EditProfileFragment : DaggerFragment() {
 
     lateinit var updateBtn:Button
     var imageText = ""
+    val args: EditProfileFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -174,38 +176,19 @@ class EditProfileFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
         Log.i(title, "onStart")
-        val request = authViewModel.getProfileData(header)
-        val response = observeRequest(request, null, null)
-        response.observe(viewLifecycleOwner, Observer {
-            val (bool, result) = it
-            try {
-                when(bool){
-                    true ->{
-                        val res = result as ProfileData
-                        val user = res.data
-                        Log.i(title, "name ${user.firstName}")
 
-                        imageUrlText.append(user.profileImageURL)
-                        imageUrlText.show()
-                        editInfoFNameEditText.setText(user.firstName)
-                        editInfoLNameEditText.setText(user.lastName)
-                        editInfoEmailEditText.setText(user.email)
-                        editInfoPhoneEditText.setText(user.phone)
-                        editInfoHouseNoEditText.setText(user.houseNumber)
-                        editInfoStateSpinner.prompt = user.state
-                        editInfoStreetEditText.setText(user.street)
-
-                    }
-                    false ->{
-                        Log.i(title, "false")
-                    }
-                }
-            }
-            catch (e:Exception){
-                Log.i(title, "error ${e.localizedMessage}")
-            }
-
-        })
+        val user = args.profileData
+        if(user?.profileImageURL != null){
+            imageUrlText.append(user?.profileImageURL)
+            imageUrlText.show()
+        }
+        editInfoFNameEditText.setText(user?.firstName)
+        editInfoLNameEditText.setText(user?.lastName)
+        editInfoEmailEditText.setText(user?.email)
+        editInfoPhoneEditText.setText(user?.phone)
+        editInfoHouseNoEditText.setText(user?.houseNumber)
+        editInfoStateSpinner.prompt = user?.state
+        editInfoStreetEditText.setText(user?.street)
     }
     override fun onResume() {
         super.onResume()

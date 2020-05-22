@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,6 +25,7 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.utsman.recycling.extentions.Recycling
 import com.utsman.recycling.setupAdapter
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.create_report_item.view.*
@@ -117,36 +119,34 @@ class CreateReportFragment : DaggerFragment() {
         val topics = getTopic(header)
 
 
-        topics.observe(viewLifecycleOwner, Observer {
+        createReportRecyclerView.setupAdapter<Topic>(R.layout.create_report_item) { adapter, context, list ->
+            bind { itemView, position, item ->
+                itemView.createReportSubject.text = item?.topic
 
+                itemView.setOnClickListener {
+                    Log.i(title, "${item?.id}")
+                    newReport.topic = item?.id.toString()
 
-            createReportRecyclerView.setupAdapter<Topic>(R.layout.create_report_item) { adapter, context, list ->
-                bind { itemView, position, item ->
-                    itemView.createReportSubject.text = item?.topic
+                    val rating = item?.id?.let { id -> getRating(id, header) }
+                    rating?.observe(viewLifecycleOwner, Observer {
 
-                    itemView.setOnClickListener {
-                        Log.i(title, "${item?.id}")
-                        newReport.topic = item?.id.toString()
-
-                        val rating = item?.id?.let { id -> getRating(id, header) }
-                        rating?.observe(viewLifecycleOwner, Observer {
-
-                            val ratingItems = it.data
-                            ratingItems.let { data -> setUpBottomSheet(data) }
+                        val ratingItems = it.data
+                        ratingItems.let { data -> setUpBottomSheet(data) }
 //                            Log.i(title, "${ratingItems.size}")
-
-                        })
-
-                        bottomSheetView.reportQuestionHeading.text = item?.topic
-
-                    }
+                    })
+                    bottomSheetView.reportQuestionHeading.text = item?.topic
                 }
-                setLayoutManager(GridLayoutManager(requireContext(), 2))
-
-                submitList(it.data)
             }
+            addLoader(R.layout.network_state_loader) {
+                idLoader = R.id.progress_circular
+                idTextError = R.id.error_text_view
+            }
+            setLayoutManager(GridLayoutManager(requireContext(), 2))
 
-        })
+            setRecyclerViewData(this, topics)
+
+        }
+
     }
 
     override fun onPause() {
@@ -159,6 +159,16 @@ class CreateReportFragment : DaggerFragment() {
         bottomSheetDialog.dismiss()
         Log.i(title, "started")
 
+    }
+    private fun setRecyclerViewData(recycling: Recycling<Topic>, topics:MediatorLiveData<TopicResponse>){
+        topics.observe(viewLifecycleOwner, Observer {
+
+            recycling.submitList(it.data)
+        })
+
+        authViewModel.getAuthLoader().observe(viewLifecycleOwner, Observer {
+            recycling.submitNetworkState(it)
+        })
     }
 
     private fun getTopic(header:String):MediatorLiveData<TopicResponse>{
@@ -267,9 +277,6 @@ class CreateReportFragment : DaggerFragment() {
                     } else {
                         checkBoxMap.remove(position)
                     }
-
-    //                    Log.i(title, "checkBoxMapChanged ${checkBoxMap}")
-
                 }
             }
             submitList(myList)

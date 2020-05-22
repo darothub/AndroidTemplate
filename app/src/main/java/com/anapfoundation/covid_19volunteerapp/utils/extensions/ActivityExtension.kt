@@ -159,7 +159,6 @@ fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, ca
                 imageUrlText.text = ""
                 imageUrlText.text = "imageUrl: "
                 imageUrlText.append(imageUrl)
-                imageUrlText.show()
 
             }
 

@@ -10,6 +10,7 @@ import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
+import com.utsman.recycling.paged.extentions.NetworkState
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,16 +30,19 @@ class ReviewerApprovedReportsDataFactory @Inject constructor(val authApiRequests
 
 class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
     ItemKeyedDataSource<Long, ReportResponse>() {
-    val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+
+    var networkState = MutableLiveData<NetworkState>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
     ) {
+        networkState.postValue(NetworkState.LOADING)
         val request = authApiRequests.getApprovedReports(header, params.requestedLoadSize.toLong())
         request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
+                networkState.postValue(NetworkState.error("Bad network connection"))
+
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
@@ -46,7 +50,7 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
                 when {
 
                     body != null -> {
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(body))
+                        networkState.postValue(NetworkState.LOADED)
                         callback.onResult(body.data)
                     }
                 }
@@ -64,7 +68,7 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
         request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
+                networkState.postValue(NetworkState.error("Bad network connection"))
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
@@ -74,10 +78,7 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
                     body != null -> {
                         try {
 
-                            responseLiveData.value = ServicesResponseWrapper.Loading(
-                                null,
-                                "Loading..."
-                            )
+                            networkState.postValue(NetworkState.LOADING)
                             callback.onResult(body.data)
                         } catch (e: Exception) {
                             Log.e("Paging error", e.localizedMessage)

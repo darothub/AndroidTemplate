@@ -108,6 +108,10 @@ class ReportFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        customBackDispatcher()
+    }
+
+    private fun customBackDispatcher() {
         destinationChangedListener =
             NavController.OnDestinationChangedListener { controller, destination, arguments ->
                 when (destination.id) {
@@ -137,7 +141,12 @@ class ReportFragment : DaggerFragment() {
                             navController.navigate(R.id.reportHomeFragment)
                         }
                     }
-                    R.id.reviewerScreenFragment->{
+                    R.id.editProfileFragment -> {
+                        requireActivity().onBackPressedDispatcher.addCallback {
+                            navController.navigate(R.id.profileFragment)
+                        }
+                    }
+                    R.id.reviewerScreenFragment -> {
                         requireActivity().onBackPressedDispatcher.addCallback {
                             navController.navigate(R.id.reportHomeFragment)
                         }

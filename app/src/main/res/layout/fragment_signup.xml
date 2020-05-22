@@ -43,7 +43,6 @@
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/firstNameField"
             style="@style/CustomInputLayoutStyle"
-
             app:layout_constraintBottom_toTopOf="@+id/lastNameField"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -54,9 +53,8 @@
 
             <EditText
                 android:id="@+id/firstNameEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
+                style="@style/CustomEditTextStyle"
+                android:includeFontPadding="true"
                 android:inputType="textCapWords"
                 android:hint="@string/first_name_hint" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
@@ -76,8 +74,7 @@
             <EditText
                 android:id="@+id/lastNameEdit"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
+                style="@style/CustomEditTextStyle"
                 android:inputType="textCapWords"
                 android:hint="@string/last_name_hint" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
@@ -94,9 +91,7 @@
 
             <EditText
                 android:id="@+id/emailEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:singleLine="true"
+                style="@style/CustomEditTextStyle"
                 android:inputType="textEmailAddress"
                 android:hint="@string/email_hint_text" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
@@ -113,10 +108,8 @@
 
             <EditText
                 android:id="@+id/passwordEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/CustomEditTextStyle"
                 android:inputType="textPassword"
-                android:singleLine="true"
                 android:hint="@string/password_hint_text" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
@@ -146,10 +139,8 @@
 
             <EditText
                 android:id="@+id/cpasswordEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/CustomEditTextStyle"
                 android:inputType="textPassword"
-                android:singleLine="true"
                 android:hint="@string/cpassword_hint_text" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
@@ -166,10 +157,9 @@
 
             <EditText
                 android:id="@+id/phoneNumberEdit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/CustomEditTextStyle"
                 android:inputType="phone"
-                android:singleLine="true"
+                android:maxLength="15"
                 android:hint="@string/phone_hint_text" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 

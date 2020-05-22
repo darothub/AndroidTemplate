@@ -1,10 +1,12 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.os.Bundle
 import android.text.SpannableString
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -106,6 +108,7 @@ class SingleReportFragment : DaggerFragment() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onStart() {
         super.onStart()
 
@@ -114,14 +117,26 @@ class SingleReportFragment : DaggerFragment() {
         }
 
 //        uri = args?.uri.toString()
+        val story = singleReport.story
+        val storyLen = story?.length
+        if (storyLen != null) {
+            when{
+                storyLen <= 100 -> singleReportStory.text = story
+                storyLen > 100 -> {
+                    val fullStopIndex = story.indexOf(".", 100)
+                    val contdText = story.substring(fullStopIndex+1)
+                    singleReportStory.text = story.substring(0..fullStopIndex)
+                    singleReportStoryContd.text = contdText
+                    singleReportStoryContd.show()
+                }
+            }
+        }
 
         singleReportReportTopic.text = singleReport.topic
-        singleReportHeadline.text = singleReport.topic
         singleReportReportLocation.text = "${singleReport.localGovernment}, ${singleReport.state}"
-        singleReportStory.text = singleReport.story
-        singleReportStoryContd.text = ""
+        Log.i(title, "state ${singleReport.state}")
         Picasso.get().load(singleReport.mediaURL)
-            .placeholder(R.drawable.applogo)
+            .placeholder(R.drawable.no_image_icon)
             .into(singleReportImage)
 
 

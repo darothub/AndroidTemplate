@@ -20,7 +20,7 @@ fun AuthViewModel.resetPassword(newPassword:String, token:String): LiveData<Serv
     val request = authRequestInterface.resetPassword(newPassword, token)
     request.enqueue(object : Callback<DefaultResponse> {
         override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
@@ -65,7 +65,7 @@ fun AuthViewModel.updateProfile(
     )
     request.enqueue(object : Callback<ProfileData> {
         override fun onFailure(call: Call<ProfileData>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
@@ -88,7 +88,7 @@ fun AuthViewModel.approveReport(id:String, header:String): LiveData<ServicesResp
     val request = authRequestInterface.approveReport(id, header)
     request.enqueue(object : Callback<DefaultResponse> {
         override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
@@ -102,28 +102,6 @@ fun AuthViewModel.approveReport(id:String, header:String): LiveData<ServicesResp
     return responseLiveData
 }
 
-//fun AuthViewModel.getUnApprovedReports(header: String, first:Long?, after:Long?): LiveData<ServicesResponseWrapper<Data>>{
-//    val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
-//    responseLiveData.value = ServicesResponseWrapper.Loading(
-//        null,
-//        "Loading..."
-//    )
-//    val request = authRequestInterface.getUnapprovedReports(header, first, after)
-//    request.enqueue(object : Callback<Reports> {
-//        override fun onFailure(call: Call<Reports>, t: Throwable) {
-//            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
-//        }
-//
-//        override fun onResponse(
-//            call: Call<Reports>,
-//            response: Response<Reports>
-//        ) {
-//            onResponseTask(response as Response<Data>, responseLiveData)
-//        }
-//
-//    })
-//    return responseLiveData
-//}
 
 
 

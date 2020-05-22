@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.paging.PagedList
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
@@ -22,9 +23,12 @@ import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
 import com.squareup.picasso.Picasso
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_report_home.*
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import kotlinx.android.synthetic.main.fragment_unapproved_report.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
@@ -67,6 +71,7 @@ class UnapprovedReportFragment : DaggerFragment() {
     var state = ""
 
     var singleReport = ReportResponse()
+    var total = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -138,11 +143,15 @@ class UnapprovedReportFragment : DaggerFragment() {
                     }
 
                     Picasso.get().load(item?.mediaURL)
-                        .placeholder(R.drawable.applogo)
+                        .placeholder(R.drawable.no_image_icon)
                         .into(itemView.reportImage)
                     itemView.reportImage.clipToOutline = true
                 }
 
+                addLoader(R.layout.network_state_loader) {
+                    idLoader = R.id.progress_circular
+                    idTextError = R.id.error_text_view
+                }
 
 
                 authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory)
@@ -150,6 +159,9 @@ class UnapprovedReportFragment : DaggerFragment() {
 
                         submitList(it)
                     })
+                authViewModel.unApprovedReportLoader(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    submitNetwork(it)
+                })
 
             }
 

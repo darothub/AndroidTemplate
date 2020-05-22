@@ -19,7 +19,7 @@ fun UserViewModel.getSingleLGA(lgaID:String): MutableLiveData<ServicesResponseWr
     val request = userRequestInterface.getSingleLGA(lgaID)
     request.enqueue(object : Callback<Location> {
         override fun onFailure(call: Call<Location>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(call: Call<Location>, response: Response<Location>) {

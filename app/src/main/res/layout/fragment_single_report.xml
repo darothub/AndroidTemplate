@@ -48,7 +48,7 @@
                         android:id="@+id/singleReportNotificationCount"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="2"
+                        android:text=""
                         android:elevation="2dp"
                         android:visibility="gone"
                         tools:visibility="visible"
@@ -99,67 +99,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-<!--            <TextView-->
-<!--                android:id="@+id/shareIcon"-->
-<!--                android:layout_width="wrap_content"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:layout_marginRight="@dimen/normal_margin"-->
-<!--                android:text="@string/share_text"-->
-<!--                android:textColor="@color/colorPrimaryDark"-->
-<!--                android:textSize="@dimen/large_font_size"-->
-<!--                android:drawableEnd="@drawable/ic_share_icon"-->
-<!--                app:layout_constraintBottom_toBottomOf="@id/pininterestIcon"-->
-<!--                app:layout_constraintEnd_toEndOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="@id/pininterestIcon" />-->
-
-
-
-<!--            <ImageView-->
-<!--                android:id="@+id/facebookIcon"-->
-<!--                android:layout_width="30dp"-->
-<!--                android:layout_height="30dp"-->
-<!--                android:layout_marginTop="10dp"-->
-<!--                android:scaleType="centerCrop"-->
-<!--                app:layout_constraintStart_toStartOf="parent"-->
-<!--                app:layout_constraintTop_toTopOf="parent"-->
-<!--                app:srcCompat="@drawable/facebook3" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/twitterIcon"-->
-<!--                style="@style/SocialMediaIcon"-->
-<!--                app:layout_constraintBottom_toBottomOf="@id/facebookIcon"-->
-<!--                app:layout_constraintStart_toEndOf="@id/facebookIcon"-->
-<!--                app:layout_constraintTop_toTopOf="@id/facebookIcon"-->
-<!--                app:srcCompat="@drawable/twitter"-->
-
-<!--                />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/linkedinIcon"-->
-<!--                style="@style/SocialMediaIcon"-->
-<!--                app:layout_constraintBottom_toBottomOf="@id/twitterIcon"-->
-<!--                app:layout_constraintStart_toEndOf="@id/twitterIcon"-->
-<!--                app:layout_constraintTop_toTopOf="@id/twitterIcon"-->
-<!--                app:srcCompat="@drawable/linkedin4" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/mailIcon"-->
-<!--                style="@style/SocialMediaIcon"-->
-<!--                app:layout_constraintBottom_toBottomOf="@id/linkedinIcon"-->
-<!--                app:layout_constraintStart_toEndOf="@id/linkedinIcon"-->
-<!--                app:layout_constraintTop_toTopOf="@id/linkedinIcon"-->
-
-<!--                app:srcCompat="@drawable/envelopes" />-->
-
-<!--            <ImageView-->
-<!--                android:id="@+id/pininterestIcon"-->
-<!--                style="@style/SocialMediaIcon"-->
-<!--                app:layout_constraintBottom_toBottomOf="@id/mailIcon"-->
-<!--                app:layout_constraintStart_toEndOf="@id/mailIcon"-->
-
-<!--                app:layout_constraintTop_toTopOf="@id/mailIcon"-->
-<!--                app:srcCompat="@drawable/pinterest" />-->
-
             <TextView
                 android:id="@+id/singleReportReportTopic"
                 android:layout_width="wrap_content"
@@ -171,22 +110,24 @@
                 android:ems="10"
                 android:gravity="left"
                 android:layout_marginTop="@dimen/normal_margin"
-                app:layout_constraintEnd_toStartOf="@id/singleReportReportLocation"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                />
 
             <TextView
                 android:id="@+id/singleReportReportLocation"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textAllCaps="false"
                 android:text="@string/location"
                 android:textColor="@color/colorPrimaryDark"
-                android:textSize="@dimen/medium_font_size"
+                android:textSize="@dimen/smallest_font_size"
                 android:textStyle="bold"
+                android:gravity="end"
+                app:layout_constraintStart_toEndOf="@id/singleReportReportTopic"
                 app:layout_constraintBottom_toBottomOf="@id/singleReportReportTopic"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
                 />
 
             <TextView
@@ -207,12 +148,16 @@
 
             <TextView
                 android:id="@+id/singleReportStory"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/dummy_details"
-
+                android:layout_marginTop="@dimen/normal_margin"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/smallest_font_size"
+                android:maxLines="5"
+                android:autoSizeTextType="uniform"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeMaxTextSize="14sp"
                 android:textStyle="normal"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/singleReportHeadline" />
@@ -239,6 +184,8 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/smallest_font_size"
                 android:textStyle="normal"
+                tools:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/singleReportImage" />
 

@@ -23,7 +23,7 @@ interface UserApiRequests {
         @Field("localGovernment") localGovernment:String,
         @Field("zone") zone:String,
         @Field("district") district:String
-    ): Call<DefaultResponse>
+    ): Call<UserResponse>
 
     @POST("login")
     @FormUrlEncoded

@@ -5,7 +5,8 @@ package com.anapfoundation.covid_19volunteerapp.services
  */
 sealed class ServicesResponseWrapper<T>(
     val data: T? = null,
-    val message: String? = null
+    val message: String? = null,
+    val code:Int? = null
 ) {
     /**
      * A success class wrapper
@@ -19,5 +20,5 @@ sealed class ServicesResponseWrapper<T>(
     /**
      * An error class wrapper
      */
-    class Error<T>(message: String?, data: T? = null) : ServicesResponseWrapper<T>(data, message)
+    class Error<T>(message: String?, code:Int?= null, data: T? = null) : ServicesResponseWrapper<T>(data, message, code)
 }

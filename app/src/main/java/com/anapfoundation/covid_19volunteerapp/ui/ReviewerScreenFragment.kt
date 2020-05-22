@@ -93,16 +93,9 @@ class ReviewerScreenFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_reviewer_screen, container, false)
     }
 
-    override fun onResume() {
-        super.onResume()
 
-        val pageAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
-        viewPager2.adapter = pageAdapter
-        var names = arrayListOf<String>("Unapproved reports", "Approved reports")
-        TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
-            tab.text = names[position]
-        }.attach()
-
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
         this.displayNotificationBell(
             authViewModel,
             user,
@@ -110,7 +103,27 @@ class ReviewerScreenFragment : DaggerFragment() {
             reviewerNotificationIcon,
             reviewerNotificationCount
         )
+    }
+    override fun onResume() {
+        super.onResume()
 
+        Log.i(title, "Onresume")
+        val pageAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
+        viewPager2.adapter = pageAdapter
+        var names = arrayListOf<String>("Unapproved reports", "Approved reports")
+        TabLayoutMediator(tabLayout, viewPager2) { tab, position ->
+            tab.text = names[position]
+        }.attach()
+
+
+
+
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        Log.i(title, "onStart")
 
     }
 

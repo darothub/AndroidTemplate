@@ -119,8 +119,6 @@ class ApprovedReportFragment : DaggerFragment() {
                                 state = res.data.stateName.toString()
                                 Log.i("State", "${res.data.stateName}")
                                 itemView.reportLocation.text = "$lga, $state"
-
-
                             }
                         }
                     })
@@ -141,11 +139,15 @@ class ApprovedReportFragment : DaggerFragment() {
                     }
 
                     Picasso.get().load(item?.mediaURL)
-                        .placeholder(R.drawable.applogo)
+                        .placeholder(R.drawable.no_image_icon)
                         .into(itemView.reportImage)
                     itemView.reportImage.clipToOutline = true
                 }
 
+                addLoader(R.layout.network_state_loader) {
+                    idLoader = R.id.progress_circular
+                    idTextError = R.id.error_text_view
+                }
 
                 val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 setLayoutManager(layoutManager)
@@ -155,6 +157,9 @@ class ApprovedReportFragment : DaggerFragment() {
                         Log.i(title, "listSize ${it.loadedCount}")
                         submitList(it)
                     })
+                authViewModel.approvedLoader(reviewerApprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    submitNetwork(it)
+                })
 
             }
 

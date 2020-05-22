@@ -29,6 +29,7 @@ import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.tfb.fbtoast.FBCustomToast
+import com.tfb.fbtoast.FBToast
 import kotlinx.android.synthetic.main.fragment_single_report.*
 import java.lang.Exception
 
@@ -67,6 +68,24 @@ inline fun Context.toast(message:String){
     else{
         toastie.setBackgroundColor(resources.getColor(R.color.colorNeutral))
         toastie.setToastMsgColor(resources.getColor(R.color.colorPrimaryDark))
+    }
+    toastie.show()
+
+}
+
+fun Context.errorToast(message:String){
+    val toastie = FBCustomToast(this)
+    toastie.setMsg(message)
+    toastie.setIcon(resources.getDrawable(R.drawable.bad, theme))
+    toastie.setGravity(Gravity.CENTER_VERTICAL)
+
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+        toastie.setBackgroundColor(resources.getColor(R.color.errorRed, theme))
+        toastie.setToastMsgColor(resources.getColor(R.color.colorNeutral, theme))
+    }
+    else{
+        toastie.setBackgroundColor(resources.getColor(R.color.errorRed))
+        toastie.setToastMsgColor(resources.getColor(R.color.colorNeutral))
     }
     toastie.show()
 
@@ -123,6 +142,7 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
         try {
             val responseData = it.data
             val errorResponse = it.message
+            val errorCode = it.code
             when (it) {
                 is ServicesResponseWrapper.Loading<*> -> {
                     progressBar?.show()
@@ -139,8 +159,14 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
                 is ServicesResponseWrapper.Error -> {
                     progressBar?.hide()
                     button?.show()
-                    result.postValue(Pair(false, errorResponse))
-                    requireContext().toast("$errorResponse")
+                    if(errorCode == 502){
+                        requireContext().errorToast(requireContext().getLocalisedString(R.string.bad_network))
+                    }
+                    else{
+                        result.postValue(Pair(false, errorResponse))
+                        requireContext().toast("$errorResponse")
+                    }
+
                     Log.i(title, "Error ${it.message}")
                 }
                 is ServicesResponseWrapper.Logout ->{

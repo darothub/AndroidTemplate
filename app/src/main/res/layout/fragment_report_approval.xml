@@ -62,7 +62,7 @@
                             android:id="@+id/reportApprovalNotificationCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="2"
+                            android:text=""
                             android:elevation="2dp"
                             android:visibility="gone"
                             tools:visibility="visible"
@@ -152,6 +152,7 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/large_font_size"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -162,7 +163,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/dummy_details"
-
+                android:layout_marginTop="@dimen/normal_margin"
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/smallest_font_size"
                 android:textStyle="normal"
@@ -174,6 +175,7 @@
                 android:layout_width="0dp"
                 android:layout_height="200dp"
                 android:scaleType="fitXY"
+                android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toTopOf="@id/reportApprovalStoryContd"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -189,6 +191,8 @@
                 android:textColor="@color/colorPrimaryDark"
                 android:textSize="@dimen/smallest_font_size"
                 android:textStyle="normal"
+                tools:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/reportApprovalImage" />
 

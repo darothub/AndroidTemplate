@@ -10,6 +10,7 @@ import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
+import com.utsman.recycling.paged.extentions.NetworkState
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,17 +30,21 @@ class ReportDataFactory @Inject constructor(val authApiRequests: AuthApiRequests
 
 class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):ItemKeyedDataSource<Long, ReportResponse>(){
 
-    var index :Long? = 0
-    val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+
+//    val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+    var networkState = MutableLiveData<NetworkState>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
     ) {
+        networkState.postValue(NetworkState.LOADING)
         val request = authApiRequests.getReport(header, params.requestedLoadSize.toLong())
         request.enqueue(object : Callback<Reports>{
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
+                networkState.postValue(NetworkState.error("Bad network connection"))
+
+//                responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
@@ -47,9 +52,9 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 when {
 
                     body != null ->  {
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(body))
-                        index = params.requestedInitialKey
-                        Log.i("last index", "$index")
+//                        responseLiveData.postValue(ServicesResponseWrapper.Success(body))
+                        networkState.postValue(NetworkState.LOADED)
+
                         callback.onResult(body.data)
                     }
                 }
@@ -59,13 +64,14 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
-
+        networkState.postValue(NetworkState.LOADING)
         val request = authApiRequests.getReportAfter(header, params.requestedLoadSize.toLong(), params.key)
         request.enqueue(object : Callback<Reports>{
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
+                networkState.postValue(NetworkState.error(t.localizedMessage))
 
-                responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
+//                responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
@@ -74,13 +80,9 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
 
                     body != null ->  {
                         try {
-                            responseLiveData.value = ServicesResponseWrapper.Loading(
-                                null,
-                                "Loading..."
-                            )
+                            networkState.postValue(NetworkState.LOADING)
+
                             callback.onResult(body.data)
-                            index = params.key
-                            Log.i("load after index", "$index")
                         }
                         catch (e:Exception){
                             Log.e("Paging error", e.localizedMessage)

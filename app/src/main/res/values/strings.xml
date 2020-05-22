@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">COVID-19VolunteerApp</string>
+    <string name="app_name">ANAP COVID-19\nVolunteer App</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="anap">ANAP</string>
@@ -140,6 +140,7 @@
     <string name="exit">Exit</string>
     <string name="new_picture">New picture uploaded</string>
     <string name="upload_image">Upload</string>
+    <string name="bad_network">Bad network connection</string>
 
 
 </resources>
