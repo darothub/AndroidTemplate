@@ -52,7 +52,7 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         lastName: String,
         email: String,
         phone: String,
-        houseNumber: String,
+        houseNumber: String?,
         state: String?,
         street: String?,
         zone: String?,

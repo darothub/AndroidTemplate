@@ -80,7 +80,7 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
 
                     body != null ->  {
                         try {
-                            networkState.postValue(NetworkState.LOADING)
+                            networkState.postValue(NetworkState.LOADED)
 
                             callback.onResult(body.data)
                         }

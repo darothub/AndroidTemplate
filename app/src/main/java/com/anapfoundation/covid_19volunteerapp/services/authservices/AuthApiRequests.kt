@@ -55,11 +55,11 @@ interface AuthApiRequests {
         @Field("lastName") lastName: String,
         @Field("email") email: String,
         @Field("phone") phone: String,
-        @Field("houseNumber") houseNumber: String?,
+        @Field("houseNumber") houseNumber: String?=null,
         @Field("state") state: String?,
         @Field("street") street: String?,
         @Field("zone") zone: String?,
-        @Field("profile_image_url") profileImageUrl:String?,
+        @Field("profile_image_url") profileImageUrl:String?=null,
         @Header("Authorization") header: String?
     ): Call<ProfileData>
 

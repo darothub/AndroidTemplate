@@ -124,7 +124,6 @@ class ReportFragment : DaggerFragment() {
                         }
                     }
                     R.id.notificationFragment -> {
-
                         requireActivity().onBackPressedDispatcher.addCallback {
                             navController.popBackStack()
                         }

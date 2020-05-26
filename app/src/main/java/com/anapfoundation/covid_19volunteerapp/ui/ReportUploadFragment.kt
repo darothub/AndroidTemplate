@@ -161,6 +161,7 @@ class ReportUploadFragment : DaggerFragment() {
 
     var path =""
 
+    lateinit var photoUri: Uri
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     private val userViewModel: UserViewModel by lazy {
@@ -380,7 +381,9 @@ class ReportUploadFragment : DaggerFragment() {
     private fun checkCameraPermission() {
         cameraPermission.check(this)
             .onGranted {
+
                 dispatchTakePictureIntent(imageFileAndPath.first, REQUEST_TAKE_PHOTO)
+
             }.onShowRationale {
                 showRationaleDialog()
             }
@@ -434,12 +437,14 @@ class ReportUploadFragment : DaggerFragment() {
 
     }
 
+    @ExperimentalStdlibApi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
             bottomSheetDialog.show()
             imagePreview.setImageBitmap(imageBitmap)
             imagePreview.show()
+
             uploadPictureEvent(imageBitmap, null)
 
         }
@@ -459,6 +464,7 @@ class ReportUploadFragment : DaggerFragment() {
         }
     }
 
+    @ExperimentalStdlibApi
     private fun uploadPictureEvent(imageBitmap: Bitmap?, uri:Uri?) {
         path = "images/report_$timeStamp" + "_.jpg"
         uploadPictureBtn.setOnClickListener {

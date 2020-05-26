@@ -1,8 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.utils.extensions
 
-import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -16,18 +14,20 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
+import com.cloudinary.Transformation
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import com.cloudinary.transformation.Layer
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.fragment_edit_profile.*
-import kotlinx.android.synthetic.main.fragment_report_upload.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 inline fun Activity.getName():String{
@@ -86,13 +86,13 @@ fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
     val title: String by lazy {
         getName()
     }
+
     Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
         // Ensure that there's a camera activity to handle the intent
         takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
             // Create the File where the photo should go
             val photoFile: File? = try {
                 file
-
             } catch (ex: IOException) {
                 // Error occurred while creating the File
                 Log.i(title, ex.localizedMessage)
@@ -107,13 +107,17 @@ fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
                     it
                 )
 
+
+
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+
             }
 
 
 
         }
+
     }
 }
 
@@ -133,37 +137,78 @@ fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, ca
     val outputStream = ByteArrayOutputStream()
     capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
     val data = outputStream.toByteArray()
-    val uploadTask = imageRef.putBytes(data)
 
-    uploadTask.addOnFailureListener {
-        // Handle unsuccessful uploads
-        Log.i(title, "Upload not successful")
-    }.addOnSuccessListener {
-        // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-        // ...
-        Log.i(title, "Upload successful")
+    try {
+
+        val uploadRequest = MediaManager.get().upload(data).unsigned("of6bplnq")
+            .option("resource_type", "image")
+            .option("public_id", path)
+            .maxFileSize(5 * 1024 * 1024).callback(object :UploadCallback{
+                override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
+
+                    imageUrl = resultData?.get("url").toString()
+                    imageUrlText.text = ""
+                    imageUrlText.text = "imageUrl: "
+                    imageUrlText.append(imageUrl)
+                    Log.i(title, "url $imageUrl")
+                }
+
+                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                    Log.i(title, "$totalBytes")
+                }
+
+                override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                    Log.i(title, "${error?.description}")
+                }
+
+                override fun onError(requestId: String?, error: ErrorInfo?) {
+                    Log.i(title, "${error?.description}")
+                }
+
+                override fun onStart(requestId: String?) {
+                    Log.i(title, "Upload started")
+                }
+
+            })
+        val str = uploadRequest.dispatch(requireContext())
+
+
     }
-    uploadTask.continueWith { task ->
-        if (!task.isSuccessful) {
-            task.exception?.let {
-                throw it
-            }
-        }
-        imageRef.downloadUrl
-    }.addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            val downloadUri = task.result
-            downloadUri?.addOnSuccessListener {url ->
-                imageUrl = url.toString()
-                Log.i(title, "url $url")
-                imageUrlText.text = ""
-                imageUrlText.text = "imageUrl: "
-                imageUrlText.append(imageUrl)
-
-            }
-
-        } else {
-            Log.i(title, "uri: No url")
-        }
+    catch (e:Exception){
+        Log.e(title, e.localizedMessage)
     }
+
+//    val uploadTask = imageRef.putBytes(data)
+//
+//    uploadTask.addOnFailureListener {
+//        // Handle unsuccessful uploads
+//        Log.i(title, "Upload not successful")
+//    }.addOnSuccessListener {
+//        // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
+//        // ...
+//        Log.i(title, "Upload successful")
+//    }
+//    uploadTask.continueWith { task ->
+//        if (!task.isSuccessful) {
+//            task.exception?.let {
+//                throw it
+//            }
+//        }
+//        imageRef.downloadUrl
+//    }.addOnCompleteListener { task ->
+//        if (task.isSuccessful) {
+//            val downloadUri = task.result
+//            downloadUri?.addOnSuccessListener {url ->
+//                imageUrl = url.toString()
+//                Log.i(title, "url $url")
+//                imageUrlText.text = ""
+//                imageUrlText.text = "imageUrl: "
+//                imageUrlText.append(imageUrl)
+//
+//            }
+//
+//        } else {
+//            Log.i(title, "uri: No url")
+//        }
+//    }
 }

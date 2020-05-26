@@ -154,6 +154,7 @@ class EditProfileFragment : DaggerFragment() {
 
     lateinit var updateBtn:Button
     var imageText = ""
+
     val args: EditProfileFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -190,6 +191,7 @@ class EditProfileFragment : DaggerFragment() {
         editInfoStateSpinner.prompt = user?.state
         editInfoStreetEditText.setText(user?.street)
     }
+    @ExperimentalStdlibApi
     override fun onResume() {
         super.onResume()
         getStateAndSendToSpinner()
@@ -219,11 +221,13 @@ class EditProfileFragment : DaggerFragment() {
         imagePreview.clipToOutline = true
     }
 
+    @ExperimentalStdlibApi
     private fun camerPermissionRequest(){
         setOnClickEventForPicture(editInfoUploadCard, moreIcon){ showBottomSheet() }
 
     }
 
+    @ExperimentalStdlibApi
     private fun showBottomSheet() {
         val fullName = "${editInfoFNameEditText.text}_${editInfoLNameEditText.text}"
         val path = "images/profile_$fullName _$timeStamp" + "_.jpg"
@@ -342,7 +346,7 @@ class EditProfileFragment : DaggerFragment() {
 //        Log.i(title, "states $states")
     }
     private fun updateProfileRequest() {
-
+        var profileImageUrl: String?
         var validation:String?=""
         val firstName = editInfoFNameEditText.text.toString().trim()
         val lastName = editInfoLNameEditText.text.toString().trim()
@@ -355,11 +359,13 @@ class EditProfileFragment : DaggerFragment() {
         val zoneGUID = valueOfStateSelected?.get(1).toString()
         val street = editInfoStreetEditText.text.toString().trim()
          imageText = imageUrlText.text.toString()
-        val profileImageUrl = imageText.subSequence(10, imageText.length).toString()
+        profileImageUrl = imageText.subSequence(10, imageText.length).toString()
 
         Log.i(title, "imageUrl $profileImageUrl")
 
-
+        if(profileImageUrl.isEmpty()){
+            profileImageUrl = null
+        }
         val checkForEmpty =
             IsEmptyCheck(editInfoFNameEditText, editInfoLNameEditText)
         if(emailAddress.isNotEmpty()){

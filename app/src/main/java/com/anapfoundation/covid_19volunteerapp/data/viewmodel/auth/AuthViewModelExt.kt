@@ -39,11 +39,11 @@ fun AuthViewModel.updateProfile(
     lastName: String,
     email: String,
     phone: String,
-    houseNumber: String,
+    houseNumber: String?=null,
     state: String,
     street: String?,
     zone:String?,
-    profileImageUrl: String?,
+    profileImageUrl: String?=null,
     header: String
 ): LiveData<ServicesResponseWrapper<Data>> {
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
