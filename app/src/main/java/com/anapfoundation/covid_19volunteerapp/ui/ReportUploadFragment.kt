@@ -41,6 +41,7 @@ import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.cloudinary.android.MediaManager
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.storage.FirebaseStorage
 import dagger.android.support.DaggerFragment
@@ -59,6 +60,7 @@ import java.security.Permission
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+import kotlin.collections.HashMap
 
 /**
  * A simple [Fragment] subclass.
@@ -131,7 +133,7 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     val capture by lazy {
-        Bitmap.createBitmap(cameraIcon.width, cameraIcon.height, Bitmap.Config.ARGB_8888)
+        Bitmap.createBitmap(300, 300, Bitmap.Config.ARGB_8888)
     }
     val canvas by lazy {
         Canvas(capture)
@@ -234,57 +236,73 @@ class ReportUploadFragment : DaggerFragment() {
     private fun addReportRequest() {
         submitBtn.setOnClickListener {
 
-            CoroutineScope(Main).launch {
+
                 progressBar.show()
                 submitBtn.hide()
-                uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlField, true)
-                delay(8000)
+                val url = uploadImage(path, imagePreview, capture, canvas, imageUrlField, true)
+                url.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                    val checkUrl = it.first.split("/").last()
+                    val publicID = it.second
+                    val options = HashMap<String, String>()
+                    options["resource_type"] = "image"
+                    if(checkUrl.startsWith("file", true)){
+                        Log.i(title, "urls $checkUrl")
+                        CoroutineScope(IO).launch {
+                            val cloudinary = MediaManager.get().cloudinary.uploader()
+                            val res = cloudinary.destroy(publicID, options)
+                            Log.i(title, "destroyres $res")
+                        }
 
-                val story = storyEditText.text
-                val stateGUID = loggedInUser?.stateID
-                val zoneGUID = loggedInUser?.zoneID
-                val lgaGUID = loggedInUser?.lgID
-                val district = loggedInUser?.districtID
-                suggestion = suggestionEditText.text.toString()
-                imageUrl = imageUrlField.text.toString().substring(10)
+                        imageUrl = null
+                    }
+                    else{
+                        imageUrl = it.first
+                    }
 
-                Log.i(title, "state $stateGUID, local $lgaGUID, district $district zone $zoneGUID")
+                    val story = storyEditText.text
+                    val stateGUID = loggedInUser?.stateID
+                    val zoneGUID = loggedInUser?.zoneID
+                    val lgaGUID = loggedInUser?.lgID
+                    val district = loggedInUser?.districtID
+                    suggestion = suggestionEditText.text.toString()
 
-                if (suggestion!!.isEmpty()){
-                    suggestion = null
-                }
-                if (imageUrl!!.isEmpty()){
-                    imageUrl = null
-                }
-                report.story = story.toString()
-                report.state = "$stateGUID"
-                report.mediaURL = imageUrl
-                report.town = reportUploadTownEditText.text.toString()
-                report.localGovernment = lgaGUID
-                report.district = district
 
-                val request = authViewModel.addReport(
-                    report.topic,
-                    report.rating,
-                    report.story,
-                    report.state,
-                    report.mediaURL,
-                    report.localGovernment,
-                    report.district,
-                    report.town,
-                    zoneGUID,
-                    suggestion,
-                    header
-                )
-                Log.i(title, "mediaURL $imageUrl suggestion $suggestion")
-                val response = observeRequest(request, progressBar, submitBtn)
+                    Log.i(title, "state $stateGUID, local $lgaGUID, district $district zone $zoneGUID")
 
-                response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-                    requestResponseTask(it)
+                    if (suggestion!!.isEmpty()){
+                        suggestion = null
+                    }
+
+                    report.story = story.toString()
+                    report.state = "$stateGUID"
+                    report.mediaURL = imageUrl
+                    report.town = reportUploadTownEditText.text.toString()
+                    report.localGovernment = lgaGUID
+                    report.district = district
+
+                    val request = authViewModel.addReport(
+                        report.topic,
+                        report.rating,
+                        report.story,
+                        report.state,
+                        report.mediaURL,
+                        report.localGovernment,
+                        report.district,
+                        report.town,
+                        zoneGUID,
+                        suggestion,
+                        header
+                    )
+                    Log.i(title, "mediaURL $imageUrl suggestion $suggestion")
+                    val response = observeRequest(request, progressBar, submitBtn)
+
+                    response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                        requestResponseTask(it)
+                    })
+
+
+                    Log.i(title, "Inside Observer $it")
                 })
-            }
-
-
 
 
             Log.i(title, "Report $report")

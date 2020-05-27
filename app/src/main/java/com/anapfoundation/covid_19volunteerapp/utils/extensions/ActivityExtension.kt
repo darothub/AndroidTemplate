@@ -12,6 +12,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.cloudinary.Cloudinary
@@ -31,11 +33,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
-inline fun Activity.getName():String{
+inline fun Activity.getName(): String {
     return this::class.qualifiedName!!
 }
 
-inline fun Activity.readCitiesAndLgaData():HashMap<String, List<CityClass>>{
+inline fun Activity.readCitiesAndLgaData(): HashMap<String, List<CityClass>> {
     val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
         HashMap<String, List<CityClass>>()
     }
@@ -82,7 +84,8 @@ fun Activity.createImageFile(): Pair<File?, String> {
     }
     return Pair(newFile, currentPhotoPath)
 }
-fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
+
+fun Fragment.dispatchTakePictureIntent(file: File?, REQUEST_TAKE_PHOTO: Int) {
     //Class title
     val title: String by lazy {
         getName()
@@ -100,7 +103,7 @@ fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
                 null
             }
             // Continue only if the File was successfully created
-                Log.i(title, "File $file")
+            Log.i(title, "File $file")
             photoFile?.also {
                 val photoURI: Uri = FileProvider.getUriForFile(
                     requireContext(),
@@ -116,32 +119,40 @@ fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
             }
 
 
-
         }
 
     }
 }
 
 
-fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, canvas:Canvas, storageRef:StorageReference, imageUrlText:TextView, report:Boolean=false){
+fun Fragment.uploadImage(
+    path: String,
+    imagePreview: ImageView,
+    capture: Bitmap,
+    canvas: Canvas,
+    imageUrlText: TextView,
+    report: Boolean = false
+):LiveData<Pair<String, String>> {
 
-    val title:String by lazy{
+    val urlStringLiveData = MutableLiveData<Pair<String, String>>()
+    val title: String by lazy {
         this.getName()
     }
     var imageUrl = ""
 
     val path = path
-    val imageRef = storageRef.child(path)
+
 
     imagePreview.draw(canvas)
 
     val outputStream = ByteArrayOutputStream()
     capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
     val data = outputStream.toByteArray()
+    Log.i(title, "capture $capture data $data")
 
     try {
         val uploadRequest = MediaManager.get().upload(data)
-        val cloudinary = MediaManager.get().cloudinary.uploader()
+
 
         if (report) {
             uploadRequest
@@ -158,40 +169,41 @@ fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, ca
                 .option("public_id", path)
                 .maxFileSize(5 * 1024 * 1024)
         }
-        uploadRequest.callback(object :UploadCallback{
-                override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-//                    cloudinary.destroy()
-                    imageUrl = resultData?.get("secure_url").toString()
-                    imageUrlText.text = ""
-                    imageUrlText.text = "imageUrl: "
-                    imageUrlText.append(imageUrl)
-                    Log.i(title, "url ${imageUrlText.text}")
-                    Log.i(title, "data $resultData")
-                }
+        uploadRequest.callback(object : UploadCallback {
+            override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
+                imageUrl = resultData?.get("secure_url").toString()
+                val publicID = resultData?.get("public_id").toString()
+                imageUrlText.text = ""
+                imageUrlText.text = "imageUrl: "
+                imageUrlText.append(imageUrl)
+                urlStringLiveData.postValue(Pair(imageUrl, publicID))
+                Log.i(title, "url ${imageUrlText.text}")
+                Log.i(title, "data $resultData")
+            }
 
-                override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
-                    Log.i(title, "$totalBytes")
-                }
+            override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                Log.i(title, "$totalBytes")
+            }
 
-                override fun onReschedule(requestId: String?, error: ErrorInfo?) {
-                    Log.i(title, "${error?.description}")
-                }
+            override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                Log.i(title, "${error?.description}")
+            }
 
-                override fun onError(requestId: String?, error: ErrorInfo?) {
-                    Log.i(title, "${error?.description}")
-                }
+            override fun onError(requestId: String?, error: ErrorInfo?) {
+                Log.i(title, "${error?.description}")
+            }
 
-                override fun onStart(requestId: String?) {
-                    Log.i(title, "Upload started")
-                }
+            override fun onStart(requestId: String?) {
+                Log.i(title, "Upload started")
+            }
 
-            })
+        })
         val req = uploadRequest.dispatch(requireContext())
 
 
-    }
-    catch (e:Exception){
+    } catch (e: Exception) {
         Log.e(title, e.localizedMessage)
     }
 
+    return urlStringLiveData
 }

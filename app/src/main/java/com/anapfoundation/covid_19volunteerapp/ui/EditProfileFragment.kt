@@ -243,7 +243,7 @@ class EditProfileFragment : DaggerFragment() {
 
             bottomSheetProgressBar.show()
             uploadPictureBtn.hide()
-            uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlText)
+            uploadImage(path, imagePreview, capture, canvas, imageUrlText)
             CoroutineScope(Dispatchers.Main).launch {
                 delay(3000)
                 bottomSheetProgressBar.hide()

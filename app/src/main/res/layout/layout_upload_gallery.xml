@@ -50,8 +50,7 @@
             app:layout_constraintBottom_toTopOf="@id/galleryBottomSheet"
             app:layout_constraintTop_toBottomOf="@id/galleryIcon"
             android:elevation="10dp"
-            android:src="@drawable/healthpic"
-            android:visibility="gone"
+            android:src="@drawable/no_image_icon"
             android:background="@drawable/shadow"
             android:scaleType="centerCrop"
            android:layout_margin="15dp"/>

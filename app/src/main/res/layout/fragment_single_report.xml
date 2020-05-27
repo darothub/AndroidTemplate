@@ -165,7 +165,7 @@
             <ImageView
                 android:id="@+id/singleReportImage"
                 android:layout_width="0dp"
-                android:layout_height="200dp"
+                android:layout_height="500dp"
                 android:scaleType="fitXY"
                 android:layout_marginTop="10dp"
                 app:layout_constraintBottom_toTopOf="@id/singleReportStoryContd"

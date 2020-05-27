@@ -113,8 +113,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="15dp"
             tools:visibility="visible"
-            android:visibility="gone"
-            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/no_image_icon"
+            android:scaleType="fitXY"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
             app:layout_constraintStart_toStartOf="parent"/>
