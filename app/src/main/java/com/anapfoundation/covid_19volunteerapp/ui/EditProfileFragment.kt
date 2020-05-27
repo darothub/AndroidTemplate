@@ -179,8 +179,9 @@ class EditProfileFragment : DaggerFragment() {
         Log.i(title, "onStart")
 
         val user = args.profileData
-        if(user?.profileImageURL != null){
-            imageUrlText.append(user?.profileImageURL)
+        if(user?.imageUrl != null){
+            val profileImageUrl = "imageUrl: ${user.imageUrl}"
+            imageUrlText.text = profileImageUrl
             imageUrlText.show()
         }
         editInfoFNameEditText.setText(user?.firstName)
@@ -188,7 +189,7 @@ class EditProfileFragment : DaggerFragment() {
         editInfoEmailEditText.setText(user?.email)
         editInfoPhoneEditText.setText(user?.phone)
         editInfoHouseNoEditText.setText(user?.houseNumber)
-        editInfoStateSpinner.prompt = user?.state
+        editInfoStateSpinner.prompt = user?.stateName
         editInfoStreetEditText.setText(user?.street)
     }
     @ExperimentalStdlibApi
@@ -229,8 +230,9 @@ class EditProfileFragment : DaggerFragment() {
 
     @ExperimentalStdlibApi
     private fun showBottomSheet() {
-        val fullName = "${editInfoFNameEditText.text}_${editInfoLNameEditText.text}"
-        val path = "images/profile_$fullName _$timeStamp" + "_.jpg"
+        val firstName = "${editInfoFNameEditText.text}"
+        val id = loggedInUser?.id
+        val path = "images/profile_$firstName _$id" + "_.jpg"
 
         uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
 
@@ -330,10 +332,13 @@ class EditProfileFragment : DaggerFragment() {
         }, {
             "${it.id} ${it.zone}" /* value */
         })
+
+
     }
 
     private fun setupSpinner() {
         val stateArray = states.keys.sorted().toMutableList()
+        stateArray.add(0, loggedInUser?.stateName.toString())
         val adapterState =
             ArrayAdapter(
                 requireContext(),
@@ -342,7 +347,7 @@ class EditProfileFragment : DaggerFragment() {
             )
         editInfoStateSpinner.adapter = adapterState
 
-        setLGASpinner(editInfoStateSpinner, editInfoLGASpinner, lgaAndDistrict, states, userViewModel)
+        setLGASpinner(editInfoStateSpinner, editInfoLGASpinner, lgaAndDistrict, states, userViewModel, loggedInUser)
 //        Log.i(title, "states $states")
     }
     private fun updateProfileRequest() {

@@ -248,8 +248,22 @@ class SigninFragment : DaggerFragment() {
             when (bool) {
                 true -> {
                     val res = result as ProfileData
-
-                    when (res.data.isReviewer) {
+                    val data = res.data
+                    userExist.firstName = data.firstName
+                    userExist.lastName = data.lastName
+                    userExist.email = data.email
+                    userExist.imageUrl = data.profileImageURL.toString()
+                    userExist.houseNumber = data.houseNumber
+                    userExist.street = data.street
+                    userExist.lgName = data.lgName
+                    userExist.lgID = data.lgID
+                    userExist.stateID = data.stateID
+                    userExist.stateName = data.stateName
+                    userExist.zoneID = data.zoneID
+                    userExist.districtID = data.districtID
+                    userExist.totalReports = data.totalReports
+                    userExist.id = data.id
+                    when (data.isReviewer) {
                         true -> {
                             userExist.isReviewer = true
                             storageRequest.saveData(userExist, "loggedInUser")

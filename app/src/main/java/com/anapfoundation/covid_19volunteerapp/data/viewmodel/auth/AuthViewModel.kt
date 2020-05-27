@@ -2,10 +2,7 @@ package com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth
 
 import android.util.Log
 import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Transformations
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.*
 import androidx.paging.DataSource
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
@@ -40,8 +37,10 @@ class AuthViewModel @Inject constructor(
         this.getName()
 
     }
+
     var networkState = MutableLiveData<com.utsman.recycling.extentions.NetworkState>()
     var countLive = MutableLiveData<Int?>()
+
 
     fun addReport(
         topic: String, rating: String, story: String, state: String, mediaURL: String?="",
@@ -93,6 +92,7 @@ class AuthViewModel @Inject constructor(
 
         request.enqueue(object : Callback<TopicResponse> {
             override fun onFailure(call: Call<TopicResponse>, t: Throwable) {
+                networkState.postValue(com.utsman.recycling.extentions.NetworkState.error("Bad network connnection"))
                 responseLiveData.postValue(ServicesResponseWrapper.Error("${t.cause}", null))
             }
 
@@ -214,6 +214,7 @@ class AuthViewModel @Inject constructor(
                     )
                     val error = converter.convert(response.errorBody())
                     Log.i(title, "message ${error?.message}")
+                    networkState.postValue(com.utsman.recycling.extentions.NetworkState.error(error?.message))
                     responseLiveData.postValue(ServicesResponseWrapper.Error(error?.message))
                 } catch (e: java.lang.Exception) {
                     Log.i(title, "Caught ${e.message}")

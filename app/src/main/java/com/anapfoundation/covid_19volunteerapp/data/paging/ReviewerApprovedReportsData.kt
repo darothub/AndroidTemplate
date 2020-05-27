@@ -47,12 +47,13 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
                 val body = response.body()
+                Log.i("title", "Approvedbody $body")
                 when {
-
                     body != null -> {
                         networkState.postValue(NetworkState.LOADED)
                         callback.onResult(body.data)
                     }
+
                 }
             }
 
@@ -78,7 +79,7 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
                     body != null -> {
                         try {
 
-                            networkState.postValue(NetworkState.LOADING)
+                            networkState.postValue(NetworkState.LOADED)
                             callback.onResult(body.data)
                         } catch (e: Exception) {
                             Log.e("Paging error", e.localizedMessage)

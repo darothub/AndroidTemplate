@@ -17,13 +17,26 @@ open class User(
     var phone:String?
 
 ) : Serializable {
-
     var loggedIn:Boolean = false
     var message = ""
     var token:String?=""
     var rememberPassword:Boolean = false
     var imageUrl = ""
+    var street: String? = null
+    var lgName:String?=null
+    var stateName:String?=null
+    var lgID:String?=null
+    var stateID:String?=null
+    var zoneID:String?=null
+    var districtID:String?=null
     var isReviewer:Boolean = false
+    var houseNumber: String? = null
+    val instagramProfileUsername: String? = null
+    val twitterProfileUsername: String? = null
+    val specialization: String? = null
+    var totalReports: Long?=null
+    var id:String?=null
+
 
 }
 class ProfileData (
@@ -44,14 +57,24 @@ class UserData(
     @SerializedName("password")
     var password:String="",
 
-    @SerializedName("house_number")
-    val houseNumber: String? = "",
-
-    val street: String? = "",
-    val id: String? = "",
-    val state: String? = "",
-
     val age: Long? = null,
+    @SerializedName("house_number")
+    val houseNumber: String? = null,
+
+    val street: String? = null,
+    val id: String? = null,
+    @SerializedName("state")
+    val stateID: String? = null,
+    @SerializedName("state_name")
+    val stateName:String?=null,
+    @SerializedName("lg_name")
+    val lgName:String?=null,
+    @SerializedName("local_government")
+    val lgID:String?=null,
+    @SerializedName("zone")
+    val zoneID:String?=null,
+    @SerializedName("district")
+    val districtID:String?=null,
 
     @SerializedName("instagram_profile_username")
     val instagramProfileUsername: String? = null,
@@ -65,8 +88,7 @@ class UserData(
 
     @SerializedName("profile_image_url")
     val profileImageURL: String? = null,
-    @SerializedName("state_id")
-    val stateID: String? = null,
+
     @SerializedName("total_reports")
     val totalReports: Long?=null
 ):Serializable {

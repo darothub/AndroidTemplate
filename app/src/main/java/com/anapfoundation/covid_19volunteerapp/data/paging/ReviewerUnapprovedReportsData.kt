@@ -32,8 +32,6 @@ class ReviewerUnapprovedReportsDataFactory @Inject constructor(val authApiReques
 
 class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
     ItemKeyedDataSource<Long, ReportResponse>(){
-    private var first = 10L
-    private var after = 0L
     var count :Int = 0
     var networkState = MutableLiveData<NetworkState>()
     var countLiveData = MutableLiveData<Int?>()
@@ -47,20 +45,18 @@ class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, 
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
                 networkState.postValue(NetworkState.error("Bad network connection"))
-                countLiveData.postValue(null)
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
                 val body = response.body()
+                Log.i("title", "UnApprovedbody $body")
                 when {
-
                     body != null ->  {
                         networkState.postValue(NetworkState.LOADED)
-                        count = params.requestedLoadSize
-                        countLiveData.postValue(params.requestedLoadSize)
                         Log.i("last count", "$countLiveData")
                         callback.onResult(body.data)
                     }
+
                 }
             }
 

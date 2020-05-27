@@ -151,7 +151,7 @@
                 android:gravity="top|left"
                 android:hint="@string/enter_your_report" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
-        <Spinner
+        <EditText
             android:id="@+id/reportUploadState"
             android:layout_height="50dp"
             android:background="@drawable/spinner_backgrnd"
@@ -162,6 +162,9 @@
             android:layout_marginRight="@dimen/normal_margin"
             android:layout_marginTop="16dp"
             android:spinnerMode="dropdown"
+            android:clickable="false"
+            android:focusable="false"
+            android:enabled="false"
             style="@style/CustomEditTextStyle"
             android:textColor="@color/colorPrimaryDark"
             app:layout_constraintStart_toStartOf="parent"
@@ -170,7 +173,7 @@
             android:popupTheme="@style/AppThemeActivity"
             app:layout_constraintTop_toBottomOf="@id/reportDetailField"
             />
-        <Spinner
+        <EditText
             android:id="@+id/reportUploadLGA"
             android:layout_width="match_parent"
             android:background="@drawable/spinner_backgrnd"
@@ -178,6 +181,9 @@
             android:gravity="left|center"
             android:hint="@string/lga"
             android:padding="10dp"
+            android:clickable="false"
+            android:focusable="false"
+            android:enabled="false"
             android:layout_marginTop="16dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"

@@ -81,7 +81,11 @@ interface AuthApiRequests {
     fun getApprovedReportsAfter(@Header("Authorization") header: String, @Query("first") first: Long?,
                                   @Query("after") after: Long?): Call<Reports>
 
-    @PUT("review/reports")
+    @PUT("review/reports/approve")
     @FormUrlEncoded
     fun approveReport(@Field("id") id:String, @Header("Authorization") header: String):Call<DefaultResponse>
+
+    @PUT("review/reports/dismiss")
+    @FormUrlEncoded
+    fun dismissReport(@Field("id") id:String, @Header("Authorization") header: String):Call<DefaultResponse>
 }

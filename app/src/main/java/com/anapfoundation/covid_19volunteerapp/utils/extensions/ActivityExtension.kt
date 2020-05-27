@@ -14,6 +14,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
+import com.cloudinary.Cloudinary
 import com.cloudinary.Transformation
 import com.cloudinary.android.MediaManager
 import com.cloudinary.android.callback.ErrorInfo
@@ -122,7 +123,7 @@ fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
 }
 
 
-fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, canvas:Canvas, storageRef:StorageReference, imageUrlText:TextView){
+fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, canvas:Canvas, storageRef:StorageReference, imageUrlText:TextView, report:Boolean=false){
 
     val title:String by lazy{
         this.getName()
@@ -139,18 +140,33 @@ fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, ca
     val data = outputStream.toByteArray()
 
     try {
+        val uploadRequest = MediaManager.get().upload(data)
+        val cloudinary = MediaManager.get().cloudinary.uploader()
 
-        val uploadRequest = MediaManager.get().upload(data).unsigned("of6bplnq")
-            .option("resource_type", "image")
-            .option("public_id", path)
-            .maxFileSize(5 * 1024 * 1024).callback(object :UploadCallback{
+        if (report) {
+            uploadRequest
+                .option("folder", "Reports")
+                .option("resource_type", "image")
+                .option("use_filename", true)
+                .option("public_id", path)
+                .maxFileSize(5 * 1024 * 1024)
+        } else {
+            uploadRequest
+                .option("folder", "Profile")
+                .option("resource_type", "image")
+                .option("use_filename", true)
+                .option("public_id", path)
+                .maxFileSize(5 * 1024 * 1024)
+        }
+        uploadRequest.callback(object :UploadCallback{
                 override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
-
-                    imageUrl = resultData?.get("url").toString()
+//                    cloudinary.destroy()
+                    imageUrl = resultData?.get("secure_url").toString()
                     imageUrlText.text = ""
                     imageUrlText.text = "imageUrl: "
                     imageUrlText.append(imageUrl)
-                    Log.i(title, "url $imageUrl")
+                    Log.i(title, "url ${imageUrlText.text}")
+                    Log.i(title, "data $resultData")
                 }
 
                 override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
@@ -170,7 +186,7 @@ fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, ca
                 }
 
             })
-        val str = uploadRequest.dispatch(requireContext())
+        val req = uploadRequest.dispatch(requireContext())
 
 
     }
@@ -178,37 +194,4 @@ fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, ca
         Log.e(title, e.localizedMessage)
     }
 
-//    val uploadTask = imageRef.putBytes(data)
-//
-//    uploadTask.addOnFailureListener {
-//        // Handle unsuccessful uploads
-//        Log.i(title, "Upload not successful")
-//    }.addOnSuccessListener {
-//        // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-//        // ...
-//        Log.i(title, "Upload successful")
-//    }
-//    uploadTask.continueWith { task ->
-//        if (!task.isSuccessful) {
-//            task.exception?.let {
-//                throw it
-//            }
-//        }
-//        imageRef.downloadUrl
-//    }.addOnCompleteListener { task ->
-//        if (task.isSuccessful) {
-//            val downloadUri = task.result
-//            downloadUri?.addOnSuccessListener {url ->
-//                imageUrl = url.toString()
-//                Log.i(title, "url $url")
-//                imageUrlText.text = ""
-//                imageUrlText.text = "imageUrl: "
-//                imageUrlText.append(imageUrl)
-//
-//            }
-//
-//        } else {
-//            Log.i(title, "uri: No url")
-//        }
-//    }
 }

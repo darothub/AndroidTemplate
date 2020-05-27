@@ -28,6 +28,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
@@ -52,6 +53,7 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.*
 import java.security.Permission
 import java.text.SimpleDateFormat
@@ -116,12 +118,12 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     //Get logged-in user
-    private val getUser by lazy {
+    private val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
     //Get token
     private val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
     //Set header
     private val header by lazy {
@@ -220,58 +222,70 @@ class ReportUploadFragment : DaggerFragment() {
             startActivityForResult(intent, REQUEST_FROM_GALLERY)
         }
 
-
+        bottomSheetDialog.setOnDismissListener {
+            Log.i(title, "dismissed ${it.dismiss()}")
+        }
+        bottomSheetDialog.setOnCancelListener {
+            Log.i(title, "cancelled ${it.cancel()}")
+        }
     }
 
 
     private fun addReportRequest() {
         submitBtn.setOnClickListener {
-            val story = storyEditText.text
 
-            val selectedState = reportUploadState.selectedItem
-            val valueOfStateSelected = states.get(selectedState)?.split(" ")
-            val stateGUID = valueOfStateSelected?.get(0).toString()
-            val zoneGUID = valueOfStateSelected?.get(1).toString()
-            val selectedLGA = reportUploadLGA.selectedItem
-            val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
-            val lgaGUID = lgaAndDistrictArray?.get(0).toString()
-            val district = lgaAndDistrictArray?.get(1).toString()
-            suggestion = suggestionEditText.text.toString()
-            imageUrl = imageUrlField.text.toString().substring(10)
+            CoroutineScope(Main).launch {
+                progressBar.show()
+                submitBtn.hide()
+                uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlField, true)
+                delay(8000)
 
+                val story = storyEditText.text
+                val stateGUID = loggedInUser?.stateID
+                val zoneGUID = loggedInUser?.zoneID
+                val lgaGUID = loggedInUser?.lgID
+                val district = loggedInUser?.districtID
+                suggestion = suggestionEditText.text.toString()
+                imageUrl = imageUrlField.text.toString().substring(10)
 
-            if (suggestion!!.isEmpty()){
-                suggestion = null
+                Log.i(title, "state $stateGUID, local $lgaGUID, district $district zone $zoneGUID")
+
+                if (suggestion!!.isEmpty()){
+                    suggestion = null
+                }
+                if (imageUrl!!.isEmpty()){
+                    imageUrl = null
+                }
+                report.story = story.toString()
+                report.state = "$stateGUID"
+                report.mediaURL = imageUrl
+                report.town = reportUploadTownEditText.text.toString()
+                report.localGovernment = lgaGUID
+                report.district = district
+
+                val request = authViewModel.addReport(
+                    report.topic,
+                    report.rating,
+                    report.story,
+                    report.state,
+                    report.mediaURL,
+                    report.localGovernment,
+                    report.district,
+                    report.town,
+                    zoneGUID,
+                    suggestion,
+                    header
+                )
+                Log.i(title, "mediaURL $imageUrl suggestion $suggestion")
+                val response = observeRequest(request, progressBar, submitBtn)
+
+                response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+                    requestResponseTask(it)
+                })
             }
-            if (imageUrl!!.isEmpty()){
-                imageUrl = null
-            }
-            report.story = story.toString()
-            report.state = "$stateGUID"
-            report.mediaURL = imageUrl
-            report.town = reportUploadTownEditText.text.toString()
-            report.localGovernment = lgaGUID
-            report.district = district
 
-            val request = authViewModel.addReport(
-                report.topic,
-                report.rating,
-                report.story,
-                report.state,
-                report.mediaURL,
-                report.localGovernment,
-                report.district,
-                report.town,
-                zoneGUID,
-                suggestion,
-                header
-            )
-            Log.i(title, "mediaURL $imageUrl suggestion $suggestion")
-            val response = observeRequest(request, progressBar, submitBtn)
 
-            response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-                requestResponseTask(it)
-            })
+
 
             Log.i(title, "Report $report")
 
@@ -284,8 +298,11 @@ class ReportUploadFragment : DaggerFragment() {
 
             true -> {
                 requireContext().toast(requireContext().getLocalisedString(R.string.upload_successful))
+                loggedInUser?.totalReports = loggedInUser?.totalReports?.plus(1)
+                storageRequest.saveData(loggedInUser, "loggedInUser")
                 val res = result as AddReportResponse
                 Log.i(title, "message ${result.message}")
+
                 findNavController().navigate(R.id.reportHomeFragment)
             }
             false ->{
@@ -297,6 +314,7 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     private fun getStateAndSendToSpinner() {
+
         val stateData = getStates(header)
         stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             extractStateList(it)
@@ -322,8 +340,10 @@ class ReportUploadFragment : DaggerFragment() {
                 R.layout.support_simple_spinner_dropdown_item,
                 states.keys.sorted()
             )
-        reportUploadState.adapter = adapterState
-        setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel)
+        reportUploadState.setText(loggedInUser?.stateName)
+        reportUploadLGA.setText(loggedInUser?.lgName)
+//        reportUploadState.adapter = adapterState
+//        setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel)
         Log.i(title, "states $states")
     }
 
@@ -351,6 +371,7 @@ class ReportUploadFragment : DaggerFragment() {
     private fun showBottomSheet() {
         uploadPictureText.text = requireContext().getLocalisedString(R.string.upload_picture)
 //        val state = reportUploadState.selectedItem
+
 
 
 
@@ -466,15 +487,13 @@ class ReportUploadFragment : DaggerFragment() {
 
     @ExperimentalStdlibApi
     private fun uploadPictureEvent(imageBitmap: Bitmap?, uri:Uri?) {
-        path = "images/report_$timeStamp" + "_.jpg"
+        path = "images/report_$timeStamp"
         uploadPictureBtn.setOnClickListener {
-            imagePreview.hide()
-
             bottomSheetProgressBar.show()
             uploadPictureBtn.hide()
-            uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlField)
+
             CoroutineScope(Main).launch {
-                delay(3000)
+                delay(1000)
                 bottomSheetProgressBar.hide()
                 uploadPictureBtn.show()
                 if (imageBitmap != null){
@@ -488,7 +507,9 @@ class ReportUploadFragment : DaggerFragment() {
 
                 uploadPictureText.setText(requireContext().getLocalisedString(R.string.new_picture))
                 bottomSheetDialog.dismiss()
+
             }
+
 
         }
     }
@@ -514,23 +535,7 @@ class ReportUploadFragment : DaggerFragment() {
             Log.i(title, "new uri ${Uri.fromFile(f)}")
         }
 
-//        CoroutineScope(IO).launch {
-//            val client = object :MediaScannerConnection.MediaScannerConnectionClient{
-//                override fun onMediaScannerConnected() {
-//                    Log.i(title, "Scan connected")
-//                }
-//
-//                override fun onScanCompleted(path: String?, uri: Uri?) {
-//                    Log.i(title, "Scan completed")
-//                }
-//
-//            }
-//            currentPhotoPath = imageFileAndPath.second
-//            Log.i(title, "Path $currentPhotoPath")
-//            val h =  MediaScannerConnection(requireContext(), client)
-//            h.scanFile(currentPhotoPath, "image/*")
-//            h.connect()
-//        }
+
 
 
     }

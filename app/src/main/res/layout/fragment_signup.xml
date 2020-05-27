@@ -62,7 +62,6 @@
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/lastNameField"
             style="@style/CustomInputLayoutStyle"
-
             app:layout_constraintBottom_toTopOf="@+id/emailFieldForSignUp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -73,7 +72,6 @@
 
             <EditText
                 android:id="@+id/lastNameEdit"
-                android:layout_width="match_parent"
                 style="@style/CustomEditTextStyle"
                 android:inputType="textCapWords"
                 android:hint="@string/last_name_hint" />

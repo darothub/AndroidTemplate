@@ -36,7 +36,6 @@ class MainActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val navController = Navigation.findNavController(this, R.id.fragment)
-        MediaManager.init(this)
 
     }
     override fun onSupportNavigateUp(): Boolean {

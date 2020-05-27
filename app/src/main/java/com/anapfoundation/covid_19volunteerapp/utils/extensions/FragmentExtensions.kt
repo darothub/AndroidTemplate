@@ -203,7 +203,7 @@ inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline req
 }
 
 fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistrict:HashMap<String, String>,
-                           states:HashMap<String, String>, userViewModel: UserViewModel
+                           states:HashMap<String, String>, userViewModel: UserViewModel, user: User?=null
 ) {
     spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -231,7 +231,10 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
                     }, {
                         "${it.id} ${it.district}"
                     })
-                    val lga = lgaAndDistrict.keys.sorted()
+                    val lga = lgaAndDistrict.keys.sorted().toMutableList()
+                    if(user != null){
+                        lga.add(0, user.lgName.toString())
+                    }
                     Log.i("$this", "LGA $lga")
                     val adapterLga = ArrayAdapter(
                         requireContext(),

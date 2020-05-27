@@ -59,7 +59,7 @@
         tools:layout="@layout/fragment_edit_profile" >
         <argument
             android:name="profileData"
-            app:argType="com.anapfoundation.covid_19volunteerapp.model.UserData"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.User"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>

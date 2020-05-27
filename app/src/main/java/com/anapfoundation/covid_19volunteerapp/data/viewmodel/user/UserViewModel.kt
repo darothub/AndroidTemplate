@@ -3,11 +3,13 @@ package com.anapfoundation.covid_19volunteerapp.data.viewmodel.user
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
@@ -21,12 +23,23 @@ import javax.inject.Inject
 
 class UserViewModel @Inject constructor(
     val userRequestInterface: UserRequestInterface,
-    val retrofit: Retrofit
+    val retrofit: Retrofit,
+    val state: SavedStateHandle
 ) : ViewModel() {
 
     val title: String by lazy {
         this.getName()
 
+    }
+    val registeringUser:String by lazy {
+        "registeringUser"
+    }
+
+    fun getSavedUserForm(): User?{
+        return state.get<User>(registeringUser)
+    }
+    fun saveRegisteringUser(user: User){
+        state.set(registeringUser, user)
     }
 
     fun registerUser(

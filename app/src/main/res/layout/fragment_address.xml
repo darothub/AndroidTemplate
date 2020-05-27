@@ -41,7 +41,7 @@
                 android:id="@+id/houseNumberEditText"
                 style="@style/CustomEditTextStyle"
                 android:hint="@string/house_number_hint_text"
-
+                android:inputType="number"
                />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
@@ -58,6 +58,7 @@
                 style="@style/CustomEditTextStyle"
                 android:hint="@string/street_hint_text"
                 android:textColorHint="@color/colorTextHint"
+                android:inputType="textCapWords"
                 />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
