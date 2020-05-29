@@ -6,6 +6,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.UnapprovedReportFragment">
 
+    <include
+        android:id="@+id/noReportUnapproved"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_marginTop="30dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        layout="@layout/layout_noreport"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/reviewerRecyclerView"
         app:layout_constraintStart_toStartOf="parent"

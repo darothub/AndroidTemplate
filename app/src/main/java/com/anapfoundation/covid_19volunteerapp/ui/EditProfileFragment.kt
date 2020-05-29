@@ -50,6 +50,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
+
 /**
  * A simple [Fragment] subclass.
  */
@@ -172,6 +173,9 @@ class EditProfileFragment : DaggerFragment() {
         editInfoBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
+
+
+
     }
 
     override fun onStart() {
@@ -182,7 +186,7 @@ class EditProfileFragment : DaggerFragment() {
         if(user?.imageUrl != null){
             val profileImageUrl = "imageUrl: ${user.imageUrl}"
             imageUrlText.text = profileImageUrl
-            imageUrlText.show()
+
         }
         editInfoFNameEditText.setText(user?.firstName)
         editInfoLNameEditText.setText(user?.lastName)
@@ -425,6 +429,14 @@ class EditProfileFragment : DaggerFragment() {
                 Log.i(title, "result of registration ${res.data.firstName}")
                 var user = storageRequest.checkUser("loggedInUser")
                 user?.imageUrl = imageText.subSequence(10, imageText.length).toString()
+                val data = result.data
+                user?.stateName = data.stateName
+                user?.stateID = data.stateID
+                user?.lgName = data.lgName
+                user?.lgID = data.lgID
+                user?.zoneID = data.zoneID
+                user?.districtID = data.districtID
+
                 storageRequest.saveData(user, "loggedInUser")
                 findNavController().navigate(R.id.profileFragment)
             }

@@ -20,7 +20,7 @@
     <string name="cpassword_hint_text">Confirm password</string>
     <string name="address_title">Your address</string>
     <string name="house_number_hint_text">House number or Apartment</string>
-    <string name="states">States</string>
+    <string name="states">State</string>
     <string name="lga">LGA</string>
     <string name="street_hint_text">Street</string>
     <string name="save_text">Save</string>
@@ -137,6 +137,8 @@
     <string name="new_picture">Change picture</string>
     <string name="upload_image">Upload</string>
     <string name="bad_network">Bad network connection</string>
+    <string name="dismissText">Dismiss report</string>
+    <string name="dismissed_successfully">Dismissed successfully</string>
 
 
 </resources>

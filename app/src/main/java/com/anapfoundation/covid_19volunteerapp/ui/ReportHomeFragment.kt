@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -75,6 +76,7 @@ class ReportHomeFragment : DaggerFragment() {
         getName()
     }
 
+
     var lga = ""
     var state = ""
     var total = 0
@@ -131,10 +133,35 @@ class ReportHomeFragment : DaggerFragment() {
                     submitList(it)
                 })
                 authViewModel.getReporterLoader(reportDataFactory).observe(viewLifecycleOwner, Observer {
+                    reportDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
+                        val code = it.code
+                        if(code == 401){
+                            requireContext().toast(it.message.toString())
+                            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+                        }
+                    })
                     submitNetwork(it)
+                })
+                var tot = 0
+                authViewModel.getReporterCount(reportDataFactory).observe(viewLifecycleOwner, Observer {
+                    tot = tot + it
+                    Log.i(title, "Newcount $tot")
                 })
 
             }
+
+
+            if (loggedInUser?.totalReports!! < 1){
+                noReportHome.show()
+                noReportHome.setOnClickListener {
+                    findNavController().navigate(R.id.createReportFragment)
+                }
+
+            }else{
+                noReportHome.hide()
+
+            }
+
 
         }catch (e:Exception){
             Log.e(title, e.message)
@@ -249,7 +276,6 @@ class ReportHomeFragment : DaggerFragment() {
                     state = res.data.stateName.toString()
                     Log.i("State", "${res.data.stateName}")
                     itemView.reportLocation.text = "$lga, $state"
-
 
                 }
             }

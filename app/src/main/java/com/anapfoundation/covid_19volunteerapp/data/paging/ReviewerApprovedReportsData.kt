@@ -18,12 +18,16 @@ import javax.inject.Inject
 
 class ReviewerApprovedReportsDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
     val pagingLiveData = MutableLiveData<ReviewerApprovedReportsDataSource>()
+    val responseLiveData = MutableLiveData<ServicesResponseWrapper<String>>()
     override fun create(): DataSource<Long, ReportResponse> {
         val user = storageRequest.checkUser("loggedInUser")
         val header = "Bearer ${user?.token}"
-        Log.i("userToken", "$header")
         val data = ReviewerApprovedReportsDataSource(authApiRequests, header)
         pagingLiveData.postValue(data)
+        if(user?.token.isNullOrEmpty()){
+            responseLiveData.postValue(ServicesResponseWrapper.Logout("Unauthorized", 401))
+        }
+
         return data
     }
 }
@@ -32,6 +36,7 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
     ItemKeyedDataSource<Long, ReportResponse>() {
 
     var networkState = MutableLiveData<NetworkState>()
+    val countLiveData = MutableLiveData<Int>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
@@ -51,6 +56,7 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
                 when {
                     body != null -> {
                         networkState.postValue(NetworkState.LOADED)
+                        countLiveData.postValue(params.requestedLoadSize)
                         callback.onResult(body.data)
                     }
 
@@ -78,8 +84,8 @@ class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, va
 
                     body != null -> {
                         try {
-
                             networkState.postValue(NetworkState.LOADED)
+                            countLiveData.postValue(params.requestedLoadSize)
                             callback.onResult(body.data)
                         } catch (e: Exception) {
                             Log.e("Paging error", e.localizedMessage)

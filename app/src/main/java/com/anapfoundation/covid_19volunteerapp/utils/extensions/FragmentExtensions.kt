@@ -27,7 +27,9 @@ import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tfb.fbtoast.FBCustomToast
 import com.tfb.fbtoast.FBToast
 import kotlinx.android.synthetic.main.fragment_single_report.*
@@ -175,10 +177,7 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
                     result.postValue(Pair(false, errorResponse))
                     requireContext().toast("$errorResponse")
                     Log.i(title, "Log out $errorResponse")
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("android-app://anapfoundation.navigation/signin".toUri())
-                        .build()
-                    findNavController().navigate(request)
+                    navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
                 }
             }
         }
@@ -203,8 +202,23 @@ inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline req
 }
 
 fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistrict:HashMap<String, String>,
-                           states:HashMap<String, String>, userViewModel: UserViewModel, user: User?=null
+                           states:HashMap<String, String>, userViewModel: UserViewModel, user: User?=null, lgaHeader:String?=null
 ) {
+
+    var defaultList = arrayListOf<String>()
+    if(user != null){
+        defaultList.add(0, user.lgName.toString())
+    }
+    else if(lgaHeader != null){
+        defaultList.add(0, lgaHeader)
+    }
+    val adapterLga = ArrayAdapter(
+        requireContext(),
+        R.layout.support_simple_spinner_dropdown_item,
+        defaultList
+    )
+    spinnerLGA.adapter = adapterLga
+
     spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
             TODO("Not yet implemented")
@@ -232,9 +246,6 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
                         "${it.id} ${it.district}"
                     })
                     val lga = lgaAndDistrict.keys.sorted().toMutableList()
-                    if(user != null){
-                        lga.add(0, user.lgName.toString())
-                    }
                     Log.i("$this", "LGA $lga")
                     val adapterLga = ArrayAdapter(
                         requireContext(),
@@ -253,11 +264,19 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
 
     }
 }
+fun Fragment.logout(storageRequest: StorageRequest, bottomSheetDialog: BottomSheetDialog? =null){
+    val user = storageRequest.checkUser("loggedInUser")
+    user?.loggedIn = false
+    user?.token = ""
+    storageRequest.saveData(user, "loggedInUser")
+    bottomSheetDialog?.dismiss()
+    navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+
+}
 fun Fragment.navigateWithUri(uri: Uri){
     val request = NavDeepLinkRequest.Builder
         .fromUri(uri)
         .build()
-
     findNavController().navigate(request)
 }
 
@@ -288,7 +307,6 @@ internal fun Fragment.displayNotificationBell(
                             countTextView.text = total.toString()
                         }
                         override fun onRemoved(position: Int, count: Int) {}
-
                     })
 
                 })

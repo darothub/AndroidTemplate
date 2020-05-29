@@ -45,6 +45,21 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintVertical_bias="0" />
 
+        <Button
+            android:id="@+id/secondBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/rounded_border_with_backgrnd"
+            android:text="@string/submit_text"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            tool:visibility="visible"
+            android:layout_marginTop="@dimen/normal_margin"
+            app:layout_constraintTop_toBottomOf="@id/btn"
+            android:textColor="@color/colorNeutral"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintVertical_bias="0" />
+
 
         <com.skydoves.progressview.ProgressView
             android:id="@+id/reportUploadProgressView1"

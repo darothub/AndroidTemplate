@@ -6,9 +6,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 
 import com.anapfoundation.covid_19volunteerapp.R
@@ -22,13 +24,14 @@ import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.squareup.picasso.Picasso
+import com.utsman.recycling.paged.extentions.NetworkState
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.approved_report_item.view.*
 import kotlinx.android.synthetic.main.fragment_approved_report.*
+import kotlinx.android.synthetic.main.fragment_unapproved_report.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
 
@@ -70,7 +73,7 @@ class ApprovedReportFragment : DaggerFragment() {
     var state = ""
 
     var singleReport = ReportResponse()
-
+    var total = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -154,11 +157,37 @@ class ApprovedReportFragment : DaggerFragment() {
                 authViewModel.getApprovedReports(reviewerApprovedReportsDataFactory)
                     .observe(viewLifecycleOwner, Observer {
 
-                        Log.i(title, "listSize ${it.loadedCount}")
                         submitList(it)
+                        it.addWeakCallback(null, object: PagedList.Callback(){
+                            override fun onChanged(position: Int, count: Int) {}
+
+                            override fun onInserted(position: Int, count: Int) {
+                                total += count
+                                if(total < 1){
+                                    noReportApproved.show()
+                                }else{
+                                    noReportApproved.hide()
+                                }
+                            }
+
+                            override fun onRemoved(position: Int, count: Int) {}
+
+                        })
                     })
                 authViewModel.approvedLoader(reviewerApprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
-                    submitNetwork(it)
+                    reviewerApprovedReportsDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
+                        val code = it.code
+                        if(code == 401){
+                            requireContext().toast(it.message.toString())
+                            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+                        }
+                    })
+                    submitNetwork(it as NetworkState)
+                })
+                var tot = 0
+                authViewModel.getApprovedReportCount(reviewerApprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    tot = tot + it
+                    Log.i(title, "NewApprovedcount ${tot-1}")
                 })
 
             }

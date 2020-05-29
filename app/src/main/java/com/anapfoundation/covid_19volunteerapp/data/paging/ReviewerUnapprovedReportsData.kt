@@ -19,22 +19,24 @@ import javax.inject.Inject
 
 class ReviewerUnapprovedReportsDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
     val pagingLiveData = MutableLiveData<ReviewerUnapprovedReportsDataSource>()
-    val pagingCount = MutableLiveData<Int?>()
+    val responseLiveData = MutableLiveData<ServicesResponseWrapper<String>>()
     override fun create(): DataSource<Long, ReportResponse> {
         val user = storageRequest.checkUser("loggedInUser")
         val header = "Bearer ${user?.token}"
         val data = ReviewerUnapprovedReportsDataSource(authApiRequests, header)
         pagingLiveData.postValue(data)
-        pagingCount.postValue(data.count)
+        if(user?.token.isNullOrEmpty()){
+            responseLiveData.postValue(ServicesResponseWrapper.Logout("Unauthorized", 401))
+        }
+
         return data
     }
 }
 
 class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
     ItemKeyedDataSource<Long, ReportResponse>(){
-    var count :Int = 0
     var networkState = MutableLiveData<NetworkState>()
-    var countLiveData = MutableLiveData<Int?>()
+    val countLiveData = MutableLiveData<Int>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
@@ -53,7 +55,7 @@ class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, 
                 when {
                     body != null ->  {
                         networkState.postValue(NetworkState.LOADED)
-                        Log.i("last count", "$countLiveData")
+                        val countLiveData = MutableLiveData<Int>()
                         callback.onResult(body.data)
                     }
 
@@ -70,7 +72,7 @@ class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, 
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
                 networkState.postValue(NetworkState.error("Bad network connection"))
-                countLiveData.postValue(null)
+
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
@@ -79,9 +81,9 @@ class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, 
 
                     body != null ->  {
                         try {
-                            count += params.requestedLoadSize
+
                             networkState.postValue(NetworkState.LOADING)
-                            countLiveData.postValue(params.requestedLoadSize)
+                            val countLiveData = MutableLiveData<Int>()
                             callback.onResult(body.data)
                         }
                         catch (e:Exception){

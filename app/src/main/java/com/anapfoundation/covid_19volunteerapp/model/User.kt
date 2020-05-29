@@ -34,7 +34,7 @@ open class User(
     val instagramProfileUsername: String? = null
     val twitterProfileUsername: String? = null
     val specialization: String? = null
-    var totalReports: Long?=null
+    var totalReports: Long?=0
     var id:String?=null
 
 

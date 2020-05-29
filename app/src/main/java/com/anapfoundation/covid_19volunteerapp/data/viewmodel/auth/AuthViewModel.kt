@@ -39,7 +39,7 @@ class AuthViewModel @Inject constructor(
     }
 
     var networkState = MutableLiveData<com.utsman.recycling.extentions.NetworkState>()
-    var countLive = MutableLiveData<Int?>()
+    val responseLiveData = MutableLiveData<ServicesResponseWrapper<String>>()
 
 
     fun addReport(
@@ -240,19 +240,19 @@ class AuthViewModel @Inject constructor(
 
     private fun configPaged(size: Int): PagedList.Config = PagedList.Config.Builder()
         .setPageSize(size)
-        .setInitialLoadSizeHint(size * 20)
+        .setInitialLoadSizeHint(size)
         .setEnablePlaceholders(true)
         .build()
 
     fun getReportss(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>> {
 
-        return LivePagedListBuilder(dataSourceFactory, configPaged(7)).build()
+        return LivePagedListBuilder(dataSourceFactory, configPaged(1)).build()
     }
     fun getUnapprovedReports(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>>{
-        return LivePagedListBuilder(dataSourceFactory, configPaged(3)).build()
+        return LivePagedListBuilder(dataSourceFactory, configPaged(1)).build()
     }
     fun getApprovedReports(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<PagedList<ReportResponse>>{
-        return LivePagedListBuilder(dataSourceFactory, configPaged(2)).build()
+        return LivePagedListBuilder(dataSourceFactory, configPaged(1)).build()
     }
 
     fun getReporterLoader(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<NetworkState> = Transformations.switchMap<ReportsDataSource, NetworkState>(
@@ -272,6 +272,25 @@ class AuthViewModel @Inject constructor(
     ) {
         it.networkState
     }
+
+    fun getReporterCount(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<Int> = Transformations.switchMap(
+        (dataSourceFactory as ReportDataFactory).pagingLiveData
+    ) {
+        it.countLiveData
+    }
+
+    fun getUnapprovedReportCount(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<Int> = Transformations.switchMap(
+        (dataSourceFactory as ReviewerUnapprovedReportsDataFactory).pagingLiveData
+    ) {
+        it.countLiveData
+    }
+
+    fun getApprovedReportCount(dataSourceFactory: DataSource.Factory<Long, ReportResponse>): LiveData<Int> = Transformations.switchMap(
+        (dataSourceFactory as ReviewerApprovedReportsDataFactory).pagingLiveData
+    ) {
+        it.countLiveData
+    }
+
 
 
 }

@@ -7,7 +7,7 @@
     <color name="progressColor">#24D2FC</color>
     <color name="colorNeutral">#FFFFFF</color>
     <color name="colorTextHint">#30183C52</color>
-    <color name="transparentWhite">#20000000</color>
+    <color name="transparentWhite">#72DCDBDB</color>
     <color name="borderColor">#80183C52</color>
     <color name="errorRed">#FF1100</color>
 </resources>

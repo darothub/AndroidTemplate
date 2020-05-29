@@ -38,6 +38,8 @@ interface AuthRequestInterface {
     fun resetPassword(newPassword:String, token: String):Call<DefaultResponse>
 
     fun approveReport(id:String, header: String):Call<DefaultResponse>
+    
+    fun dismissReport(id:String, header: String):Call<DefaultResponse>
 
 //    fun getUnapprovedReports(header: String, first:Long?, after:Long?):Call<Reports>
 

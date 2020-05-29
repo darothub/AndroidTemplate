@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
@@ -109,6 +111,10 @@ class AddressFragment : DaggerFragment() {
         }
         initEnterKeyToSubmitForm(streetEditText) { completeSignupRequest() }
 
+        addressBackBtn.setOnClickListener {
+            findNavController().navigate(R.id.signupFragment)
+        }
+
         requireActivity().onBackPressedDispatcher.addCallback {
 
             findNavController().navigate(R.id.signupFragment)
@@ -156,6 +162,8 @@ class AddressFragment : DaggerFragment() {
     }
 
     private fun setupSpinner() {
+        val stateArray = states.keys.sorted().toMutableList()
+        stateArray.add(0, requireContext().getLocalisedString(R.string.states))
         val adapterState =
             ArrayAdapter(
                 requireContext(),
@@ -164,7 +172,7 @@ class AddressFragment : DaggerFragment() {
             )
         spinnerState.adapter = adapterState
 
-        setLGASpinner(spinnerState, spinnerLGA, lgaAndDistrict, states, userViewModel)
+        setLGASpinner(spinnerState, spinnerLGA, lgaAndDistrict, states, userViewModel, null, "Local government")
 //        Log.i(title, "states $states")
     }
 
@@ -227,8 +235,10 @@ class AddressFragment : DaggerFragment() {
             true -> {
                 val res = result as UserResponse
                 requireContext().toast(requireContext().getLocalisedString(R.string.signup_successful))
+                val clearRegister = userViewModel.clearSavedRegisteredUser()
                 findNavController().navigate(R.id.signinFragment)
                 Log.i(title, "result of registration ${res.data}")
+                Log.i(title, "clearedRegister $clearRegister")
             }
             else -> Log.i(title, "error $result")
         }

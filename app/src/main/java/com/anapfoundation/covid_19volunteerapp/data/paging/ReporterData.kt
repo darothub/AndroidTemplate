@@ -19,11 +19,16 @@ import javax.inject.Inject
 
 class ReportDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
     val pagingLiveData = MutableLiveData<ReportsDataSource>()
+    val responseLiveData = MutableLiveData<ServicesResponseWrapper<String>>()
     override fun create(): DataSource<Long, ReportResponse> {
         val user = storageRequest.checkUser("loggedInUser")
         val header = "Bearer ${user?.token}"
         val data = ReportsDataSource(authApiRequests, header)
         pagingLiveData.postValue(data)
+        if(user?.token.isNullOrEmpty()){
+            responseLiveData.postValue(ServicesResponseWrapper.Logout("Unauthorized", 401))
+        }
+
         return data
     }
 }
@@ -31,8 +36,8 @@ class ReportDataFactory @Inject constructor(val authApiRequests: AuthApiRequests
 class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):ItemKeyedDataSource<Long, ReportResponse>(){
 
 
-//    val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
     var networkState = MutableLiveData<NetworkState>()
+    val countLiveData = MutableLiveData<Int>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
@@ -44,7 +49,6 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 Log.i("Datasource", "error message ${t.message}")
                 networkState.postValue(NetworkState.error("Bad network connection"))
 
-//                responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
@@ -52,7 +56,7 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 when {
 
                     body != null ->  {
-//                        responseLiveData.postValue(ServicesResponseWrapper.Success(body))
+                        countLiveData.postValue(params.requestedLoadSize)
                         networkState.postValue(NetworkState.LOADED)
 
                         callback.onResult(body.data)
@@ -71,7 +75,7 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
                 Log.i("Datasource", "error message ${t.message}")
                 networkState.postValue(NetworkState.error(t.localizedMessage))
 
-//                responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
+//                countLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
@@ -80,6 +84,7 @@ class ReportsDataSource(val authApiRequests: AuthApiRequests, val header:String)
 
                     body != null ->  {
                         try {
+                            countLiveData.postValue(params.requestedLoadSize)
                             networkState.postValue(NetworkState.LOADED)
 
                             callback.onResult(body.data)

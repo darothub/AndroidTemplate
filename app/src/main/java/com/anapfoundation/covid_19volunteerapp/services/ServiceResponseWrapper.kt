@@ -16,7 +16,7 @@ sealed class ServicesResponseWrapper<T>(
      * A loading class wrapper
      */
     class Loading<T>(data: T? = null, message: String) : ServicesResponseWrapper<T>(data, message)
-    class Logout<T>(message: String, data: T? = null) : ServicesResponseWrapper<T>(data, message)
+    class Logout<T>(message: String, code: Int?=null, data: T? = null) : ServicesResponseWrapper<T>(data, message, code)
     /**
      * An error class wrapper
      */

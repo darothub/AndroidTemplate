@@ -102,6 +102,29 @@ fun AuthViewModel.approveReport(id:String, header:String): LiveData<ServicesResp
     return responseLiveData
 }
 
+fun AuthViewModel.dismissReport(id:String, header:String): LiveData<ServicesResponseWrapper<Data>> {
+    val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+    responseLiveData.value = ServicesResponseWrapper.Loading(
+        null,
+        "Loading..."
+    )
+    val request = authRequestInterface.dismissReport(id, header)
+    request.enqueue(object : Callback<DefaultResponse> {
+        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+            onFailureResponse(responseLiveData, t)
+        }
+
+        override fun onResponse(
+            call: Call<DefaultResponse>,
+            response: Response<DefaultResponse>
+        ) {
+            onResponseTask(response as Response<Data>, responseLiveData)
+        }
+
+    })
+    return responseLiveData
+}
+
 
 
 

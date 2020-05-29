@@ -352,16 +352,18 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     private fun setupSpinner() {
+        val stateArray = states.keys.sorted().toMutableList()
+        stateArray.add(0, loggedInUser?.stateName.toString())
         val adapterState =
             ArrayAdapter(
                 requireContext(),
                 R.layout.support_simple_spinner_dropdown_item,
-                states.keys.sorted()
+                stateArray
             )
-        reportUploadState.setText(loggedInUser?.stateName)
-        reportUploadLGA.setText(loggedInUser?.lgName)
-//        reportUploadState.adapter = adapterState
-//        setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel)
+//        reportUploadState.setText(loggedInUser?.stateName)
+//        reportUploadLGA.setText(loggedInUser?.lgName)
+        reportUploadState.adapter = adapterState
+        setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel, loggedInUser)
         Log.i(title, "states $states")
     }
 

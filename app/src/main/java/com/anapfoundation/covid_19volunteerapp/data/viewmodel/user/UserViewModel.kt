@@ -40,6 +40,11 @@ class UserViewModel @Inject constructor(
     }
     fun saveRegisteringUser(user: User){
         state.set(registeringUser, user)
+
+    }
+    fun clearSavedRegisteredUser():String{
+        state.remove<User>(registeringUser)
+        return "done"
     }
 
     fun registerUser(

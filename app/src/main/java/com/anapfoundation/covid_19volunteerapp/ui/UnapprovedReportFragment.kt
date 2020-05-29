@@ -6,6 +6,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -21,9 +23,7 @@ import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.observeRequest
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.show
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.squareup.picasso.Picasso
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
@@ -72,6 +72,7 @@ class UnapprovedReportFragment : DaggerFragment() {
 
     var singleReport = ReportResponse()
     var total = 0
+    val countLiveData = MutableLiveData<Int>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -84,6 +85,11 @@ class UnapprovedReportFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
         setRecyclerViewForUnapprovedReports()
+
+        val valo = countLiveData.value
+        Log.i(title, "start")
+        Log.i(title, "valo $valo")
+
     }
 
     private fun setRecyclerViewForUnapprovedReports() {
@@ -153,14 +159,41 @@ class UnapprovedReportFragment : DaggerFragment() {
                     idTextError = R.id.error_text_view
                 }
 
-
                 authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory)
                     .observe(viewLifecycleOwner, Observer {
-
                         submitList(it)
+                        it.addWeakCallback(null, object:PagedList.Callback(){
+                            override fun onChanged(position: Int, count: Int) {}
+
+                            override fun onInserted(position: Int, count: Int) {
+                                total += count
+                                countLiveData.postValue(count)
+                                Log.i(title, "total $count")
+                                if(total < 1){
+                                    noReportUnapproved.show()
+                                }else{
+                                    noReportUnapproved.hide()
+                                }
+                            }
+
+                            override fun onRemoved(position: Int, count: Int) {}
+
+                        })
                     })
                 authViewModel.unApprovedReportLoader(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    reviewerUnapprovedReportsDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
+                        val code = it.code
+                        if(code == 401){
+                            requireContext().toast(it.message.toString())
+                            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+                        }
+                    })
                     submitNetwork(it)
+                })
+                var tot = 0
+                authViewModel.getApprovedReportCount(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    tot = tot + it
+                    Log.i(title, "NewUnapprovedcount ${tot-1}")
                 })
 
             }

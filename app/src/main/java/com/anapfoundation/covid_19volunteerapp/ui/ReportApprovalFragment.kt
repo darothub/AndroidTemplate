@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -20,6 +21,7 @@ import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedRep
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.approveReport
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.dismissReport
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
@@ -74,6 +76,7 @@ class ReportApprovalFragment : DaggerFragment() {
     }
     lateinit var singleReport: ReportResponse
     lateinit var approveBtn: Button
+    lateinit var dismissBtn: Button
     val progressBar by lazy {
         reportApprovalBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
@@ -127,10 +130,20 @@ class ReportApprovalFragment : DaggerFragment() {
             .placeholder(R.drawable.no_image_icon)
             .into(appBarImage)
 
-        approveBtn = reportApprovalBottomLayout.findViewById<Button>(R.id.btn)
+        approveBtn = reportApprovalBottomLayout.findViewById(R.id.btn)
         approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
+        dismissBtn = reportApprovalBottomLayout.findViewById(R.id.secondBtn)
+        dismissBtn.text = requireContext().getLocalisedString(R.string.dismissText)
+        dismissBtn.show()
 
-        approveReport()
+        approveBtn.setOnClickListener {
+            approveOrDismiss(singleReport.id.toString(), true)
+        }
+        dismissBtn.setOnClickListener {
+            approveOrDismiss(singleReport.id.toString(), false)
+        }
+
+
 
         reportApprovalBackBtn.setOnClickListener {
             findNavController().popBackStack()
@@ -147,27 +160,44 @@ class ReportApprovalFragment : DaggerFragment() {
 
     }
 
-    private fun approveReport() {
-        approveBtn.setOnClickListener {
-            Log.i(title, "id ${singleReport.id}")
-            val request = authViewModel.approveReport(singleReport.id.toString(), header)
-            val response = observeRequest(request, progressBar, approveBtn)
-
-            response.observe(viewLifecycleOwner, Observer {
-                val (bool, result) = it
-
-                when (bool) {
-                    true -> {
-                        val res = result as DefaultResponse
-                        Log.i(title, res.data.toString())
-                        requireContext().toast(requireContext().getLocalisedString(R.string.approved_successful))
-                        findNavController().navigate(R.id.reviewerScreenFragment)
-                    }
-                    else -> Log.i(title, "error $result")
-                }
-
-            })
+    private fun approveOrDismiss(id:String, approve:Boolean=false) {
+        val response:LiveData<Pair<Boolean, *>>
+        when(approve){
+            true -> {
+                Log.i(title, "id ${singleReport.id}")
+                val request = authViewModel.approveReport(id, header)
+                response = observeRequest(request, progressBar, approveBtn)
+            }
+            false->{
+                val request = authViewModel.dismissReport(singleReport.id.toString(), header)
+                response = observeRequest(request, progressBar, approveBtn)
+            }
         }
+        onResponseObserver(response, approve)
+    }
+
+    private fun onResponseObserver(
+        response: LiveData<Pair<Boolean, *>>,
+        approve: Boolean
+    ) {
+        response.observe(viewLifecycleOwner, Observer {
+            val (bool, result) = it
+            when (bool) {
+                true -> {
+                    val res = result as DefaultResponse
+                    Log.i(title, res.data.toString())
+                    if (approve) {
+                        requireContext().toast(requireContext().getLocalisedString(R.string.approved_successful))
+                    } else {
+                        requireContext().toast(requireContext().getLocalisedString(R.string.dismissed_successfully))
+                    }
+
+                    findNavController().navigate(R.id.reviewerScreenFragment)
+                }
+                else -> Log.i(title, "error $result")
+            }
+
+        })
     }
 
 
