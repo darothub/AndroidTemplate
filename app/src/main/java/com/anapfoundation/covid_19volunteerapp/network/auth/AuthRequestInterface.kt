@@ -32,7 +32,7 @@ interface AuthRequestInterface {
 
     fun updateProfile(
         firstName:String, lastName:String, email: String, phone: String,
-        houseNumber:String?=null,  state:String?, street: String?, zone:String?, profileImageUrl:String?=null, header:String
+        houseNumber:String?=null,  state:String?, street: String?, localGovernment: String?, zone:String?, profileImageUrl:String?=null, header:String
     ):Call<ProfileData>
 
     fun resetPassword(newPassword:String, token: String):Call<DefaultResponse>

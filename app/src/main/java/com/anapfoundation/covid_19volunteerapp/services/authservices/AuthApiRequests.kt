@@ -57,6 +57,7 @@ interface AuthApiRequests {
         @Field("phone") phone: String,
         @Field("houseNumber") houseNumber: String?=null,
         @Field("state") state: String?,
+        @Field("localGovernment") localGovernment: String?,
         @Field("street") street: String?,
         @Field("zone") zone: String?,
         @Field("profile_image_url") profileImageUrl:String?=null,

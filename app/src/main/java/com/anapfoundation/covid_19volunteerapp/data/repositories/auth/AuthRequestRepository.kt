@@ -55,11 +55,12 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         houseNumber: String?,
         state: String?,
         street: String?,
+        localGovernment: String?,
         zone: String?,
         profileImageUrl:String?,
         header: String
     ): Call<ProfileData> {
-        return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, zone, profileImageUrl, header)
+        return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, localGovernment, zone, profileImageUrl, header)
     }
 
     override fun resetPassword(newPassword: String, token: String): Call<DefaultResponse> {

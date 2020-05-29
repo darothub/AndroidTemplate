@@ -139,6 +139,8 @@
     <string name="bad_network">Bad network connection</string>
     <string name="dismissText">Dismiss report</string>
     <string name="dismissed_successfully">Dismissed successfully</string>
+    <string name="unauthorized">Unauthorized</string>
+    <string name="no_reports">No reports</string>
 
 
 </resources>

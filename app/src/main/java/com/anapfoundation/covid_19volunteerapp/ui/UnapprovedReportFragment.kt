@@ -44,12 +44,12 @@ class UnapprovedReportFragment : DaggerFragment() {
     @Inject
     lateinit var storageRequest: StorageRequest
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
     //Set header
     val header by lazy {
@@ -84,14 +84,23 @@ class UnapprovedReportFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
-        setRecyclerViewForUnapprovedReports()
 
-        val valo = countLiveData.value
-        Log.i(title, "start")
-        Log.i(title, "valo $valo")
 
+        Log.i(title, "Onstart")
     }
 
+
+    override fun onPause() {
+        super.onPause()
+
+        Log.i(title, "onPause")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setRecyclerViewForUnapprovedReports()
+        Log.i(title, "OnResume")
+    }
     private fun setRecyclerViewForUnapprovedReports() {
         try {
 
@@ -162,23 +171,6 @@ class UnapprovedReportFragment : DaggerFragment() {
                 authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory)
                     .observe(viewLifecycleOwner, Observer {
                         submitList(it)
-                        it.addWeakCallback(null, object:PagedList.Callback(){
-                            override fun onChanged(position: Int, count: Int) {}
-
-                            override fun onInserted(position: Int, count: Int) {
-                                total += count
-                                countLiveData.postValue(count)
-                                Log.i(title, "total $count")
-                                if(total < 1){
-                                    noReportUnapproved.show()
-                                }else{
-                                    noReportUnapproved.hide()
-                                }
-                            }
-
-                            override fun onRemoved(position: Int, count: Int) {}
-
-                        })
                     })
                 authViewModel.unApprovedReportLoader(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
                     reviewerUnapprovedReportsDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
@@ -189,11 +181,13 @@ class UnapprovedReportFragment : DaggerFragment() {
                         }
                     })
                     submitNetwork(it)
-                })
-                var tot = 0
-                authViewModel.getApprovedReportCount(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
-                    tot = tot + it
-                    Log.i(title, "NewUnapprovedcount ${tot-1}")
+                    when(loggedInUser?.isReviewer){
+                        true -> {
+                            if(loggedInUser?.totalUnapprovedReports == 0.toLong()){
+                                noReportUnapproved.show()
+                            }
+                        }
+                    }
                 })
 
             }

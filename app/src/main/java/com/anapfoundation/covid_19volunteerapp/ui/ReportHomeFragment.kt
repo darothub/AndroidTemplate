@@ -18,6 +18,7 @@ import androidx.paging.PagedList
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReportDataFactory
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerApprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
@@ -33,7 +34,9 @@ import com.squareup.picasso.Picasso
 import com.utsman.recycling.extentions.Recycling
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_approved_report.*
 import kotlinx.android.synthetic.main.fragment_report_home.*
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
 import kotlin.math.absoluteValue
@@ -65,6 +68,8 @@ class ReportHomeFragment : DaggerFragment() {
     @Inject
     lateinit var reviewerUnapprovedReportsDataFactory: ReviewerUnapprovedReportsDataFactory
     @Inject
+    lateinit var reviewerApprovedReportsDataFactory: ReviewerApprovedReportsDataFactory
+    @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
@@ -91,7 +96,16 @@ class ReportHomeFragment : DaggerFragment() {
     @SuppressLint("SetTextI18n")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+
+//        this.displayNotificationBell(
+//            authViewModel,
+//            loggedInUser,
+//            reviewerUnapprovedReportsDataFactory,
+//            reporterNotificationIcon,
+//            reporterNotificationCount
+//        )
         getReportCount()
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -132,6 +146,7 @@ class ReportHomeFragment : DaggerFragment() {
                 authViewModel.getReportss(reportDataFactory).observe(viewLifecycleOwner, Observer {
                     submitList(it)
                 })
+
                 authViewModel.getReporterLoader(reportDataFactory).observe(viewLifecycleOwner, Observer {
                     reportDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
                         val code = it.code
@@ -142,16 +157,8 @@ class ReportHomeFragment : DaggerFragment() {
                     })
                     submitNetwork(it)
                 })
-                var tot = 0
-                authViewModel.getReporterCount(reportDataFactory).observe(viewLifecycleOwner, Observer {
-                    tot = tot + it
-                    Log.i(title, "Newcount $tot")
-                })
-
             }
-
-
-            if (loggedInUser?.totalReports!! < 1){
+            if (loggedInUser?.totalReports == 0.toLong()){
                 noReportHome.show()
                 noReportHome.setOnClickListener {
                     findNavController().navigate(R.id.createReportFragment)
@@ -162,12 +169,9 @@ class ReportHomeFragment : DaggerFragment() {
 
             }
 
-
         }catch (e:Exception){
             Log.e(title, e.message)
         }
-
-
 
         reporterNotificationIcon.setOnClickListener {
             findNavController().navigate(R.id.reviewerScreenFragment)
@@ -176,35 +180,49 @@ class ReportHomeFragment : DaggerFragment() {
 
     }
 
-    private fun getReportCount():LiveData<Int> {
-        var countInt = MutableLiveData<Int>()
+    private fun getReportCount() {
         when (loggedInUser?.isReviewer) {
             true -> {
-                authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory)
+
+                var unApprovedTotal = 0
+                authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    it.addWeakCallback(null, object :PagedList.Callback(){
+                        override fun onChanged(position: Int, count: Int) {}
+
+                        override fun onInserted(position: Int, count: Int) {
+                            unApprovedTotal += count
+                            Log.i(title, "NewUnapprovedcount ${unApprovedTotal}")
+                            reporterNotificationCount.text = "${unApprovedTotal}"
+                            loggedInUser?.totalUnapprovedReports = unApprovedTotal.toLong()
+                            storageRequest.saveData(loggedInUser, "loggedInUser")
+                        }
+
+                        override fun onRemoved(position: Int, count: Int) {}
+
+                    })
+                })
+                var approvedTotal = 0
+                authViewModel.getApprovedReports(reviewerApprovedReportsDataFactory)
                     .observe(viewLifecycleOwner, Observer {
-                        it.addWeakCallback(null, object : PagedList.Callback() {
-                            override fun onChanged(position: Int, count: Int) {
-                                Log.e(title, "changed $count")
-                            }
+
+                        it.addWeakCallback(null, object: PagedList.Callback(){
+                            override fun onChanged(position: Int, count: Int) {}
+
                             override fun onInserted(position: Int, count: Int) {
-                                total += count
-                                Log.e(title, "count $count")
-                                reporterNotificationCount.text = total.toString()
+                                approvedTotal += count
+                                Log.i(title, "NewApprovedcount ${approvedTotal}")
+                                loggedInUser?.totalApprovedReports = approvedTotal.toLong()
                             }
 
-                            override fun onRemoved(position: Int, count: Int) {
-                                Log.e(title, "remmoved $count")
-                            }
+                            override fun onRemoved(position: Int, count: Int) {}
 
                         })
-
                     })
                 reporterNotificationIcon.show()
                 reporterNotificationCount.show()
             }
             false -> reporterNotificationIcon.hide()
         }
-        return countInt
     }
 
     private fun prepareSingleReport(

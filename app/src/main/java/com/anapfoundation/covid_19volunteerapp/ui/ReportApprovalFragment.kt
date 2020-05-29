@@ -187,11 +187,14 @@ class ReportApprovalFragment : DaggerFragment() {
                     val res = result as DefaultResponse
                     Log.i(title, res.data.toString())
                     if (approve) {
+
                         requireContext().toast(requireContext().getLocalisedString(R.string.approved_successful))
                     } else {
                         requireContext().toast(requireContext().getLocalisedString(R.string.dismissed_successfully))
                     }
-
+                    loggedInUser?.totalUnapprovedReports =
+                        loggedInUser?.totalUnapprovedReports?.minus(1.toLong())
+                    storageRequest.saveData(loggedInUser, "loggedInUser")
                     findNavController().navigate(R.id.reviewerScreenFragment)
                 }
                 else -> Log.i(title, "error $result")

@@ -115,6 +115,16 @@
            app:layout_constraintTop_toBottomOf="@id/forgotPassword"
            layout="@layout/bottom_indicator"/>
 
+       <androidx.recyclerview.widget.RecyclerView
+           android:id="@+id/signInRecyclerView"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:layout_marginLeft="0dp"
+
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@id/signinBottomLayout"
+           tools:listitem="@layout/report_item" />
+
 
    </androidx.constraintlayout.widget.ConstraintLayout>
 

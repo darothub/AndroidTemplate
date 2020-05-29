@@ -140,7 +140,7 @@ class ReportFragment : DaggerFragment() {
 
                     }
                     R.id.profileFragment -> {
-//                        bottomNav.hide()
+                        bottomNav.hide()
                         requireActivity().onBackPressedDispatcher.addCallback {
                             navController.navigate(R.id.reportHomeFragment)
                         }

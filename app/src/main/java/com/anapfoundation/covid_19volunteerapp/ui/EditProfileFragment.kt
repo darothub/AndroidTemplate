@@ -351,6 +351,7 @@ class EditProfileFragment : DaggerFragment() {
             )
         editInfoStateSpinner.adapter = adapterState
 
+        Log.i("SpinnerItem", "State ${states}")
         setLGASpinner(editInfoStateSpinner, editInfoLGASpinner, lgaAndDistrict, states, userViewModel, loggedInUser)
 //        Log.i(title, "states $states")
     }
@@ -365,15 +366,18 @@ class EditProfileFragment : DaggerFragment() {
         val selectedState = editInfoStateSpinner.selectedItem
         val valueOfStateSelected = states.get(selectedState)?.split(" ")
         val state = valueOfStateSelected?.get(0).toString()
+        val selectedLga = editInfoLGASpinner.selectedItem
+        val valueOfSelectedLga =  lgaAndDistrict.get(selectedLga)?.split(" ")
+        val lgaGUID = valueOfSelectedLga?.get(0).toString()
         val zoneGUID = valueOfStateSelected?.get(1).toString()
         val street = editInfoStreetEditText.text.toString().trim()
          imageText = imageUrlText.text.toString()
         profileImageUrl = imageText.subSequence(10, imageText.length).toString()
 
-        Log.i(title, "imageUrl $profileImageUrl")
 
-        if(profileImageUrl.isEmpty()){
+        if(profileImageUrl == "null" || profileImageUrl.isNullOrEmpty()){
             profileImageUrl = null
+            Log.i(title, "imageUrl $profileImageUrl")
         }
         val checkForEmpty =
             IsEmptyCheck(editInfoFNameEditText, editInfoLNameEditText)
@@ -398,6 +402,7 @@ class EditProfileFragment : DaggerFragment() {
                     phoneNumber,
                     houseNumber,
                     state as String,
+                    lgaGUID,
                     street,
                     zoneGUID,
                     profileImageUrl,
@@ -437,6 +442,7 @@ class EditProfileFragment : DaggerFragment() {
                 user?.zoneID = data.zoneID
                 user?.districtID = data.districtID
 
+                Log.i(title, "local ${result.data.lgName}")
                 storageRequest.saveData(user, "loggedInUser")
                 findNavController().navigate(R.id.profileFragment)
             }

@@ -35,6 +35,8 @@ open class User(
     val twitterProfileUsername: String? = null
     val specialization: String? = null
     var totalReports: Long?=0
+    var totalUnapprovedReports: Long?=0
+    var totalApprovedReports:Long =0
     var id:String?=null
 
 

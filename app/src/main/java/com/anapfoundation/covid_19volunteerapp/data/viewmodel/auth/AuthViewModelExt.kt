@@ -3,6 +3,7 @@ package com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.LocalGovernment
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
@@ -41,6 +42,7 @@ fun AuthViewModel.updateProfile(
     phone: String,
     houseNumber: String?=null,
     state: String,
+    localGovernment: String?,
     street: String?,
     zone:String?,
     profileImageUrl: String?=null,
@@ -58,6 +60,7 @@ fun AuthViewModel.updateProfile(
         phone,
         houseNumber,
         state,
+        localGovernment,
         street,
         zone,
         profileImageUrl,

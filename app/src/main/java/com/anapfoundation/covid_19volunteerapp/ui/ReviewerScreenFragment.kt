@@ -47,13 +47,13 @@ class ReviewerScreenFragment : DaggerFragment() {
     lateinit var storageRequest: StorageRequest
 
     //Get logged-in user
-    val user by lazy {
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
 
     //Get token
     val token by lazy {
-        user?.token
+        loggedInUser?.token
     }
 
     //Set header
@@ -96,13 +96,20 @@ class ReviewerScreenFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        this.displayNotificationBell(
-            authViewModel,
-            user,
-            reviewerUnapprovedReportsDataFactory,
-            reviewerNotificationIcon,
-            reviewerNotificationCount
-        )
+        when(loggedInUser?.isReviewer){
+            true -> {
+                reviewerNotificationIcon.show()
+                reviewerNotificationCount.show()
+                reviewerNotificationCount.text = loggedInUser?.totalUnapprovedReports.toString()
+            }
+        }
+//        this.displayNotificationBell(
+//            authViewModel,
+//            loggedInUser,
+//            reviewerUnapprovedReportsDataFactory,
+//            reviewerNotificationIcon,
+//            reviewerNotificationCount
+//        )
     }
     override fun onResume() {
         super.onResume()

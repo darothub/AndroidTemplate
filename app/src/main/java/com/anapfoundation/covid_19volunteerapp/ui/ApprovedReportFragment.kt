@@ -46,12 +46,12 @@ class ApprovedReportFragment : DaggerFragment() {
     @Inject
     lateinit var storageRequest: StorageRequest
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
     //Set header
     val header by lazy {
@@ -85,6 +85,11 @@ class ApprovedReportFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
 
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         setRecyclerViewForApprovedReports()
     }
 
@@ -156,23 +161,7 @@ class ApprovedReportFragment : DaggerFragment() {
                 setLayoutManager(layoutManager)
                 authViewModel.getApprovedReports(reviewerApprovedReportsDataFactory)
                     .observe(viewLifecycleOwner, Observer {
-
                         submitList(it)
-                        it.addWeakCallback(null, object: PagedList.Callback(){
-                            override fun onChanged(position: Int, count: Int) {}
-
-                            override fun onInserted(position: Int, count: Int) {
-                                total += count
-                                if(total < 1){
-                                    noReportApproved.show()
-                                }else{
-                                    noReportApproved.hide()
-                                }
-                            }
-
-                            override fun onRemoved(position: Int, count: Int) {}
-
-                        })
                     })
                 authViewModel.approvedLoader(reviewerApprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
                     reviewerApprovedReportsDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
@@ -183,13 +172,14 @@ class ApprovedReportFragment : DaggerFragment() {
                         }
                     })
                     submitNetwork(it as NetworkState)
+                    when(loggedInUser?.isReviewer){
+                        true -> {
+                            if(loggedInUser?.totalApprovedReports == 0.toLong()){
+                                noReportApproved.show()
+                            }
+                        }
+                    }
                 })
-                var tot = 0
-                authViewModel.getApprovedReportCount(reviewerApprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
-                    tot = tot + it
-                    Log.i(title, "NewApprovedcount ${tot-1}")
-                })
-
             }
 
         } catch (e: Exception) {

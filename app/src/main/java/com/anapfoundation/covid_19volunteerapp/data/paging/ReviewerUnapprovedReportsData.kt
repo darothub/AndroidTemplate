@@ -36,7 +36,7 @@ class ReviewerUnapprovedReportsDataFactory @Inject constructor(val authApiReques
 class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
     ItemKeyedDataSource<Long, ReportResponse>(){
     var networkState = MutableLiveData<NetworkState>()
-    val countLiveData = MutableLiveData<Int>()
+    var countLiveData = MutableLiveData<Int>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
@@ -55,7 +55,7 @@ class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, 
                 when {
                     body != null ->  {
                         networkState.postValue(NetworkState.LOADED)
-                        val countLiveData = MutableLiveData<Int>()
+                        countLiveData.postValue(params.requestedLoadSize)
                         callback.onResult(body.data)
                     }
 
@@ -67,7 +67,7 @@ class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, 
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
         networkState.postValue(NetworkState.LOADING)
-        val request = authApiRequests.getUnapprovedReportsAfter(header, params.requestedLoadSize.toLong(), params.key)
+        val request = authApiRequests.getUnapprovedReportsAfter(header, params.requestedLoadSize.toLong()+1, params.key)
         request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
@@ -82,8 +82,8 @@ class ReviewerUnapprovedReportsDataSource(val authApiRequests: AuthApiRequests, 
                     body != null ->  {
                         try {
 
-                            networkState.postValue(NetworkState.LOADING)
-                            val countLiveData = MutableLiveData<Int>()
+                            networkState.postValue(NetworkState.LOADED)
+                            countLiveData.postValue(params.requestedLoadSize)
                             callback.onResult(body.data)
                         }
                         catch (e:Exception){

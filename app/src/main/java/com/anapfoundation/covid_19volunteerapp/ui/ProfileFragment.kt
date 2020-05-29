@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
@@ -19,12 +20,12 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.UserData
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.displayNotificationBell
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.logout
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import javax.inject.Inject
 
 /**
@@ -95,20 +96,26 @@ class ProfileFragment : DaggerFragment() {
                 resources.getDrawable(R.drawable.ic_person_primary_24dp)
         }
 
-        profileName.text =
-            "${loggedInUser?.lastName?.capitalize()} ${loggedInUser?.firstName?.capitalize()}"
-        profileEmail.text = "${loggedInUser?.email}"
-        profileAddress.text = "${loggedInUser?.houseNumber} ${loggedInUser?.street}, ${loggedInUser?.stateName}"
-        profileUploadNumber.text = "${loggedInUser?.totalReports}"
-        Picasso.get().load(loggedInUser?.imageUrl).placeholder(imagePlaceholder)
-            .into(profileImage)
-        Log.i(title, "name ${loggedInUser?.firstName}")
+        if(loggedInUser?.token.isNullOrEmpty()){
+            requireContext().toast(requireContext().getLocalisedString(R.string.unauthorized))
+            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+        }else{
+            profileName.text =
+                "${loggedInUser?.lastName?.capitalize()} ${loggedInUser?.firstName?.capitalize()}"
+            profileEmail.text = "${loggedInUser?.email}"
+            profileAddress.text = "${loggedInUser?.houseNumber} ${loggedInUser?.street}, ${loggedInUser?.stateName}"
+            profileUploadNumber.text = "${loggedInUser?.totalReports}"
+            Picasso.get().load(loggedInUser?.imageUrl).placeholder(imagePlaceholder)
+                .into(profileImage)
+            Log.i(title, "name ${loggedInUser?.firstName}")
 
-        navigateToEditProfile(loggedInUser)
+            navigateToEditProfile(loggedInUser)
 
-        profileBackBtn.setOnClickListener {
-            findNavController().navigate(R.id.reportHomeFragment)
+            profileBackBtn.setOnClickListener {
+                findNavController().navigate(R.id.reportHomeFragment)
+            }
         }
+
 
 
     }
@@ -116,13 +123,20 @@ class ProfileFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
 
-        this.displayNotificationBell(
-            authViewModel,
-            loggedInUser,
-            reviewerUnapprovedReportsDataFactory,
-            profileNotificationIcon,
-            profileNotificationCount
-        )
+        when(loggedInUser?.isReviewer){
+            true -> {
+                profileNotificationIcon.show()
+                profileNotificationCount.show()
+                profileNotificationCount.text = loggedInUser?.totalUnapprovedReports.toString()
+            }
+        }
+//        this.displayNotificationBell(
+//            authViewModel,
+//            loggedInUser,
+//            reviewerUnapprovedReportsDataFactory,
+//            profileNotificationIcon,
+//            profileNotificationCount
+//        )
         profileNotificationIcon.setOnClickListener {
             findNavController().navigate(R.id.reviewerScreenFragment)
         }

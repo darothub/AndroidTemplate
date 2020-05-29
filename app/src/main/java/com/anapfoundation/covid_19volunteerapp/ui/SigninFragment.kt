@@ -14,21 +14,27 @@ import androidx.activity.addCallback
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.User
+import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report.*
+import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.fragment_signin.*
+import kotlinx.android.synthetic.main.report_item.view.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -70,6 +76,9 @@ class SigninFragment : DaggerFragment() {
     @Inject
     lateinit var storageRequest: StorageRequest
 
+    @Inject
+    lateinit var reviewerUnapprovedReportsDataFactory: ReviewerUnapprovedReportsDataFactory
+
     val userViewModel: UserViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
     }
@@ -77,6 +86,8 @@ class SigninFragment : DaggerFragment() {
     val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
+
+    var total = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -133,6 +144,7 @@ class SigninFragment : DaggerFragment() {
         forgotPassword.setOnClickListener {
             findNavController().navigate(R.id.forgotPasswordFragment)
         }
+
     }
 
 
@@ -162,6 +174,7 @@ class SigninFragment : DaggerFragment() {
                     signinPasswordEdit.setText(returningUser.password)
                 }
             }
+
 
         }
     }
@@ -218,11 +231,6 @@ class SigninFragment : DaggerFragment() {
                 userExist.token = res.data
 
                 userExist.rememberPassword = signinCheckbox.isChecked
-//                storageRequest.saveData(userExist, emailAddress)
-//                storageRequest.saveData(userExist, "loggedInUser")
-//                CoroutineScope(Main).launch {
-//
-//                }
 
                 checkIsReviewer(userExist)
 
@@ -263,6 +271,7 @@ class SigninFragment : DaggerFragment() {
                     userExist.districtID = data.districtID
                     userExist.totalReports = data.totalReports
                     userExist.id = data.id
+                    Log.i("Local", "local ${data.lgName}")
                     when (data.isReviewer) {
                         true -> {
                             userExist.isReviewer = true
