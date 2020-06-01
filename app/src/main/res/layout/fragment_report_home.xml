@@ -36,9 +36,11 @@
 
                     <ImageView
                         android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="100dp"
                         android:layout_alignParentLeft="true"
-                        app:srcCompat="@drawable/applogo" />
+                        android:scaleType="fitCenter"
+
+                        app:srcCompat="@drawable/logo_black" />
 
                     <ImageView
                         android:id="@+id/reporterNotificationIcon"

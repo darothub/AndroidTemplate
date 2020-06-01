@@ -6,6 +6,7 @@ import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.auth.AuthRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
 import retrofit2.Call
@@ -63,7 +64,7 @@ class AuthRequestRepository @Inject constructor(val authApiRequests: AuthApiRequ
         return authApiRequests.updateProfile(firstName, lastName, email, phone, houseNumber, state, street, localGovernment, zone, profileImageUrl, header)
     }
 
-    override fun resetPassword(newPassword: String, token: String): Call<DefaultResponse> {
+    override fun resetPassword(newPassword: String, token: String): Call<UserResponse> {
         return authApiRequests.resetPassword(newPassword, token)
     }
 

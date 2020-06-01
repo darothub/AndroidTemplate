@@ -19,6 +19,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.User
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
@@ -105,7 +106,7 @@ class ForgotPasswordFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
-                val res = result as DefaultResponse
+                val res = result as UserResponse
                 requireActivity().toast("${res.data}")
                 findNavController().popBackStack()
             }

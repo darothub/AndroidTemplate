@@ -23,7 +23,7 @@ interface UserRequestInterface {
 
     fun getLocal(stateID:String, first: String, after: String?=""): Call<LGA>
 
-    fun forgotPasswordRequest(email: String):Call<DefaultResponse>
+    fun forgotPasswordRequest(email: String):Call<UserResponse>
 
     fun getSingleLGA(lgaID:String):Call<Location>
 }

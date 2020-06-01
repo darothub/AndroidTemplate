@@ -6,6 +6,7 @@ import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import retrofit2.Call
 
 interface AuthRequestInterface {
@@ -35,7 +36,7 @@ interface AuthRequestInterface {
         houseNumber:String?=null,  state:String?, street: String?, localGovernment: String?, zone:String?, profileImageUrl:String?=null, header:String
     ):Call<ProfileData>
 
-    fun resetPassword(newPassword:String, token: String):Call<DefaultResponse>
+    fun resetPassword(newPassword:String, token: String):Call<UserResponse>
 
     fun approveReport(id:String, header: String):Call<DefaultResponse>
     

@@ -128,7 +128,7 @@ class ReportApprovalFragment : DaggerFragment() {
 
         Picasso.get().load(singleReport.mediaURL)
             .placeholder(R.drawable.no_image_icon)
-            .into(appBarImage)
+            .into(reportApprovalAppBarImage)
 
         approveBtn = reportApprovalBottomLayout.findViewById(R.id.btn)
         approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)

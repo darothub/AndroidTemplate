@@ -436,6 +436,7 @@ class EditProfileFragment : DaggerFragment() {
                 user?.imageUrl = imageText.subSequence(10, imageText.length).toString()
                 val data = result.data
                 user?.stateName = data.stateName
+                user?.houseNumber = data.houseNumber
                 user?.stateID = data.stateID
                 user?.lgName = data.lgName
                 user?.lgID = data.lgID

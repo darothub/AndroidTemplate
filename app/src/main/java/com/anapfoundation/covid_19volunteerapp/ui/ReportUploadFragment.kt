@@ -16,6 +16,7 @@ import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -42,9 +43,12 @@ import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.cloudinary.android.MediaManager
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.storage.FirebaseStorage
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_address.*
 import kotlinx.android.synthetic.main.fragment_edit_profile.*
 import kotlinx.android.synthetic.main.fragment_report_upload.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
@@ -224,6 +228,8 @@ class ReportUploadFragment : DaggerFragment() {
             startActivityForResult(intent, REQUEST_FROM_GALLERY)
         }
 
+
+
         bottomSheetDialog.setOnDismissListener {
             Log.i(title, "dismissed ${it.dismiss()}")
         }
@@ -259,11 +265,13 @@ class ReportUploadFragment : DaggerFragment() {
                         imageUrl = it.first
                     }
 
+                    val selectedLGA = reportUploadLGA.selectedItem
+                    val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
+                    val lgaGUID = lgaAndDistrictArray?.get(0).toString()
                     val story = storyEditText.text
                     val stateGUID = loggedInUser?.stateID
                     val zoneGUID = loggedInUser?.zoneID
-                    val lgaGUID = loggedInUser?.lgID
-                    val district = loggedInUser?.districtID
+                    val district = lgaAndDistrictArray?.get(1).toString()
                     suggestion = suggestionEditText.text.toString()
 
 
@@ -363,6 +371,7 @@ class ReportUploadFragment : DaggerFragment() {
 //        reportUploadState.setText(loggedInUser?.stateName)
 //        reportUploadLGA.setText(loggedInUser?.lgName)
         reportUploadState.adapter = adapterState
+        reportUploadState.isEnabled = false
         setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel, loggedInUser)
         Log.i(title, "states $states")
     }
@@ -399,6 +408,7 @@ class ReportUploadFragment : DaggerFragment() {
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
+
 //        uploadPictureBtn.setOnClickListener {
 //
 //            bottomSheetProgressBar.show()
@@ -527,6 +537,7 @@ class ReportUploadFragment : DaggerFragment() {
 
                 uploadPictureText.setText(requireContext().getLocalisedString(R.string.new_picture))
                 bottomSheetDialog.dismiss()
+
 
             }
 

@@ -23,6 +23,7 @@ import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.UserData
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
@@ -136,7 +137,7 @@ class ResetPasswordFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
-                val res = result as DefaultResponse
+                val res = result as UserResponse
                 requireContext().toast(res.data.toString())
 
                 activity?.finish()

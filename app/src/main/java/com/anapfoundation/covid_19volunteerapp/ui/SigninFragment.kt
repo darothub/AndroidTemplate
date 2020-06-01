@@ -95,6 +95,7 @@ class SigninFragment : DaggerFragment() {
         // Inflate the layout for this fragment
 
         showStatusBar()
+
         return inflater.inflate(R.layout.fragment_signin, container, false)
     }
 

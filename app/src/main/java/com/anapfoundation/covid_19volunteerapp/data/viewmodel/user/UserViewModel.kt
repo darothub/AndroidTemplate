@@ -166,12 +166,12 @@ class UserViewModel @Inject constructor(
             "Loading..."
         )
         val request = userRequestInterface.forgotPasswordRequest(email)
-        request.enqueue(object :Callback<DefaultResponse>{
-            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+        request.enqueue(object :Callback<UserResponse>{
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
                 onFailureResponse(responseLiveData, t)
             }
 
-            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 

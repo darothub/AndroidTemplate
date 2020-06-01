@@ -47,7 +47,7 @@ interface UserApiRequests {
 
     @POST("forgot-password")
     @FormUrlEncoded
-    fun forgotPasswordRequest(@Field("email") email: String):Call<DefaultResponse>
+    fun forgotPasswordRequest(@Field("email") email: String):Call<UserResponse>
 
     @GET("states/{stateID}")
     fun getSingleState(

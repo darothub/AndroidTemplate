@@ -141,6 +141,7 @@
     <string name="dismissed_successfully">Dismissed successfully</string>
     <string name="unauthorized">Unauthorized</string>
     <string name="no_reports">No reports</string>
+    <string name="server_error">Server error</string>
 
 
 </resources>

@@ -7,6 +7,7 @@ import com.anapfoundation.covid_19volunteerapp.model.LocalGovernment
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import retrofit2.Call
 import retrofit2.Callback
@@ -19,14 +20,14 @@ fun AuthViewModel.resetPassword(newPassword:String, token:String): LiveData<Serv
         "Loading..."
     )
     val request = authRequestInterface.resetPassword(newPassword, token)
-    request.enqueue(object : Callback<DefaultResponse> {
-        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+    request.enqueue(object : Callback<UserResponse> {
+        override fun onFailure(call: Call<UserResponse>, t: Throwable) {
             onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
-            call: Call<DefaultResponse>,
-            response: Response<DefaultResponse>
+            call: Call<UserResponse>,
+            response: Response<UserResponse>
         ) {
             onResponseTask(response as Response<Data>, responseLiveData)
         }

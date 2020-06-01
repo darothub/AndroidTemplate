@@ -1,8 +1,8 @@
 
 ext.versions = [
 
-        appcompat                     : '1.2.0-beta01',
-        navigation_fragment           : '2.3.0-alpha06',
+        appcompat                     : '1.3.0-alpha01',
+        navigation_fragment           : '2.3.0-beta01',
         lifecyklelog                  : '3.0.0',
         orhanobut                     : "2.2.0",
         textinput                     : "1.0.3",
@@ -14,4 +14,5 @@ ext.versions = [
         room_version                  : "2.2.5",
         lifecycle_version             : "2.2.0",
         paging_version                : "2.1.2",
+        AAVersion                     : "4.7.0",
 ]

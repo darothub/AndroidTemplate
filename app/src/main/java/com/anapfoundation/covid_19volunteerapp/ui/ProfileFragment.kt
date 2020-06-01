@@ -105,8 +105,11 @@ class ProfileFragment : DaggerFragment() {
             profileEmail.text = "${loggedInUser?.email}"
             profileAddress.text = "${loggedInUser?.houseNumber} ${loggedInUser?.street}, ${loggedInUser?.stateName}"
             profileUploadNumber.text = "${loggedInUser?.totalReports}"
-            Picasso.get().load(loggedInUser?.imageUrl).placeholder(imagePlaceholder)
-                .into(profileImage)
+            if(loggedInUser?.imageUrl?.isNotEmpty()!!){
+                Picasso.get().load(loggedInUser?.imageUrl).placeholder(imagePlaceholder)
+                    .into(profileImage)
+            }
+
             Log.i(title, "name ${loggedInUser?.firstName}")
 
             navigateToEditProfile(loggedInUser)

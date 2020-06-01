@@ -5,6 +5,7 @@ import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.request.AddReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -55,7 +56,7 @@ interface AuthApiRequests {
         @Field("lastName") lastName: String,
         @Field("email") email: String,
         @Field("phone") phone: String,
-        @Field("houseNumber") houseNumber: String?=null,
+        @Field("house_number") houseNumber: String?=null,
         @Field("state") state: String?,
         @Field("localGovernment") localGovernment: String?,
         @Field("street") street: String?,
@@ -66,7 +67,7 @@ interface AuthApiRequests {
 
     @PUT("reset-password")
     @FormUrlEncoded
-    fun resetPassword(@Field("newPassword") newPassword:String, @Field("token") token: String):Call<DefaultResponse>
+    fun resetPassword(@Field("newPassword") newPassword:String, @Field("token") token: String):Call<UserResponse>
 
     @GET("review/reports")
     fun getUnapprovedReports(@Header("Authorization") header: String, @Query("first") first: Long?): Call<Reports>

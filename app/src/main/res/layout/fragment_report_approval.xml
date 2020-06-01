@@ -12,7 +12,7 @@
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.AppBarLayout
-            android:id="@+id/reportApprovalappBar"
+            android:id="@+id/reportApprovalAppBar"
             android:layout_width="match_parent"
             android:layout_height="300dp"
             android:fitsSystemWindows="true"
@@ -21,16 +21,19 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:background="@color/colorNeutral"
+                >
                 <ImageView
-                    android:id="@+id/appBarImage"
+                    android:id="@+id/reportApprovalAppBarImage"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:elevation="10dp"
-                    android:scaleType="fitXY"
+                    android:layout_height="180dp"
+                    android:elevation="20dp"
+                    android:layout_marginTop="10dp"
+                    android:scaleType="centerInside"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/applogo" />
+                    app:srcCompat="@drawable/logo_black" />
 
                 <androidx.appcompat.widget.Toolbar
                     app:layout_constraintTop_toTopOf="parent"

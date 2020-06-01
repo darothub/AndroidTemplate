@@ -43,8 +43,9 @@ class HomeFragment : DaggerFragment() {
     ): View? {
         // Inflate the layout for this fragment
 
-
         requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        requireActivity().window.statusBarColor = resources.getColor(R.color.colorPrimary)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 

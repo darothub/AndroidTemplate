@@ -94,6 +94,7 @@ class ReportFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        showStatusBar()
         return inflater.inflate(R.layout.fragment_report, container, false)
     }
 

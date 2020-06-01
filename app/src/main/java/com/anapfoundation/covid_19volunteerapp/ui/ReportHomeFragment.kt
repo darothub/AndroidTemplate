@@ -119,7 +119,6 @@ class ReportHomeFragment : DaggerFragment() {
                 bind { itemView, position, item ->
                     Log.i(title, "report items ${list}")
 
-                    itemView.reportImage.transitionName = item?.mediaURL
                     getTopicAndRatingById(item, itemView)
 
                     getStateAndLgaById(item, itemView)
@@ -273,7 +272,6 @@ class ReportHomeFragment : DaggerFragment() {
                         it.topic != ""
                     }
                     itemView.reportTopic.text = topic[0].topic
-
                 }
             }
         })

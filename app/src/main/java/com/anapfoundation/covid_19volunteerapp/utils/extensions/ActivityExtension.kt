@@ -33,11 +33,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
 
-inline fun Activity.getName(): String {
+/**
+ * Get any name
+ *
+ * @return
+ */
+fun Any.getName(): String {
     return this::class.qualifiedName!!
 }
 
-inline fun Activity.readCitiesAndLgaData(): HashMap<String, List<CityClass>> {
+fun Activity.readCitiesAndLgaData(): HashMap<String, List<CityClass>> {
     val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
         HashMap<String, List<CityClass>>()
     }
@@ -64,7 +69,11 @@ inline fun Activity.readCitiesAndLgaData(): HashMap<String, List<CityClass>> {
     return stateLgaMap
 }
 
-
+/**
+ * create image file
+ *
+ * @return
+ */
 fun Activity.createImageFile(): Pair<File?, String> {
     val timeStamp by lazy {
         SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
@@ -85,6 +94,12 @@ fun Activity.createImageFile(): Pair<File?, String> {
     return Pair(newFile, currentPhotoPath)
 }
 
+/**
+ * Camera intent launch
+ *
+ * @param file
+ * @param REQUEST_TAKE_PHOTO
+ */
 fun Fragment.dispatchTakePictureIntent(file: File?, REQUEST_TAKE_PHOTO: Int) {
     //Class title
     val title: String by lazy {
@@ -124,7 +139,17 @@ fun Fragment.dispatchTakePictureIntent(file: File?, REQUEST_TAKE_PHOTO: Int) {
     }
 }
 
-
+/**
+ * Upload image with
+ *
+ * @param path
+ * @param imagePreview
+ * @param capture
+ * @param canvas
+ * @param imageUrlText
+ * @param report
+ * @return
+ */
 fun Fragment.uploadImage(
     path: String,
     imagePreview: ImageView,

@@ -52,7 +52,7 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
         return userApiRequests.getLGA(stateID,first, after)
     }
 
-    override fun forgotPasswordRequest(email: String): Call<DefaultResponse> {
+    override fun forgotPasswordRequest(email: String): Call<UserResponse> {
         return userApiRequests.forgotPasswordRequest(email)
     }
 

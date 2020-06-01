@@ -8,9 +8,11 @@ import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -41,12 +43,22 @@ import kotlinx.android.synthetic.main.fragment_single_report.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import java.lang.Exception
 
-inline fun Fragment.getName(): String {
-    return this::class.qualifiedName!!
-}
+/**
+ * Get fragment name
+ *
+ * @return
+ */
+//inline fun Fragment.getName(): String {
+//    return this::class.qualifiedName!!
+//}
 
+/**
+ * show status bar
+ *
+ */
 inline fun Fragment.showStatusBar() {
     requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    requireActivity().window.statusBarColor = resources.getColor(R.color.colorNeutral)
 }
 
 inline fun Fragment.hideKeyboard() {
@@ -57,6 +69,11 @@ inline fun Activity.hideKeyboard() {
     if (currentFocus == null) View(this) else currentFocus?.let { hideKeyboard(it) }
 }
 
+/**
+ * Hide keyboard
+ *
+ * @param view
+ */
 @SuppressLint("ServiceCast")
 inline fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -80,6 +97,18 @@ inline fun Context.toast(message: String) {
 
 }
 
+//fun BottomSheetDialog.inflate(layout: Int, activity: Activity):View{
+//    return LayoutInflater.from(this.context).inflate(
+//        layout,
+//        activity.findViewById(R.id.uploadBottomSheetContainer)
+//    )
+//}
+
+/**
+ * Display error toast
+ *
+ * @param message
+ */
 fun Context.errorToast(message: String) {
     val toastie = FBCustomToast(this)
     toastie.setMsg(message)
@@ -139,6 +168,16 @@ inline fun Context.setSpinnerAdapterData(
     }
 }
 
+/**
+ * Observe request response
+ * and manipulate progressbar
+ * and button behaviour
+ *
+ * @param request
+ * @param progressBar
+ * @param button
+ * @return
+ */
 inline fun Fragment.observeRequest(
     request: LiveData<ServicesResponseWrapper<Data>>,
     progressBar: ProgressBar?, button: Button?
@@ -170,11 +209,14 @@ inline fun Fragment.observeRequest(
                 is ServicesResponseWrapper.Error -> {
                     progressBar?.hide()
                     button?.show()
-                    if (errorCode == 502) {
-                        requireContext().errorToast(requireContext().getLocalisedString(R.string.bad_network))
-                    } else {
-                        result.postValue(Pair(false, errorResponse))
-                        requireContext().toast("$errorResponse")
+                    when(errorCode){
+                        in 500..600 ->{
+                            requireContext().errorToast(requireContext().getLocalisedString(R.string.server_error))
+                        }
+                        else ->{
+                            result.postValue(Pair(false, errorResponse))
+                            requireContext().toast("$errorResponse")
+                        }
                     }
 
                     Log.i(title, "Error ${it.message}")
@@ -197,6 +239,12 @@ inline fun Fragment.observeRequest(
     return result
 }
 
+/**
+ * Set enter key for form submission
+ *
+ * @param editText
+ * @param request
+ */
 inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline request: () -> Unit) {
     editText.setOnKeyListener { view, keyCode, keyEvent ->
         if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -208,6 +256,17 @@ inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline req
     }
 }
 
+/**
+ * To set up local government spinner
+ *
+ * @param spinnerState
+ * @param spinnerLGA
+ * @param lgaAndDistrict
+ * @param states
+ * @param userViewModel
+ * @param user
+ * @param lgaHeader
+ */
 fun Fragment.setLGASpinner(
     spinnerState: Spinner,
     spinnerLGA: Spinner,
