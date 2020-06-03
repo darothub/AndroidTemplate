@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,14 +16,21 @@ import android.widget.TextView
 import androidx.activity.addCallback
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
+import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.UserData
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signup.*
+import java.lang.Exception
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -50,7 +58,11 @@ class SignupFragment : DaggerFragment() {
 
     lateinit var signupBtn:Button
 
-
+    @Inject
+    lateinit var viewModelProviderFactory: ViewModelProviderFactory
+    val userViewModel: UserViewModel by lazy {
+        ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -124,7 +136,10 @@ class SignupFragment : DaggerFragment() {
         val phoneNumber = phoneNumberEdit.text.toString().trim()
         val passwordString = passwordEdit.text.toString().trim()
         val cpassword = cpasswordEdit.text.toString().trim()
+        val user = User(firstName, lastName, emailAddress, passwordString, phoneNumber)
+        user.rememberPassword = checkboxForSignup.isChecked
 
+        userViewModel.saveRegisteringUser(user)
         val checkForEmpty =
             IsEmptyCheck(firstNameEdit, lastNameEdit, emailEdit, phoneNumberEdit, passwordEdit, cpasswordEdit)
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
@@ -140,7 +155,6 @@ class SignupFragment : DaggerFragment() {
             validation != null -> requireActivity().toast("$validation is invalid")
             passwordString != cpassword -> requireActivity().toast(requireContext().getLocalisedString(R.string.passwords_do_not_match))
             else -> {
-
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)
                 val action = SignupFragmentDirections.toAddressFragment()
                 action.userData = userData
@@ -151,8 +165,31 @@ class SignupFragment : DaggerFragment() {
 
     }
 
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        Log.i(title, "RestoredInstance")
+        if (userViewModel.state.contains("registeringUser")){
+            try {
+                val registeringUser = userViewModel.getSavedUserForm()
+                firstNameEdit.setText(registeringUser?.firstName)
+                lastNameEdit.setText(registeringUser?.lastName)
+                emailEdit.setText(registeringUser?.email)
+                passwordEdit.setText(registeringUser?.password)
+                cpasswordEdit.setText(registeringUser?.password)
+                phoneNumberEdit.setText(registeringUser?.phone)
+                checkboxForSignup.isChecked = registeringUser?.rememberPassword!!
+            }
+            catch (e:Exception){
+                Log.i(title, "RestoringError ${e.localizedMessage}")
+            }
+        }
+
+
+    }
+
     fun validateEmailAndPassword(text: CharSequence, passwordStandard:TextView) {
-        val passwordPattern = Regex("""^[a-zA-Z0-9@$!%*#?&]{6,}$""")
+        val passwordPattern = Regex("""^[a-zA-Z0-9@$.!%*#?&]{6,}$""")
         val matchedPassword = passwordPattern.matches(text)
         if (!matchedPassword) {
             passwordStandard.show()

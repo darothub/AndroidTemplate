@@ -4,7 +4,7 @@
     <item
         android:id="@+id/reportHomeFragment"
         android:title="Home"
-        android:icon="@drawable/icon_state"/>
+        android:icon="@drawable/ic_home"/>
 
     <item
         android:id="@+id/createReportFragment"
@@ -12,14 +12,16 @@
         android:icon="@drawable/ic_add_black"/>
 
     <item
+        android:id="@+id/reviewerScreenFragment"
+        android:title="Reviewer"
+        android:icon="@drawable/man"/>
+
+    <item
         android:id="@+id/profileFragment"
         android:title="Profile"
         android:icon="@drawable/profile_icon"/>
 
-    <item
-        android:id="@+id/reviewerScreenFragment"
-        android:title="Reviewer"
-        android:icon="@drawable/man"/>
+
 
 
 </menu>

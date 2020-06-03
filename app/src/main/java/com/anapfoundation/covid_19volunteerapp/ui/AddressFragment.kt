@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
@@ -22,6 +24,7 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.*
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.gson.Gson
@@ -108,6 +111,10 @@ class AddressFragment : DaggerFragment() {
         }
         initEnterKeyToSubmitForm(streetEditText) { completeSignupRequest() }
 
+        addressBackBtn.setOnClickListener {
+            findNavController().navigate(R.id.signupFragment)
+        }
+
         requireActivity().onBackPressedDispatcher.addCallback {
 
             findNavController().navigate(R.id.signupFragment)
@@ -149,11 +156,14 @@ class AddressFragment : DaggerFragment() {
         it.data.associateByTo(states, {
             it.state /* key */
         }, {
-            it.id /* value */
+            "${it.id} ${it.zone}" /* value */
         })
+        Log.i(title, "${states.get("Bauchi")?.split(" ")?.get(0)}")
     }
 
     private fun setupSpinner() {
+        val stateArray = states.keys.sorted().toMutableList()
+        stateArray.add(0, requireContext().getLocalisedString(R.string.states))
         val adapterState =
             ArrayAdapter(
                 requireContext(),
@@ -162,7 +172,7 @@ class AddressFragment : DaggerFragment() {
             )
         spinnerState.adapter = adapterState
 
-        setLGASpinner(spinnerState, spinnerLGA, lgaAndDistrict, states, userViewModel)
+        setLGASpinner(spinnerState, spinnerLGA, lgaAndDistrict, states, userViewModel, null, "Local government")
 //        Log.i(title, "states $states")
     }
 
@@ -179,24 +189,29 @@ class AddressFragment : DaggerFragment() {
             else -> {
                 val selectedState = spinnerState.selectedItem
                 val selectedLGA = spinnerLGA.selectedItem
-                val stateGUID = states.get(selectedState)
+                val valueOfStateSelected = states.get(selectedState)?.split(" ")
+                val stateGUID = valueOfStateSelected?.get(0).toString()
+                val zoneGUID = valueOfStateSelected?.get(1).toString()
                 val lgaAndDistrictArray = lgaAndDistrict.get(selectedLGA)?.split(" ")
                 val lgaGUID = lgaAndDistrictArray?.get(0).toString()
                 val district = lgaAndDistrictArray?.get(1).toString()
 
+                Log.i(title, "ZoneGUID $zoneGUID")
+
                 val houseNumber = houseNumberEditText.text.toString()
                 val street = streetEditText.text.toString()
-                Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district")
+                Log.i(title, "lgaAndDistrict $lgaAndDistrictArray lga $lgaGUID district $district zone $zoneGUID")
                 val request = userViewModel.registerUser(
                     userData.firstName,
                     userData.lastName,
                     userData.email,
                     userData.phone,
-                    userData.password.toString(),
+                    userData.password,
                     houseNumber,
                     street,
-                    stateGUID.toString(),
+                    stateGUID,
                     lgaGUID,
+                    zoneGUID,
                     district
                 )
                 val response = observeRequest(request, progressBar, submitBtn)
@@ -218,10 +233,12 @@ class AddressFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
-                val res = result as Data
+                val res = result as UserResponse
                 requireContext().toast(requireContext().getLocalisedString(R.string.signup_successful))
+                val clearRegister = userViewModel.clearSavedRegisteredUser()
                 findNavController().navigate(R.id.signinFragment)
-                Log.i(title, "result of registration ${res.token}")
+                Log.i(title, "result of registration ${res.data}")
+                Log.i(title, "clearedRegister $clearRegister")
             }
             else -> Log.i(title, "error $result")
         }

@@ -92,8 +92,10 @@
                 android:textColor="@color/colorPrimary"
                 android:textSize="@dimen/large_font_size"
                 android:textStyle="bold"
+                android:gravity="center_vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@id/cameraImage"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
@@ -103,6 +105,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"
                 app:srcCompat="@drawable/ic_chevron_right" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -155,12 +158,12 @@
 
             <EditText
                 android:id="@+id/editInfoFNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:gravity="top|left"
+                style="@style/CustomEditTextStyle"
                 android:hint="@string/first_name_hint"
-                android:singleLine="true"
                 android:inputType="textCapWords"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"
                 android:maxLines="50" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
@@ -181,12 +184,12 @@
 
             <EditText
                 android:id="@+id/editInfoLNameEditText"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:gravity="top|left"
+                style="@style/CustomEditTextStyle"
                 android:hint="@string/last_name_hint"
-                android:singleLine="true"
                 android:inputType="textCapWords"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"
                 android:maxLines="50" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
@@ -195,21 +198,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="@dimen/normal_margin"
             style="@style/CustomInputLayoutStyle"
             app:cornerRadius="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            android:visibility="visible"
+            android:clickable="false"
+            android:focusable="false"
             app:layout_constraintTop_toBottomOf="@id/editInfoLNameField"
 
             >
             <EditText
                 android:id="@+id/editInfoEmailEditText"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:gravity="top|left"
+                style="@style/CustomEditTextStyle"
                 android:hint="@string/email_hint_text"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"
                 android:inputType="textEmailAddress"
                 android:maxLines="50" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
@@ -219,10 +226,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="@dimen/normal_margin"
             style="@style/CustomInputLayoutStyle"
             app:cornerRadius="10dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/editInfoEmailField"
@@ -230,9 +238,7 @@
             >
             <EditText
                 android:id="@+id/editInfoPhoneEditText"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:gravity="top|left"
+                style="@style/CustomEditTextStyle"
                 android:hint="@string/phone_hint_text"
                 android:maxLines="50" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
@@ -242,7 +248,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="@dimen/normal_margin"
             style="@style/CustomInputLayoutStyle"
             app:cornerRadius="10dp"
@@ -253,11 +259,27 @@
             >
             <EditText
                 android:id="@+id/editInfoHouseNoEditText"
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:gravity="top|left"
+                style="@style/CustomEditTextStyle"
                 android:hint="@string/house_number_hint_text"
                 android:maxLines="50" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/editInfoTown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomInputLayoutStyle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoHouseNoField">
+
+            <EditText
+                android:id="@+id/editInfoStreetEditText"
+                style="@style/CustomEditTextStyle"
+                android:hint="@string/street_hint_text"
+                android:textColorHint="@color/colorTextHint" />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
         <Spinner
@@ -266,6 +288,7 @@
             android:layout_height="55dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
+            android:layout_marginTop="16dp"
             android:background="@drawable/spinner_backgrnd"
             android:dropDownVerticalOffset="95dp"
             android:gravity="left|center"
@@ -276,7 +299,7 @@
             android:textColor="@color/colorPrimaryDark"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editInfoHouseNoField" />
+            app:layout_constraintTop_toBottomOf="@id/editInfoTown" />
 
         <Spinner
             android:id="@+id/editInfoLGASpinner"
@@ -285,6 +308,7 @@
             android:layout_height="55dp"
             android:layout_marginLeft="@dimen/normal_margin"
             android:layout_marginRight="@dimen/normal_margin"
+            android:layout_marginTop="16dp"
             android:background="@drawable/spinner_backgrnd"
             android:gravity="left|center"
             android:hint="@string/lga"
@@ -294,26 +318,7 @@
             android:textSize="16sp"
             app:layout_constraintTop_toBottomOf="@id/editInfoStateSpinner" />
 
-        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
-            android:id="@+id/editInfoTown"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/normal_margin"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="@dimen/normal_margin"
-            style="@style/CustomInputLayoutStyle"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editInfoLGASpinner">
 
-            <EditText
-                android:id="@+id/editInfoStreetEditText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/street_hint_text"
-                android:singleLine="true"
-                android:textColorHint="@color/colorTextHint" />
-        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
 
         <Space
             android:id="@+id/editProfiletTopSpace"
@@ -322,7 +327,7 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/editInfoTown" />
+            app:layout_constraintTop_toBottomOf="@id/editInfoLGASpinner" />
 
         <include
             android:id="@+id/editProfileBottomLayout"

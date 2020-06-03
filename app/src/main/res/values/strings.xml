@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">COVID-19VolunteerApp</string>
+    <string name="app_name">ANAP COVID-19\nVolunteer App</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="anap">ANAP</string>
@@ -20,7 +20,7 @@
     <string name="cpassword_hint_text">Confirm password</string>
     <string name="address_title">Your address</string>
     <string name="house_number_hint_text">House number or Apartment</string>
-    <string name="states">States</string>
+    <string name="states">State</string>
     <string name="lga">LGA</string>
     <string name="street_hint_text">Street</string>
     <string name="save_text">Save</string>
@@ -84,11 +84,7 @@
         This is the details of the report.This is the details of the report.This is the details of the report.
         This is the details of the report.This is the details of the report.This is the details of the report.
         This is the details of the report.This is the details of the report.This is the details of the report.
-        This is the details of the report.This is the details of the report.This is the details of the report.
-        This is the details of the report.This is the details of the report.This is the details of the report.
-        This is the details of the report.This is the details of the report.This is the details of the report.
-        This is the details of the report.This is the details of the report.This is the details of the report.
-        This is the details of the report.This is the details of the report.This is the details of the report.
+
 
     </string>
     <string name="select_text">Select</string>
@@ -131,7 +127,21 @@
     <string name="forgot_password2">Forgot password</string>
     <string name="reset_password">Reset password</string>
     <string name="password_invalid">Password is invalid</string>
-    <string name="report_review">Report review</string>
+    <string name="report_review">Review</string>
+    <string name="approved_successful">Approved successfully</string>
+    <string name="approved_report">Approved reports</string>
+    <string name="unapproved_report">Unapproved reports</string>
+    <string name="no_report_approved">No approved reports</string>
+    <string name="logout">Log out</string>
+    <string name="exit">Exit</string>
+    <string name="new_picture">Change picture</string>
+    <string name="upload_image">Upload</string>
+    <string name="bad_network">Bad network connection</string>
+    <string name="dismissText">Dismiss report</string>
+    <string name="dismissed_successfully">Dismissed successfully</string>
+    <string name="unauthorized">Unauthorized</string>
+    <string name="no_reports">No reports</string>
+    <string name="server_error">Server error</string>
 
 
 </resources>

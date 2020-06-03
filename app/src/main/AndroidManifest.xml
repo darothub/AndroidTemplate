@@ -11,13 +11,15 @@
 
     <application
         android:name=".di.BaseApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar"
-        tools:ignore="AllowBackup">
+        android:fullBackupContent="false"
+        tools:replace="android:fullBackupContent"
+        >
         <meta-data
             android:name="CLOUDINARY_URL"
             android:value="@string/cloudinary_url" />
@@ -26,7 +28,7 @@
             android:authorities="com.anapfoundation.android.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true"
-            tools:ignore="AllowBackup">
+            >
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />

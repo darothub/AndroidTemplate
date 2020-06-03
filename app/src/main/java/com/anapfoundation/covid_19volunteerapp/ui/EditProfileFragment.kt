@@ -1,5 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,10 +12,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
@@ -46,6 +49,7 @@ import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
+
 
 /**
  * A simple [Fragment] subclass.
@@ -113,14 +117,14 @@ class EditProfileFragment : DaggerFragment() {
     lateinit var storageRequest: StorageRequest
 
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
 
         storageRequest.checkUser("loggedInUser")
     }
 
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
 
     //Set header
@@ -141,11 +145,18 @@ class EditProfileFragment : DaggerFragment() {
     val timeStamp by lazy {
         SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
     }
+    private val cameraPermission by lazy {
+        net.codecision.startask.permissions.Permission.Builder(Manifest.permission.CAMERA)
+            .setRequestCode(REQUEST_TAKE_PHOTO)
+            .build()
+    }
     //Get upload button from the included layout
     lateinit var uploadPictureBtn:Button
 
     lateinit var updateBtn:Button
     var imageText = ""
+
+    val args: EditProfileFragmentArgs by navArgs()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -162,43 +173,30 @@ class EditProfileFragment : DaggerFragment() {
         editInfoBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
+
+
+
     }
 
     override fun onStart() {
         super.onStart()
-        val request = authViewModel.getProfileData(header)
-        val response = observeRequest(request, null, null)
-        response.observe(viewLifecycleOwner, Observer {
-            val (bool, result) = it
-            try {
-                when(bool){
-                    true ->{
-                        val res = result as ProfileData
-                        val user = res.data
-                        val loggedInUser = storageRequest.checkUser("loggedInUser")
-                        imageUrlText.append(user.profileImageURL)
-                        imageUrlText.show()
-                        editInfoFNameEditText.setText(user.firstName)
-                        editInfoLNameEditText.setText(user.lastName)
-                        editInfoEmailEditText.setText(user.email)
-                        editInfoPhoneEditText.setText(user.phone)
-                        editInfoHouseNoEditText.setText(user.houseNumber)
-                        editInfoStateSpinner.prompt = user.state
-                        editInfoStreetEditText.setText(user.street)
+        Log.i(title, "onStart")
 
-                        Log.i(title, "name ${user.firstName}")
-                    }
-                    false ->{
-                        Log.i(title, "false")
-                    }
-                }
-            }
-            catch (e:Exception){
-                Log.i(title, "error ${e.localizedMessage}")
-            }
+        val user = args.profileData
+        if(user?.imageUrl != null){
+            val profileImageUrl = "imageUrl: ${user.imageUrl}"
+            imageUrlText.text = profileImageUrl
 
-        })
+        }
+        editInfoFNameEditText.setText(user?.firstName)
+        editInfoLNameEditText.setText(user?.lastName)
+        editInfoEmailEditText.setText(user?.email)
+        editInfoPhoneEditText.setText(user?.phone)
+        editInfoHouseNoEditText.setText(user?.houseNumber)
+        editInfoStateSpinner.prompt = user?.stateName
+        editInfoStreetEditText.setText(user?.street)
     }
+    @ExperimentalStdlibApi
     override fun onResume() {
         super.onResume()
         getStateAndSendToSpinner()
@@ -213,8 +211,9 @@ class EditProfileFragment : DaggerFragment() {
 
         uploadPictureBtn =  bottomSheetIncludeLayout.findViewById<Button>(R.id.includeBtn)
 
+
         cameraIcon.setOnClickListener {
-            dispatchTakePictureIntent(imageFileAndPath.first, REQUEST_TAKE_PHOTO)
+            checkCameraPermission()
         }
         galleryIcon.setOnClickListener {
 
@@ -227,15 +226,17 @@ class EditProfileFragment : DaggerFragment() {
         imagePreview.clipToOutline = true
     }
 
+    @ExperimentalStdlibApi
     private fun camerPermissionRequest(){
-        requireContext().permissionRequest()
         setOnClickEventForPicture(editInfoUploadCard, moreIcon){ showBottomSheet() }
 
     }
 
+    @ExperimentalStdlibApi
     private fun showBottomSheet() {
-        val fullName = "${editInfoFNameEditText.text}_${editInfoLNameEditText.text}"
-        val path = "images/profile_$fullName _$timeStamp" + "_.jpg"
+        val firstName = "${editInfoFNameEditText.text}"
+        val id = loggedInUser?.id
+        val path = "images/profile_$firstName _$id" + "_.jpg"
 
         uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
 
@@ -246,7 +247,7 @@ class EditProfileFragment : DaggerFragment() {
 
             bottomSheetProgressBar.show()
             uploadPictureBtn.hide()
-            uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlText)
+            uploadImage(path, imagePreview, capture, canvas, imageUrlText)
             CoroutineScope(Dispatchers.Main).launch {
                 delay(3000)
                 bottomSheetProgressBar.hide()
@@ -256,6 +257,29 @@ class EditProfileFragment : DaggerFragment() {
 
 //            findNavController().navigate(R.id.reportUploadFragment)
         }
+    }
+
+    private fun checkCameraPermission() {
+        cameraPermission.check(this)
+            .onGranted {
+                dispatchTakePictureIntent(imageFileAndPath.first, REQUEST_TAKE_PHOTO)
+            }.onShowRationale {
+                showRationaleDialog()
+            }
+    }
+
+    private fun showRationaleDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Camera permission")
+            .setMessage("Allow app to use your camera to take photos and record videos.")
+            .setPositiveButton("Allow") { _, _ ->
+                cameraPermission.request(this)
+            }
+            .setNegativeButton("Deny") { _, _ ->
+
+            }
+            .create()
+            .show()
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
@@ -310,12 +334,15 @@ class EditProfileFragment : DaggerFragment() {
         it.data.associateByTo(states, {
             it.state /* key */
         }, {
-            it.id /* value */
+            "${it.id} ${it.zone}" /* value */
         })
+
+
     }
 
     private fun setupSpinner() {
         val stateArray = states.keys.sorted().toMutableList()
+        stateArray.add(0, loggedInUser?.stateName.toString())
         val adapterState =
             ArrayAdapter(
                 requireContext(),
@@ -324,24 +351,34 @@ class EditProfileFragment : DaggerFragment() {
             )
         editInfoStateSpinner.adapter = adapterState
 
-        setLGASpinner(editInfoStateSpinner, editInfoLGASpinner, lgaAndDistrict, states, userViewModel)
+        Log.i("SpinnerItem", "State ${states}")
+        setLGASpinner(editInfoStateSpinner, editInfoLGASpinner, lgaAndDistrict, states, userViewModel, loggedInUser)
 //        Log.i(title, "states $states")
     }
     private fun updateProfileRequest() {
-
+        var profileImageUrl: String?
         var validation:String?=""
         val firstName = editInfoFNameEditText.text.toString().trim()
         val lastName = editInfoLNameEditText.text.toString().trim()
         val emailAddress = editInfoEmailEditText.text.toString().trim().toLowerCase()
         val phoneNumber = editInfoPhoneEditText.text.toString().trim()
         val houseNumber = editInfoHouseNoEditText.text.toString().trim()
-        val stateSeletcted = editInfoStateSpinner.selectedItem
-        val state = states.get(stateSeletcted)
+        val selectedState = editInfoStateSpinner.selectedItem
+        val valueOfStateSelected = states.get(selectedState)?.split(" ")
+        val state = valueOfStateSelected?.get(0).toString()
+        val selectedLga = editInfoLGASpinner.selectedItem
+        val valueOfSelectedLga =  lgaAndDistrict.get(selectedLga)?.split(" ")
+        val lgaGUID = valueOfSelectedLga?.get(0).toString()
+        val zoneGUID = valueOfStateSelected?.get(1).toString()
         val street = editInfoStreetEditText.text.toString().trim()
          imageText = imageUrlText.text.toString()
-        val profileImageUrl = imageText.subSequence(10, imageText.length).toString()
+        profileImageUrl = imageText.subSequence(10, imageText.length).toString()
 
 
+        if(profileImageUrl == "null" || profileImageUrl.isNullOrEmpty()){
+            profileImageUrl = null
+            Log.i(title, "imageUrl $profileImageUrl")
+        }
         val checkForEmpty =
             IsEmptyCheck(editInfoFNameEditText, editInfoLNameEditText)
         if(emailAddress.isNotEmpty()){
@@ -365,7 +402,9 @@ class EditProfileFragment : DaggerFragment() {
                     phoneNumber,
                     houseNumber,
                     state as String,
+                    lgaGUID,
                     street,
+                    zoneGUID,
                     profileImageUrl,
                     header
                 )
@@ -395,6 +434,16 @@ class EditProfileFragment : DaggerFragment() {
                 Log.i(title, "result of registration ${res.data.firstName}")
                 var user = storageRequest.checkUser("loggedInUser")
                 user?.imageUrl = imageText.subSequence(10, imageText.length).toString()
+                val data = result.data
+                user?.stateName = data.stateName
+                user?.houseNumber = data.houseNumber
+                user?.stateID = data.stateID
+                user?.lgName = data.lgName
+                user?.lgID = data.lgID
+                user?.zoneID = data.zoneID
+                user?.districtID = data.districtID
+
+                Log.i(title, "local ${result.data.lgName}")
                 storageRequest.saveData(user, "loggedInUser")
                 findNavController().navigate(R.id.profileFragment)
             }

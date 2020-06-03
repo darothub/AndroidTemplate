@@ -50,8 +50,7 @@
             app:layout_constraintBottom_toTopOf="@id/galleryBottomSheet"
             app:layout_constraintTop_toBottomOf="@id/galleryIcon"
             android:elevation="10dp"
-            android:src="@drawable/healthpic"
-            android:visibility="gone"
+            android:src="@drawable/no_image_icon"
             android:background="@drawable/shadow"
             android:scaleType="centerCrop"
            android:layout_margin="15dp"/>
@@ -87,30 +86,34 @@
             android:layout_marginTop="@dimen/normal_margin"/>
 
         <Button
-            android:id="@+id/yesButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/logoutButton"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="@string/yes"
+            android:text="@string/logout"
             android:textColor="@color/colorNeutral"
             android:textAllCaps="true"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@id/logoutText"
-            app:layout_constraintEnd_toStartOf="@id/noButton"
+            app:layout_constraintEnd_toStartOf="@id/exitButton"
             android:layout_marginTop="50dp"
 
             android:background="@drawable/rounded_border_with_backgrnd"
             />
 
         <Button
-            android:id="@+id/noButton"
-            android:layout_width="wrap_content"
+            android:id="@+id/exitButton"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="@string/no"
+            android:text="@string/exit"
             android:textColor="@color/colorNeutral"
             android:textAllCaps="true"
-            app:layout_constraintStart_toEndOf="@id/yesButton"
-            app:layout_constraintTop_toTopOf="@id/yesButton"
-            app:layout_constraintBottom_toBottomOf="@id/yesButton"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            app:layout_constraintStart_toEndOf="@id/logoutButton"
+            app:layout_constraintTop_toTopOf="@id/logoutButton"
+            app:layout_constraintBottom_toBottomOf="@id/logoutButton"
             app:layout_constraintEnd_toEndOf="parent"
             android:background="@drawable/rounded_border_with_backgrnd"
             />

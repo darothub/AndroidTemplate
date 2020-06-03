@@ -11,14 +11,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.approveReport
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.dismissReport
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
@@ -34,44 +37,50 @@ import javax.inject.Inject
  */
 class ReportApprovalFragment : DaggerFragment() {
 
-    val title:String by lazy {
+    val title: String by lazy {
         getName()
     }
-    val detailsText:String by lazy {
+    val detailsText: String by lazy {
         requireContext().getLocalisedString(R.string.report_details)
     }
     val spannableString: SpannableString by lazy {
         detailsText.setAsSpannable()
     }
 
-    val capture by lazy {
-        Bitmap.createBitmap(reportApprovalImage.width, reportApprovalImage.height, Bitmap.Config.ARGB_8888)
-    }
+
+    @Inject
+    lateinit var reviewerUnapprovedReportsDataFactory: ReviewerUnapprovedReportsDataFactory
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
+
     @Inject
     lateinit var storageRequest: StorageRequest
+
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
+
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
+
     //Set header
     val header by lazy {
         "Bearer $token"
     }
-    lateinit var singleReport:ReportResponse
-    lateinit var  approveBtn:Button
+    lateinit var singleReport: ReportResponse
+    lateinit var approveBtn: Button
+    lateinit var dismissBtn: Button
     val progressBar by lazy {
         reportApprovalBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
+    var total = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -83,79 +92,126 @@ class ReportApprovalFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_report_approval, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-
-    }
-
     override fun onResume() {
         super.onResume()
 
-        reportApprovalBackBtn.setOnClickListener {
-            findNavController().popBackStack()
-        }
 
         Log.i(title, "OnResume")
-        approveBtn = reportApprovalBottomLayout.findViewById<Button>(R.id.includeBtn)
-        approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
+
 
         arguments?.let {
             singleReport = ReportApprovalFragmentArgs.fromBundle(it).singleReport!!
         }
 
+        val story = singleReport.story
+        val storyLen = story?.length
+        if (storyLen != null) {
+            when{
+                storyLen <= 80 -> reportApprovalStory.text = story
+                storyLen > 80 -> {
+                    val fullStopIndex = story.indexOf(".", 100)
+                    val contdText = story.substring(fullStopIndex+1)
+                    reportApprovalStory.text = story.substring(0..fullStopIndex)
+                    reportApprovalStoryContd.text = contdText
+                    reportApprovalStoryContd.show()
+                }
+            }
+        }
 
+        Log.i(title, "reportID ${singleReport.id}")
         reportApprovalReportTopic.text = singleReport.topic
-        reportApprovalHeadline.text = singleReport.topic
         reportApprovalReportLocation.text = "${singleReport.localGovernment}, ${singleReport.state}"
-        reportApprovalStory.text = singleReport.story
-        reportApprovalStoryContd.text = ""
         Picasso.get().load(singleReport.mediaURL)
-            .placeholder(R.drawable.applogo)
+            .placeholder(R.drawable.no_image_icon)
             .into(reportApprovalImage)
 
 
-        val imageDrawable = reportApprovalImage.drawable
-        reportApprovalappBar.background = imageDrawable
+        approveBtn = reportApprovalBottomLayout.findViewById(R.id.btn)
+        approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
+        dismissBtn = reportApprovalBottomLayout.findViewById(R.id.secondBtn)
+        dismissBtn.text = requireContext().getLocalisedString(R.string.dismissText)
+        dismissBtn.show()
+
         approveBtn.setOnClickListener {
-            Log.i(title, "id ${singleReport.id}")
-            val request = authViewModel.approveReport(singleReport.id.toString(), header)
-            val response    = observeRequest(request, progressBar, approveBtn)
-
-            response.observe(viewLifecycleOwner, Observer {
-                val (bool, result) = it
-
-                when (bool) {
-                    true -> {
-                        val res = result as DefaultResponse
-                        Log.i(title, res.data.toString())
-                        requireContext().toast(res.data.toString())
-
-                    }
-                    else -> Log.i(title, "error $result")
-                }
-
-            })
+            approveOrDismiss(singleReport.id.toString(), true)
         }
+        dismissBtn.setOnClickListener {
+            approveOrDismiss(singleReport.id.toString(), false)
+        }
+
+
 
         reportApprovalBackBtn.setOnClickListener {
             findNavController().popBackStack()
         }
 
+        this.displayNotificationBell(
+            authViewModel,
+            loggedInUser,
+            reviewerUnapprovedReportsDataFactory,
+            reportApprovalNotificationIcon,
+            reportApprovalNotificationCount
+        )
+
 
     }
 
-    override fun onPause() {
-        super.onPause()
-        Log.i(title, "OnPause")
-
-
+    private fun approveOrDismiss(id:String, approve:Boolean=false) {
+        val response:LiveData<Pair<Boolean, *>>
+        when(approve){
+            true -> {
+                Log.i(title, "id ${singleReport.id}")
+                val request = authViewModel.approveReport(id, header)
+                response = observeRequest(request, progressBar, approveBtn)
+            }
+            false->{
+                val request = authViewModel.dismissReport(singleReport.id.toString(), header)
+                response = observeRequest(request, progressBar, approveBtn)
+            }
+        }
+        onResponseObserver(response, approve)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(title, "OnDestroy")
+    private fun onResponseObserver(
+        response: LiveData<Pair<Boolean, *>>,
+        approve: Boolean
+    ) {
+        response.observe(viewLifecycleOwner, Observer {
+            val (bool, result) = it
+            when (bool) {
+                true -> {
+                    val res = result as DefaultResponse
+                    Log.i(title, res.data.toString())
+                    if (approve) {
 
+                        requireContext().toast(requireContext().getLocalisedString(R.string.approved_successful))
+                    } else {
+                        requireContext().toast(requireContext().getLocalisedString(R.string.dismissed_successfully))
+                    }
+                    loggedInUser?.totalUnapprovedReports =
+                        loggedInUser?.totalUnapprovedReports?.minus(1.toLong())
+                    storageRequest.saveData(loggedInUser, "loggedInUser")
+                    findNavController().navigate(R.id.reviewerScreenFragment)
+                }
+                else -> Log.i(title, "error $result")
+            }
+
+        })
     }
+
+
+//
+//    override fun onPause() {
+//        super.onPause()
+//        Log.i(title, "OnPause")
+//
+//
+//    }
+//
+//    override fun onDestroy() {
+//        super.onDestroy()
+//        Log.i(title, "OnDestroy")
+//
+//    }
 
 }

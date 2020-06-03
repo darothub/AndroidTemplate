@@ -12,20 +12,35 @@ import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.addCallback
 import androidx.core.net.toUri
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
+import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.User
-import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_report.*
+import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.fragment_signin.*
+import kotlinx.android.synthetic.main.report_item.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.*
 import javax.inject.Inject
 
 /**
@@ -61,10 +76,18 @@ class SigninFragment : DaggerFragment() {
     @Inject
     lateinit var storageRequest: StorageRequest
 
+    @Inject
+    lateinit var reviewerUnapprovedReportsDataFactory: ReviewerUnapprovedReportsDataFactory
+
     val userViewModel: UserViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
     }
 
+    val authViewModel: AuthViewModel by lazy {
+        ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
+    }
+
+    var total = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -72,6 +95,7 @@ class SigninFragment : DaggerFragment() {
         // Inflate the layout for this fragment
 
         showStatusBar()
+
         return inflater.inflate(R.layout.fragment_signin, container, false)
     }
 
@@ -84,8 +108,10 @@ class SigninFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
+
+        val localTime = Locale.getDefault().displayLanguage
         signinBtn = signinBottomLayout.findViewById<Button>(R.id.includeBtn)
-        Log.i(title, "onResume")
+        Log.i(title, "onResume $localTime")
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
         submitLoginRequest()
         setButtonText()
@@ -119,6 +145,7 @@ class SigninFragment : DaggerFragment() {
         forgotPassword.setOnClickListener {
             findNavController().navigate(R.id.forgotPasswordFragment)
         }
+
     }
 
 
@@ -137,16 +164,18 @@ class SigninFragment : DaggerFragment() {
     }
 
     private fun checkForReturninUser() {
-        val returningUser = storageRequest.checkUser("loggedOutUser")
-        signinEmailEdit.setText(returningUser?.email)
-
+        val returningUser = storageRequest.checkUser("loggedInUser")
 
         if (returningUser != null) {
             Log.i("returning", "user $returningUser")
 //            requireContext().toast("$returningUser")
             when {
-                returningUser.rememberPassword -> signinPasswordEdit.setText(returningUser.password)
+                returningUser.rememberPassword -> {
+                    signinEmailEdit.setText(returningUser?.email)
+                    signinPasswordEdit.setText(returningUser.password)
+                }
             }
+
 
         }
     }
@@ -197,24 +226,71 @@ class SigninFragment : DaggerFragment() {
     ) {
         when (bool) {
             true -> {
-                val res = result as DefaultResponse
-                var userExist = User(null, null, null, null, null)
+                val res = result as UserResponse
+                var userExist = User(null, null, emailAddress, passwordString, null)
                 userExist.loggedIn = true
-                userExist.token = res.token
+                userExist.token = res.data
 
                 userExist.rememberPassword = signinCheckbox.isChecked
-                storageRequest.saveData(userExist, emailAddress)
-                storageRequest.saveData(userExist, "loggedInUser")
+
+                checkIsReviewer(userExist)
+
                 requireContext().toast(requireContext().getLocalisedString(R.string.successful))
                 Log.i("UserExist", "${userExist}")
-                Log.i(title, "message ${result.token}")
+                Log.i(title, "message ${result.data}")
 
-
-                navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
-                findNavController().popBackStack(R.id.reportFragment, false)
+//                findNavController().popBackStack(R.id.reportFragment, false)
             }
-            else -> Log.i(title, "error $result")
+            else -> {
+                requireContext().toast("$result")
+                Log.i(title, "error $result")
+            }
         }
+    }
+
+    private fun checkIsReviewer(userExist: User) {
+        val header = "Bearer ${userExist.token}"
+        val request = authViewModel.getProfileData(header)
+        val response = observeRequest(request, null, null)
+        response.observe(viewLifecycleOwner, Observer {
+            val (bool, result) = it
+            when (bool) {
+                true -> {
+                    val res = result as ProfileData
+                    val data = res.data
+                    userExist.firstName = data.firstName
+                    userExist.lastName = data.lastName
+                    userExist.email = data.email
+                    userExist.imageUrl = data.profileImageURL.toString()
+                    userExist.houseNumber = data.houseNumber
+                    userExist.street = data.street
+                    userExist.lgName = data.lgName
+                    userExist.lgID = data.lgID
+                    userExist.stateID = data.stateID
+                    userExist.stateName = data.stateName
+                    userExist.zoneID = data.zoneID
+                    userExist.districtID = data.districtID
+                    userExist.totalReports = data.totalReports
+                    userExist.id = data.id
+                    Log.i("Local", "local ${data.lgName}")
+                    when (data.isReviewer) {
+                        true -> {
+                            userExist.isReviewer = true
+                            storageRequest.saveData(userExist, "loggedInUser")
+                            navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
+
+                        }
+                        false -> {
+                            userExist.isReviewer = false
+                            storageRequest.saveData(userExist, "loggedInUser")
+                            navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
+                        }
+                    }
+                    Log.i(title, "Reviewer ${res.data.isReviewer}")
+                }
+                else -> Log.i(title, "error $result")
+            }
+        })
     }
 
 

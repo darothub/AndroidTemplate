@@ -3,9 +3,11 @@ package com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
+import com.anapfoundation.covid_19volunteerapp.model.LocalGovernment
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import retrofit2.Call
 import retrofit2.Callback
@@ -18,14 +20,14 @@ fun AuthViewModel.resetPassword(newPassword:String, token:String): LiveData<Serv
         "Loading..."
     )
     val request = authRequestInterface.resetPassword(newPassword, token)
-    request.enqueue(object : Callback<DefaultResponse> {
-        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+    request.enqueue(object : Callback<UserResponse> {
+        override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
-            call: Call<DefaultResponse>,
-            response: Response<DefaultResponse>
+            call: Call<UserResponse>,
+            response: Response<UserResponse>
         ) {
             onResponseTask(response as Response<Data>, responseLiveData)
         }
@@ -39,10 +41,12 @@ fun AuthViewModel.updateProfile(
     lastName: String,
     email: String,
     phone: String,
-    houseNumber: String,
+    houseNumber: String?=null,
     state: String,
+    localGovernment: String?,
     street: String?,
-    profileImageUrl: String?,
+    zone:String?,
+    profileImageUrl: String?=null,
     header: String
 ): LiveData<ServicesResponseWrapper<Data>> {
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
@@ -57,13 +61,15 @@ fun AuthViewModel.updateProfile(
         phone,
         houseNumber,
         state,
+        localGovernment,
         street,
+        zone,
         profileImageUrl,
         header
     )
     request.enqueue(object : Callback<ProfileData> {
         override fun onFailure(call: Call<ProfileData>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
@@ -86,7 +92,7 @@ fun AuthViewModel.approveReport(id:String, header:String): LiveData<ServicesResp
     val request = authRequestInterface.approveReport(id, header)
     request.enqueue(object : Callback<DefaultResponse> {
         override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
@@ -100,21 +106,21 @@ fun AuthViewModel.approveReport(id:String, header:String): LiveData<ServicesResp
     return responseLiveData
 }
 
-fun AuthViewModel.getUnApprovedReports(header: String, first:Long?, after:Long?): LiveData<ServicesResponseWrapper<Data>>{
+fun AuthViewModel.dismissReport(id:String, header:String): LiveData<ServicesResponseWrapper<Data>> {
     val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
     responseLiveData.value = ServicesResponseWrapper.Loading(
         null,
         "Loading..."
     )
-    val request = authRequestInterface.getUnapprovedReports(header, first, after)
-    request.enqueue(object : Callback<Reports> {
-        override fun onFailure(call: Call<Reports>, t: Throwable) {
-            responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+    val request = authRequestInterface.dismissReport(id, header)
+    request.enqueue(object : Callback<DefaultResponse> {
+        override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
+            onFailureResponse(responseLiveData, t)
         }
 
         override fun onResponse(
-            call: Call<Reports>,
-            response: Response<Reports>
+            call: Call<DefaultResponse>,
+            response: Response<DefaultResponse>
         ) {
             onResponseTask(response as Response<Data>, responseLiveData)
         }
@@ -122,6 +128,7 @@ fun AuthViewModel.getUnApprovedReports(header: String, first:Long?, after:Long?)
     })
     return responseLiveData
 }
+
 
 
 

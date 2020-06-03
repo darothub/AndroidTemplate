@@ -87,4 +87,9 @@
             android:id="@+id/fromResetToSignin"
             app:destination="@id/signinFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment2"
+        android:name="com.anapfoundation.covid_19volunteerapp.ui.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
 </navigation>

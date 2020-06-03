@@ -30,7 +30,14 @@
         android:id="@+id/profileFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.ProfileFragment"
         android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" />
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/toEditProfile"
+            app:destination="@id/editProfileFragment" />
+        <action
+            android:id="@+id/toNavGraphOne"
+            app:destination="@id/nav_graph" />
+    </fragment>
     <include app:graph="@navigation/nav_graph" />
     <fragment
         android:id="@+id/reportUploadFragment"
@@ -52,7 +59,13 @@
         android:id="@+id/editProfileFragment"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.EditProfileFragment"
         android:label="fragment_edit_profile"
-        tools:layout="@layout/fragment_edit_profile" />
+        tools:layout="@layout/fragment_edit_profile" >
+        <argument
+            android:name="profileData"
+            app:argType="com.anapfoundation.covid_19volunteerapp.model.User"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
     <fragment
         android:id="@+id/toSingleReportScreen"
         android:name="com.anapfoundation.covid_19volunteerapp.ui.SingleReportFragment"
@@ -61,6 +74,11 @@
         <argument
             android:name="singleReport"
             app:argType="com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="uri"
+            app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
@@ -72,6 +90,9 @@
         <action
             android:id="@+id/toApprovalFragment"
             app:destination="@id/reportApprovalFragment" />
+        <action
+            android:id="@+id/fromReviewToSingleReport"
+            app:destination="@id/toSingleReportScreen" />
     </fragment>
     <fragment
         android:id="@+id/reportApprovalFragment"

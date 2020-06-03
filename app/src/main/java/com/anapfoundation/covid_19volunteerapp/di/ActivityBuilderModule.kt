@@ -3,6 +3,7 @@ package com.anapfoundation.covid_19volunteerapp.di
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.lifecycle.SavedStateHandle
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelModules
 import com.anapfoundation.covid_19volunteerapp.di.datasourcefactory.DataSourceFactoryModule
 import com.anapfoundation.covid_19volunteerapp.di.fragmentmodules.*
@@ -43,7 +44,11 @@ abstract class ActivityBuilderModule {
             ResetPasswordFragmentModule::class,
             ReviewerScreenModule::class,
             ReportApprovalFragmentModule::class,
-            DataSourceFactoryModule::class
+            DataSourceFactoryModule::class,
+            UnapprovedReportFragmentModule::class,
+            ApprovedReportFragmentModule::class,
+            HomeFragmentModules::class,
+            SingleReportFragmentModule::class
 
         ]
     )
@@ -105,5 +110,9 @@ open class ActivityStaticModule {
     fun provideStorage(sharedPrefs: SharedPreferences, gson: Gson): StorageRequest {
         return SharedPrefManager(sharedPrefs, gson)
     }
+
+    @Singleton
+    @Provides
+    fun provideSavedStateHandle()=SavedStateHandle()
 
 }

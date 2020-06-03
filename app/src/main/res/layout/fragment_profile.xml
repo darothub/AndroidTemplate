@@ -11,7 +11,6 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/profileAppBar"
             android:layout_width="0dp"
@@ -21,39 +20,29 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
-
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/profileToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="0dp"
+                app:menu="@menu/profile_menu"
                 app:titleTextColor="@android:color/black">
-
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp">
-
-                    <TextView
+                    android:layout_height="match_parent"
+                    >
+                    <ImageView
+                        android:id="@+id/profileBackBtn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:text="@string/profile_text"
-                        android:textColor="@color/colorPrimaryDark"
-                        android:textSize="@dimen/vlarge_font_size"
-                        android:textStyle="bold"
+                        android:elevation="10dp"
+                        android:scaleType="fitXY"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:srcCompat="@drawable/ic_back_icon" />
 
-                        />
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="30dp"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:clickable="true"
-                        android:focusable="true"
-                        app:srcCompat="@drawable/notification_icon" />
-                </RelativeLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.appcompat.widget.Toolbar>
 
@@ -63,9 +52,54 @@
             android:id="@+id/profileStack"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="23dp"
+            android:paddingStart="23dp"
+            android:paddingEnd="23dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/profileAppBar">
+            <RelativeLayout
+                android:id="@+id/profileHeaderVG"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/profile_text"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/vlarge_font_size"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+                    />
+
+                <ImageView
+                    android:id="@+id/profileNotificationIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:srcCompat="@drawable/ic_notifications_prydark_24dp" />
+                <TextView
+                    android:id="@+id/profileNotificationCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:elevation="2dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="7dp"
+
+                    android:textStyle="bold"/>
+            </RelativeLayout>
 
             <ImageView
                 android:id="@+id/profileImage"
@@ -75,7 +109,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_person_primary_24dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileHeaderVG"
                 android:elevation="5dp"
                 app:layout_constraintVertical_bias="0.1" />
 

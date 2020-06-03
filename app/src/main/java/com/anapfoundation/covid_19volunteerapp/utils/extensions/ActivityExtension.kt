@@ -1,8 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.utils.extensions
 
-import android.Manifest
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -14,34 +12,37 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.anapfoundation.covid_19volunteerapp.model.ArrayObjOfStates
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
+import com.cloudinary.Cloudinary
+import com.cloudinary.Transformation
+import com.cloudinary.android.MediaManager
+import com.cloudinary.android.callback.ErrorInfo
+import com.cloudinary.android.callback.UploadCallback
+import com.cloudinary.transformation.Layer
 import com.google.firebase.storage.StorageReference
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.karumi.dexter.Dexter
-import com.karumi.dexter.PermissionToken
-import com.karumi.dexter.listener.PermissionDeniedResponse
-import com.karumi.dexter.listener.PermissionGrantedResponse
-import com.karumi.dexter.listener.PermissionRequest
-import com.karumi.dexter.listener.single.DialogOnDeniedPermissionListener
-import com.karumi.dexter.listener.single.PermissionListener
-import kotlinx.android.synthetic.main.fragment_edit_profile.*
-import kotlinx.android.synthetic.main.fragment_report_upload.*
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-inline fun Activity.getName():String{
+/**
+ * Get any name
+ *
+ * @return
+ */
+fun Any.getName(): String {
     return this::class.qualifiedName!!
 }
 
-inline fun Activity.readCitiesAndLgaData():HashMap<String, List<CityClass>>{
+fun Activity.readCitiesAndLgaData(): HashMap<String, List<CityClass>> {
     val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
         HashMap<String, List<CityClass>>()
     }
@@ -68,34 +69,11 @@ inline fun Activity.readCitiesAndLgaData():HashMap<String, List<CityClass>>{
     return stateLgaMap
 }
 
-fun Context.permissionRequest() {
-    Dexter.withContext(this)
-        .withPermission(Manifest.permission.CAMERA)
-        .withListener(object : PermissionListener {
-            override fun onPermissionGranted(response: PermissionGrantedResponse?) {
-
-            }
-            override fun onPermissionDenied(response: PermissionDeniedResponse?) {
-                val dialogPermissionListener: PermissionListener =
-                    DialogOnDeniedPermissionListener.Builder
-                        .withContext(this@permissionRequest)
-                        .withTitle("Camera permission")
-                        .withMessage("Camera permission is needed to take picture for your report")
-                        .withButtonText(android.R.string.ok)
-                        .withIcon(android.R.drawable.ic_menu_camera)
-                        .build()
-                dialogPermissionListener.onPermissionDenied(response)
-            }
-
-            override fun onPermissionRationaleShouldBeShown(
-                permission: PermissionRequest?,
-                token: PermissionToken?
-            ) {
-
-            }
-        }).check()
-}
-
+/**
+ * create image file
+ *
+ * @return
+ */
 fun Activity.createImageFile(): Pair<File?, String> {
     val timeStamp by lazy {
         SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
@@ -115,25 +93,32 @@ fun Activity.createImageFile(): Pair<File?, String> {
     }
     return Pair(newFile, currentPhotoPath)
 }
-fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
+
+/**
+ * Camera intent launch
+ *
+ * @param file
+ * @param REQUEST_TAKE_PHOTO
+ */
+fun Fragment.dispatchTakePictureIntent(file: File?, REQUEST_TAKE_PHOTO: Int) {
     //Class title
     val title: String by lazy {
         getName()
     }
+
     Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
         // Ensure that there's a camera activity to handle the intent
         takePictureIntent.resolveActivity(requireActivity().packageManager)?.also {
             // Create the File where the photo should go
             val photoFile: File? = try {
                 file
-
             } catch (ex: IOException) {
                 // Error occurred while creating the File
                 Log.i(title, ex.localizedMessage)
                 null
             }
             // Continue only if the File was successfully created
-                Log.i(title, "File $file")
+            Log.i(title, "File $file")
             photoFile?.also {
                 val photoURI: Uri = FileProvider.getUriForFile(
                     requireContext(),
@@ -141,64 +126,109 @@ fun Fragment.dispatchTakePictureIntent(file:File?, REQUEST_TAKE_PHOTO:Int) {
                     it
                 )
 
+
+
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+
             }
 
 
-
         }
+
     }
 }
 
+/**
+ * Upload image with
+ *
+ * @param path
+ * @param imagePreview
+ * @param capture
+ * @param canvas
+ * @param imageUrlText
+ * @param report
+ * @return
+ */
+fun Fragment.uploadImage(
+    path: String,
+    imagePreview: ImageView,
+    capture: Bitmap,
+    canvas: Canvas,
+    imageUrlText: TextView,
+    report: Boolean = false
+):LiveData<Pair<String, String>> {
 
-fun Fragment.uploadImage(path:String, imagePreview:ImageView, capture:Bitmap, canvas:Canvas, storageRef:StorageReference, imageUrlText:TextView){
-    val timeStamp by lazy {
-        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-    }
-    val title:String by lazy{
+    val urlStringLiveData = MutableLiveData<Pair<String, String>>()
+    val title: String by lazy {
         this.getName()
     }
     var imageUrl = ""
 
     val path = path
-    val imageRef = storageRef.child(path)
+
 
     imagePreview.draw(canvas)
 
     val outputStream = ByteArrayOutputStream()
     capture.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
     val data = outputStream.toByteArray()
-    val uploadTask = imageRef.putBytes(data)
+    Log.i(title, "capture $capture data $data")
 
-    uploadTask.addOnFailureListener {
-        // Handle unsuccessful uploads
-        Log.i(title, "Upload not successful")
-    }.addOnSuccessListener {
-        // taskSnapshot.metadata contains file metadata such as size, content-type, etc.
-        // ...
-        Log.i(title, "Upload successful")
-    }
-    uploadTask.continueWith { task ->
-        if (!task.isSuccessful) {
-            task.exception?.let {
-                throw it
-            }
-        }
-        imageRef.downloadUrl
-    }.addOnCompleteListener { task ->
-        if (task.isSuccessful) {
-            val downloadUri = task.result
-            downloadUri?.addOnSuccessListener {url ->
-                imageUrl = url.toString()
-                Log.i(title, "url $url")
-                imageUrlText.append(imageUrl)
-                imageUrlText.show()
+    try {
+        val uploadRequest = MediaManager.get().upload(data)
 
-            }
 
+        if (report) {
+            uploadRequest
+                .option("folder", "Reports")
+                .option("resource_type", "image")
+                .option("use_filename", true)
+                .option("public_id", path)
+                .maxFileSize(5 * 1024 * 1024)
         } else {
-            Log.i(title, "uri: No url")
+            uploadRequest
+                .option("folder", "Profile")
+                .option("resource_type", "image")
+                .option("use_filename", true)
+                .option("public_id", path)
+                .maxFileSize(5 * 1024 * 1024)
         }
+        uploadRequest.callback(object : UploadCallback {
+            override fun onSuccess(requestId: String?, resultData: MutableMap<Any?, Any?>?) {
+                imageUrl = resultData?.get("secure_url").toString()
+                val publicID = resultData?.get("public_id").toString()
+                imageUrlText.text = ""
+                imageUrlText.text = "imageUrl: "
+                imageUrlText.append(imageUrl)
+                urlStringLiveData.postValue(Pair(imageUrl, publicID))
+                Log.i(title, "url ${imageUrlText.text}")
+                Log.i(title, "data $resultData")
+            }
+
+            override fun onProgress(requestId: String?, bytes: Long, totalBytes: Long) {
+                Log.i(title, "$totalBytes")
+            }
+
+            override fun onReschedule(requestId: String?, error: ErrorInfo?) {
+                Log.i(title, "${error?.description}")
+            }
+
+            override fun onError(requestId: String?, error: ErrorInfo?) {
+                Log.i(title, "${error?.description}")
+            }
+
+            override fun onStart(requestId: String?) {
+                Log.i(title, "Upload started")
+            }
+
+        })
+        val req = uploadRequest.dispatch(requireContext())
+
+
+    } catch (e: Exception) {
+        Log.e(title, e.localizedMessage)
     }
+
+    return urlStringLiveData
 }

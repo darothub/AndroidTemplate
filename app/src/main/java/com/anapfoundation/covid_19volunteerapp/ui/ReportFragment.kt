@@ -1,5 +1,6 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -8,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.net.toUri
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -17,14 +17,18 @@ import androidx.navigation.ui.setupWithNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
-import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.google.android.material.bottomnavigation.BottomNavigationMenuView
 
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_report.*
 import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -58,11 +62,11 @@ class ReportFragment : DaggerFragment() {
         bottomSheetView.findViewById<View>(R.id.imageUploadLayout)
     }
 
-    val yesButton by lazy{
-        bottomSheetView.yesButton
+    val logoutButton by lazy{
+        bottomSheetView.logoutButton
     }
-    val noButton by lazy{
-        bottomSheetView.noButton
+    val exitButton by lazy{
+        bottomSheetView.exitButton
     }
 
     @Inject
@@ -90,6 +94,7 @@ class ReportFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+        showStatusBar()
         return inflater.inflate(R.layout.fragment_report, container, false)
     }
 
@@ -103,47 +108,58 @@ class ReportFragment : DaggerFragment() {
 
     override fun onStart() {
         super.onStart()
+        customBackDispatcher()
+
+    }
+
+    private fun customBackDispatcher() {
         destinationChangedListener =
             NavController.OnDestinationChangedListener { controller, destination, arguments ->
                 when (destination.id) {
                     R.id.reportHomeFragment -> {
+                        bottomNav.show()
                         onBackPressed()
                     }
                     R.id.createReportFragment -> {
+                        bottomNav.show()
                         requireActivity().onBackPressedDispatcher.addCallback {
-
-
                             navController.navigate(R.id.reportHomeFragment)
-
                         }
                     }
                     R.id.notificationFragment -> {
+                        bottomNav.show()
                         requireActivity().onBackPressedDispatcher.addCallback {
-
                             navController.popBackStack()
-
                         }
 
                     }
                     R.id.toSingleReportScreen -> {
+                        bottomNav.show()
                         requireActivity().onBackPressedDispatcher.addCallback {
-
                             navController.popBackStack()
-
                         }
 
                     }
                     R.id.profileFragment -> {
+                        bottomNav.hide()
                         requireActivity().onBackPressedDispatcher.addCallback {
-
-
                             navController.navigate(R.id.reportHomeFragment)
-
+                        }
+                        this
+                    }
+                    R.id.editProfileFragment -> {
+                        requireActivity().onBackPressedDispatcher.addCallback {
+                            navController.navigate(R.id.profileFragment)
+                        }
+                    }
+                    R.id.reviewerScreenFragment -> {
+                        bottomNav.show()
+                        requireActivity().onBackPressedDispatcher.addCallback {
+                            navController.navigate(R.id.reportHomeFragment)
                         }
                     }
                     else -> {
-                        bottomNav.show()
-                        reportFragmentProgressView1.show()
+
                     }
                 }
             }
@@ -151,10 +167,7 @@ class ReportFragment : DaggerFragment() {
 
     fun onBackPressed() {
         requireActivity().onBackPressedDispatcher.addCallback {
-
-
             showBottomSheet()
-
         }
     }
 
@@ -164,32 +177,18 @@ class ReportFragment : DaggerFragment() {
         //
         Log.i(title, "OnResume")
 
-        val navController = Navigation.findNavController(requireActivity(), R.id.fragment2)
-
-        val request = authViewModel.getProfileData(header)
-        val response = observeRequest(request, null, null)
-        response.observe(viewLifecycleOwner, Observer {
-            val (bool, result) = it
-            when (bool) {
-                true -> {
-                    val res = result as ProfileData
-
-                    when(res.data.isReviewer){
-                        true ->{
-                            val screen = bottomNav.menu.findItem(R.id.reviewerScreenFragment)
-                            screen.isVisible = true
-                        }
-                        false ->{
-                            val screen = bottomNav.menu.findItem(R.id.reviewerScreenFragment)
-                            screen.isVisible = false
-                        }
-                    }
-                    requireContext().toast(requireContext().getLocalisedString(R.string.successful))
-                    Log.i(title, "Reviewer ${res.data.isReviewer}")
-                }
-                else -> Log.i(title, "error $result")
+        when(user?.isReviewer){
+            true ->{
+                val screen = bottomNav.menu.findItem(R.id.reviewerScreenFragment)
+                screen.isVisible = true
             }
-        })
+            false ->{
+                val screen = bottomNav.menu.findItem(R.id.reviewerScreenFragment)
+                screen.isVisible = false
+            }
+        }
+
+
         bottomNav.setupWithNavController(navController)
         navController.addOnDestinationChangedListener(destinationChangedListener)
     }
@@ -205,8 +204,6 @@ class ReportFragment : DaggerFragment() {
     override fun onDestroy() {
         super.onDestroy()
         Log.i(title, "OnDestroy")
-        onBackPressed()
-
 
     }
 
@@ -217,24 +214,27 @@ class ReportFragment : DaggerFragment() {
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
 
-        logout()
+       logoutButton.setOnClickListener {
+            logout(storageRequest, bottomSheetDialog)
+       }
+
+       exitButton.setOnClickListener {
+           exitApp()
+       }
 
     }
 
-    private fun logout(){
-        yesButton.setOnClickListener {
-            val user = storageRequest.checkUser("loggedInUser")
-            user?.loggedIn = false
-            storageRequest.saveData(user, "loggedOutUser")
-            bottomSheetDialog.dismiss()
-//            requireActivity().finishFromChild(activity)
-            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
-        }
-
-        noButton.setOnClickListener {
-            bottomSheetDialog.dismiss()
+    private fun exitApp() {
+        bottomSheetDialog.dismiss()
+        CoroutineScope(Main).launch {
+            delay(1000)
+            activity?.finish()
         }
     }
+
+
+
+
 
 
 

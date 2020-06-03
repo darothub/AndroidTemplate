@@ -7,10 +7,9 @@ import java.io.Serializable
 
 class Reports (
     val data: List<ReportResponse>,
-    message: String?,
-    error: AnotherError?,
-    token: String?
-): Data(message, error, token), Serializable
+    val message: String?,
+    val error: AnotherError?
+): Data, Serializable
 
 
 class ReportResponse(

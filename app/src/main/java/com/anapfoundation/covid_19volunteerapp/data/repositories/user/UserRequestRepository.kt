@@ -4,6 +4,7 @@ import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.Location
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.userservices.UserApiRequests
 import retrofit2.Call
@@ -21,8 +22,9 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
         street: String,
         state: String,
         localGovernment: String,
+        zone:String,
         district: String
-    ): Call<DefaultResponse> {
+    ): Call<UserResponse> {
         return userApiRequests.registerUser(
             firstName,
             lastName,
@@ -33,11 +35,12 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
             street,
             state,
             localGovernment,
+            zone,
             district
         )
     }
 
-    override fun loginRequest(username: String, password: String): Call<DefaultResponse> {
+    override fun loginRequest(username: String, password: String): Call<UserResponse> {
         return userApiRequests.loginRequest(username, password)
     }
 
@@ -49,7 +52,7 @@ class UserRequestRepository @Inject constructor(val userApiRequests: UserApiRequ
         return userApiRequests.getLGA(stateID,first, after)
     }
 
-    override fun forgotPasswordRequest(email: String): Call<DefaultResponse> {
+    override fun forgotPasswordRequest(email: String): Call<UserResponse> {
         return userApiRequests.forgotPasswordRequest(email)
     }
 

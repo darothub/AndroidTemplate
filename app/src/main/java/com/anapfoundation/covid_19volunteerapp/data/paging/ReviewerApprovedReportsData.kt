@@ -10,47 +10,56 @@ import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.services.authservices.AuthApiRequests
+import com.utsman.recycling.paged.extentions.NetworkState
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import javax.inject.Inject
 
-
-class ReviewerScreenReportsDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
-    val pagingLiveData = MutableLiveData<ReviewerScreenReportsDataSource>()
+class ReviewerApprovedReportsDataFactory @Inject constructor(val authApiRequests: AuthApiRequests, val storageRequest: StorageRequest) : DataSource.Factory<Long, ReportResponse>() {
+    val pagingLiveData = MutableLiveData<ReviewerApprovedReportsDataSource>()
+    val responseLiveData = MutableLiveData<ServicesResponseWrapper<String>>()
     override fun create(): DataSource<Long, ReportResponse> {
         val user = storageRequest.checkUser("loggedInUser")
         val header = "Bearer ${user?.token}"
-        val data = ReviewerScreenReportsDataSource(authApiRequests, header)
+        val data = ReviewerApprovedReportsDataSource(authApiRequests, header)
         pagingLiveData.postValue(data)
+        if(user?.token.isNullOrEmpty()){
+            responseLiveData.postValue(ServicesResponseWrapper.Logout("Unauthorized", 401))
+        }
+
         return data
     }
 }
 
-class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
-    ItemKeyedDataSource<Long, ReportResponse>(){
-    private var first = 10L
-    private var after = 0L
-    val responseLiveData = MutableLiveData<ServicesResponseWrapper<Data>>()
+class ReviewerApprovedReportsDataSource(val authApiRequests: AuthApiRequests, val header:String):
+    ItemKeyedDataSource<Long, ReportResponse>() {
+
+    var networkState = MutableLiveData<NetworkState>()
+    val countLiveData = MutableLiveData<Int>()
     override fun loadInitial(
         params: LoadInitialParams<Long>,
         callback: LoadInitialCallback<ReportResponse>
     ) {
-        val request = authApiRequests.getUnapprovedReports(header, first, after)
+        networkState.postValue(NetworkState.LOADING)
+        val request = authApiRequests.getApprovedReports(header, params.requestedLoadSize.toLong())
         request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Logout(t.message.toString()))
+                networkState.postValue(NetworkState.error("Bad network connection"))
+
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
                 val body = response.body()
+                Log.i("title", "Approvedbody $body")
                 when {
-
-                    body != null ->  {
-                        responseLiveData.postValue(ServicesResponseWrapper.Success(body))
+                    body != null -> {
+                        networkState.postValue(NetworkState.LOADED)
+                        countLiveData.postValue(params.requestedLoadSize)
                         callback.onResult(body.data)
                     }
+
                 }
             }
 
@@ -58,27 +67,27 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
     }
 
     override fun loadAfter(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {
-        val request = authApiRequests.getUnapprovedReports(header, first, after)
+        val request = authApiRequests.getApprovedReportsAfter(
+            header,
+            params.requestedLoadSize.toLong(),
+            params.key
+        )
         request.enqueue(object : Callback<Reports> {
             override fun onFailure(call: Call<Reports>, t: Throwable) {
                 Log.i("Datasource", "error message ${t.message}")
-                responseLiveData.postValue(ServicesResponseWrapper.Error(t.message.toString()))
+                networkState.postValue(NetworkState.error("Bad network connection"))
             }
 
             override fun onResponse(call: Call<Reports>, response: Response<Reports>) {
                 val body = response.body()
                 when {
 
-                    body != null ->  {
+                    body != null -> {
                         try {
-                            after++
-                            responseLiveData.value = ServicesResponseWrapper.Loading(
-                                null,
-                                "Loading..."
-                            )
+                            networkState.postValue(NetworkState.LOADED)
+                            countLiveData.postValue(params.requestedLoadSize)
                             callback.onResult(body.data)
-                        }
-                        catch (e:Exception){
+                        } catch (e: Exception) {
                             Log.e("Paging error", e.localizedMessage)
                         }
 
@@ -92,5 +101,5 @@ class ReviewerScreenReportsDataSource(val authApiRequests: AuthApiRequests, val 
     override fun loadBefore(params: LoadParams<Long>, callback: LoadCallback<ReportResponse>) {}
 
     override fun getKey(item: ReportResponse): Long = item.index!!
-
 }
+

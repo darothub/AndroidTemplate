@@ -22,7 +22,7 @@ class IsEmptyCheck {
          */
         fun fieldsValidation(email: String?, password: String?): String? {
             val emailPattern = Regex("""^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*${'$'}""")
-            val passwordPattern = Regex("""^[a-zA-Z0-9@$!%*#?&]{6,}$""")
+            val passwordPattern = Regex("""^[a-zA-Z0-9@$!.%*#?&]{6,}$""")
             var message:String? = ""
             when {
                 email != null && password != null -> {

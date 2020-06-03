@@ -3,11 +3,14 @@ package com.anapfoundation.covid_19volunteerapp.data.viewmodel.user
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.DefaultResponse
 import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.User
+import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
@@ -20,12 +23,28 @@ import javax.inject.Inject
 
 class UserViewModel @Inject constructor(
     val userRequestInterface: UserRequestInterface,
-    val retrofit: Retrofit
+    val retrofit: Retrofit,
+    val state: SavedStateHandle
 ) : ViewModel() {
 
     val title: String by lazy {
         this.getName()
 
+    }
+    val registeringUser:String by lazy {
+        "registeringUser"
+    }
+
+    fun getSavedUserForm(): User?{
+        return state.get<User>(registeringUser)
+    }
+    fun saveRegisteringUser(user: User){
+        state.set(registeringUser, user)
+
+    }
+    fun clearSavedRegisteredUser():String{
+        state.remove<User>(registeringUser)
+        return "done"
     }
 
     fun registerUser(
@@ -38,6 +57,7 @@ class UserViewModel @Inject constructor(
         street: String,
         state: String,
         localGovernment: String,
+        zone:String,
         district:String
 
     ): LiveData<ServicesResponseWrapper<Data>> {
@@ -57,14 +77,15 @@ class UserViewModel @Inject constructor(
             street,
             state,
             localGovernment,
+            zone,
             district
         )
-        request.enqueue(object : Callback<DefaultResponse> {
-            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+        request.enqueue(object : Callback<UserResponse> {
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                onFailureResponse(responseLiveData, t)
             }
 
-            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -83,12 +104,13 @@ class UserViewModel @Inject constructor(
             "Loading..."
         )
         val request = userRequestInterface.loginRequest(username, password)
-        request.enqueue(object : Callback<DefaultResponse> {
-            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+        request.enqueue(object : Callback<UserResponse> {
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                onFailureResponse(responseLiveData, t)
+                Log.i(title, "Error $t")
             }
 
-            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -106,7 +128,7 @@ class UserViewModel @Inject constructor(
 
         request.enqueue(object :Callback<StatesList>{
             override fun onFailure(call: Call<StatesList>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+                onFailureResponse(responseLiveData, t)
             }
 
             override fun onResponse(call: Call<StatesList>, response: Response<StatesList>) {
@@ -127,7 +149,7 @@ class UserViewModel @Inject constructor(
         val request = userRequestInterface.getLocal(stateID, first, after)
         request.enqueue(object :Callback<LGA>{
             override fun onFailure(call: Call<LGA>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+                onFailureResponse(responseLiveData, t)
             }
 
             override fun onResponse(call: Call<LGA>, response: Response<LGA>) {
@@ -144,12 +166,12 @@ class UserViewModel @Inject constructor(
             "Loading..."
         )
         val request = userRequestInterface.forgotPasswordRequest(email)
-        request.enqueue(object :Callback<DefaultResponse>{
-            override fun onFailure(call: Call<DefaultResponse>, t: Throwable) {
-                responseLiveData.postValue(ServicesResponseWrapper.Error("${t.message}", null))
+        request.enqueue(object :Callback<UserResponse>{
+            override fun onFailure(call: Call<UserResponse>, t: Throwable) {
+                onFailureResponse(responseLiveData, t)
             }
 
-            override fun onResponse(call: Call<DefaultResponse>, response: Response<DefaultResponse>) {
+            override fun onResponse(call: Call<UserResponse>, response: Response<UserResponse>) {
                 onResponseTask(response as Response<Data>, responseLiveData)
             }
 
@@ -157,6 +179,12 @@ class UserViewModel @Inject constructor(
         return responseLiveData
     }
 
+    internal fun onFailureResponse(
+        responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>,
+        t: Throwable
+    ) {
+        responseLiveData.postValue(ServicesResponseWrapper.Error(t.localizedMessage, 0, null))
+    }
     internal fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()
         val statusCode = response.code()
@@ -191,7 +219,6 @@ class UserViewModel @Inject constructor(
                 catch (e:java.lang.Exception){
                     Log.i(title, e.message)
                 }
-
 
             }
             else -> {

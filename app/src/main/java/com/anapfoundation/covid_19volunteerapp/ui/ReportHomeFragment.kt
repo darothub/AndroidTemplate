@@ -1,51 +1,45 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.core.net.toUri
-import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavDeepLinkBuilder
-import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.paging.PagedList
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReportDataFactory
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerApprovedReportsDataFactory
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.getSingleLGA
-import com.anapfoundation.covid_19volunteerapp.model.LGA
 import com.anapfoundation.covid_19volunteerapp.model.Location
-import com.anapfoundation.covid_19volunteerapp.model.StatesList
-import com.anapfoundation.covid_19volunteerapp.model.response.Data
 import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.response.Reports
 import com.anapfoundation.covid_19volunteerapp.model.response.TopicResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.picasso.Picasso
 import com.utsman.recycling.extentions.Recycling
 import com.utsman.recycling.paged.setupAdapterPaged
-import com.utsman.recycling.setupAdapter
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_approved_report.*
 import kotlinx.android.synthetic.main.fragment_report_home.*
-import kotlinx.android.synthetic.main.layout_upload_gallery.view.*
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 /**
  * A simple [Fragment] subclass.
@@ -55,31 +49,26 @@ class ReportHomeFragment : DaggerFragment() {
     @Inject
     lateinit var storageRequest: StorageRequest
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
     //Set header
     val header by lazy {
         "Bearer $token"
     }
-    private val bottomSheetDialog by lazy {
-        BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
-    }
-    //inflate bottomSheetView
-    private val bottomSheetView by lazy {
-        LayoutInflater.from(requireContext()).inflate(
-            R.layout.layout_upload_gallery,
-            requireActivity().findViewById(R.id.uploadBottomSheetContainer)
-        )
-    }
+
 
 
     @Inject
     lateinit var reportDataFactory: ReportDataFactory
+    @Inject
+    lateinit var reviewerUnapprovedReportsDataFactory: ReviewerUnapprovedReportsDataFactory
+    @Inject
+    lateinit var reviewerApprovedReportsDataFactory: ReviewerApprovedReportsDataFactory
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
     val authViewModel: AuthViewModel by lazy {
@@ -91,7 +80,11 @@ class ReportHomeFragment : DaggerFragment() {
     val title: String by lazy {
         getName()
     }
-    var singleReport = ReportResponse()
+
+
+    var lga = ""
+    var state = ""
+    var total = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -104,10 +97,16 @@ class ReportHomeFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
+//        this.displayNotificationBell(
+//            authViewModel,
+//            loggedInUser,
+//            reviewerUnapprovedReportsDataFactory,
+//            reporterNotificationIcon,
+//            reporterNotificationCount
+//        )
+        getReportCount()
 
     }
-    var lga = ""
-    var state = ""
 
     @SuppressLint("SetTextI18n")
     override fun onResume() {
@@ -116,71 +115,56 @@ class ReportHomeFragment : DaggerFragment() {
         try {
 
             Log.i(title, "header $header")
-            recyclerView.setupAdapter<ReportResponse>(R.layout.report_item){ adapter, context, list ->
+            recyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item){ adapter, context, list ->
                 bind { itemView, position, item ->
-                    Log.i(title, "report items ${item}")
+                    Log.i(title, "report items ${list}")
 
-                    val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
-                    val ratingResponse = observeRequest(ratingRequest, null, null)
-                    ratingResponse.observe(viewLifecycleOwner, Observer {
-                        val(bool, result) = it
-                        when(bool){
-                            true -> {
-                                val res = result as TopicResponse
-                                val topic =res.data.filter {
-                                    it.topic != ""
-                                }
-                                itemView.reportTopic.text = topic[0].topic
+                    getTopicAndRatingById(item, itemView)
 
-                            }
-                        }
-                    })
-
-                    val locationRequest = userViewModel.getSingleLGA("${item?.localGovernment}")
-                    val stateResponse = observeRequest(locationRequest, null, null)
-                    stateResponse.observe(viewLifecycleOwner, Observer {
-                        val(bool, result) = it
-                        when(bool){
-                            true -> {
-                                val res = result as Location
-                                 lga = res.data.localGovernment.toString()
-                                 state = res.data.stateName.toString()
-                                Log.i("State", "${res.data.stateName}")
-                                itemView.reportLocation.text = "$lga, $state"
-
-
-                            }
-                        }
-                    })
+                    getStateAndLgaById(item, itemView)
 
                     itemView.reportStory.text = item?.story
 
-                    Log.i(title, "${singleReport.mediaURL}")
 
                     itemView.setOnClickListener {
-                        singleReport.id = item?.id
-                        singleReport.topic = itemView.reportTopic.text.toString()
-                        singleReport.story = itemView.reportStory.text.toString()
-                        singleReport.mediaURL = item?.mediaURL
-
-                        singleReport.localGovernment = lga
-                        singleReport.state = state
+                        var singleReport = prepareSingleReport(item, itemView)
                         val action = ReportHomeFragmentDirections.toSingleReportScreen()
                         action.singleReport = singleReport
                         Navigation.findNavController(requireView()).navigate(action)
+                        sendReportToSingleReportScreen()
 
                         Log.i(title, "report items ${singleReport.localGovernment}")
                     }
 
-                    Picasso.get().load(item?.mediaURL)
-                        .placeholder(R.drawable.applogo)
-                        .into(itemView.reportImage)
-                    itemView.reportImage.clipToOutline = true
+                    loadItemImage(item, itemView)
+                }
+                addLoader(R.layout.network_state_loader) {
+                    idLoader = R.id.progress_circular
+                    idTextError = R.id.error_text_view
+                }
+                authViewModel.getReportss(reportDataFactory).observe(viewLifecycleOwner, Observer {
+                    submitList(it)
+                })
+
+                authViewModel.getReporterLoader(reportDataFactory).observe(viewLifecycleOwner, Observer {
+                    reportDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
+                        val code = it.code
+                        if(code == 401){
+                            requireContext().toast(it.message.toString())
+                            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+                        }
+                    })
+                    submitNetwork(it)
+                })
+            }
+            if (loggedInUser?.totalReports == 0.toLong()){
+                noReportHome.show()
+                noReportHome.setOnClickListener {
+                    findNavController().navigate(R.id.createReportFragment)
                 }
 
-
-                setupData(this, 100, 0)
-
+            }else{
+                noReportHome.hide()
 
             }
 
@@ -188,35 +172,136 @@ class ReportHomeFragment : DaggerFragment() {
             Log.e(title, e.message)
         }
 
-        notificationIcon.setOnClickListener {
-            findNavController().navigate(R.id.notificationFragment)
+        reporterNotificationIcon.setOnClickListener {
+            findNavController().navigate(R.id.reviewerScreenFragment)
         }
 
 
+    }
+
+    private fun getReportCount() {
+        when (loggedInUser?.isReviewer) {
+            true -> {
+
+                var unApprovedTotal = 0
+                authViewModel.getUnapprovedReports(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    it.addWeakCallback(null, object :PagedList.Callback(){
+                        override fun onChanged(position: Int, count: Int) {}
+
+                        override fun onInserted(position: Int, count: Int) {
+                            unApprovedTotal += count
+                            Log.i(title, "NewUnapprovedcount ${unApprovedTotal}")
+                            reporterNotificationCount.text = "${unApprovedTotal}"
+                            loggedInUser?.totalUnapprovedReports = unApprovedTotal.toLong()
+                            storageRequest.saveData(loggedInUser, "loggedInUser")
+                        }
+
+                        override fun onRemoved(position: Int, count: Int) {}
+
+                    })
+                })
+                var approvedTotal = 0
+                authViewModel.getApprovedReports(reviewerApprovedReportsDataFactory)
+                    .observe(viewLifecycleOwner, Observer {
+
+                        it.addWeakCallback(null, object: PagedList.Callback(){
+                            override fun onChanged(position: Int, count: Int) {}
+
+                            override fun onInserted(position: Int, count: Int) {
+                                approvedTotal += count
+                                Log.i(title, "NewApprovedcount ${approvedTotal}")
+                                loggedInUser?.totalApprovedReports = approvedTotal.toLong()
+                            }
+
+                            override fun onRemoved(position: Int, count: Int) {}
+
+                        })
+                    })
+                reporterNotificationIcon.show()
+                reporterNotificationCount.show()
+            }
+            false -> reporterNotificationIcon.hide()
+        }
+    }
+
+    private fun prepareSingleReport(
+        item: ReportResponse?,
+        itemView: View
+    ): ReportResponse {
+        var singleReport = ReportResponse()
+        singleReport.id = item?.id
+        singleReport.topic = itemView.reportTopic.text.toString()
+        singleReport.story = itemView.reportStory.text.toString()
+        singleReport.mediaURL = item?.mediaURL
+        val location = itemView.reportLocation.text.toString()
+        val lga = location.split(",")[0]
+        val state = location.split(",")[1]
+        singleReport.localGovernment = lga
+        Log.i(title, "LGA ${singleReport.localGovernment}  lga $lga")
+        singleReport.state = state
+        return singleReport
+    }
+
+    private fun loadItemImage(
+        item: ReportResponse?,
+        itemView: View
+    ) {
+        Picasso.get().load(item?.mediaURL)
+            .placeholder(R.drawable.no_image_icon)
+            .into(itemView.reportImage)
+        itemView.reportImage.clipToOutline = true
+    }
+
+    private fun sendReportToSingleReportScreen() {
 
     }
 
-    // function for setup data
-    private fun setupData(recycling: Recycling<ReportResponse>, first: Long?, after:Long?) {
-        val request =  authViewModel.getReports(header, first, after)
-        val response = observeRequest(request, null, null)
-        response.observe(viewLifecycleOwner, Observer {
+
+    private fun getTopicAndRatingById(
+        item: ReportResponse?,
+        itemView: View
+    ) {
+        val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
+        val ratingResponse = observeRequest(ratingRequest, null, null)
+        ratingResponse.observe(viewLifecycleOwner, Observer {
             val (bool, result) = it
-            when(bool){
+            when (bool) {
                 true -> {
-                    val res = result as Reports
-                    // submit list from viewmodel into recycling
-                    recycling.submitList(result.data)
+                    val res = result as TopicResponse
+                    val topic = res.data.filter {
+                        it.topic != ""
+                    }
+                    itemView.reportTopic.text = topic[0].topic
                 }
             }
-
-
         })
-
     }
+
+    private fun getStateAndLgaById(
+        item: ReportResponse?,
+        itemView: View
+    ) {
+        val locationRequest = userViewModel.getSingleLGA("${item?.localGovernment}")
+        val stateResponse = observeRequest(locationRequest, null, null)
+        stateResponse.observe(viewLifecycleOwner, Observer {
+            val (bool, result) = it
+            when (bool) {
+                true -> {
+                    val res = result as Location
+                    lga = res.data.localGovernment.toString()
+                    state = res.data.stateName.toString()
+                    Log.i("State", "${res.data.stateName}")
+                    itemView.reportLocation.text = "$lga, $state"
+
+                }
+            }
+        })
+    }
+
     override fun onPause() {
         super.onPause()
         Log.i(title, "onpause")
+        total = 0
     }
 
 

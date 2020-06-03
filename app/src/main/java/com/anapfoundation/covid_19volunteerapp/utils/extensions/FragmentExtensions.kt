@@ -8,9 +8,11 @@ import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
@@ -18,21 +20,45 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagedList
+import androidx.recyclerview.widget.RecyclerView
 import com.anapfoundation.covid_19volunteerapp.R
+import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
+import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.LGA
+import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
+import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tfb.fbtoast.FBCustomToast
+import com.tfb.fbtoast.FBToast
+import com.utsman.recycling.paged.setupAdapterPaged
+import kotlinx.android.synthetic.main.fragment_report_home.*
+import kotlinx.android.synthetic.main.fragment_signin.*
+import kotlinx.android.synthetic.main.fragment_single_report.*
+import kotlinx.android.synthetic.main.report_item.view.*
 import java.lang.Exception
 
-inline fun Fragment.getName():String{
-    return this::class.qualifiedName!!
-}
+/**
+ * Get fragment name
+ *
+ * @return
+ */
+//inline fun Fragment.getName(): String {
+//    return this::class.qualifiedName!!
+//}
 
-inline fun Fragment.showStatusBar(){
+/**
+ * show status bar
+ *
+ */
+inline fun Fragment.showStatusBar() {
     requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
+    requireActivity().window.statusBarColor = resources.getColor(R.color.colorNeutral)
 }
 
 inline fun Fragment.hideKeyboard() {
@@ -43,23 +69,27 @@ inline fun Activity.hideKeyboard() {
     if (currentFocus == null) View(this) else currentFocus?.let { hideKeyboard(it) }
 }
 
+/**
+ * Hide keyboard
+ *
+ * @param view
+ */
 @SuppressLint("ServiceCast")
 inline fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-inline fun Context.toast(message:String){
+inline fun Context.toast(message: String) {
     val toastie = FBCustomToast(this)
     toastie.setMsg(message)
     toastie.setIcon(resources.getDrawable(R.drawable.applogo, theme))
     toastie.setGravity(Gravity.CENTER_VERTICAL)
 
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M){
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
         toastie.setBackgroundColor(resources.getColor(R.color.colorNeutral, theme))
         toastie.setToastMsgColor(resources.getColor(R.color.colorPrimaryDark, theme))
-    }
-    else{
+    } else {
         toastie.setBackgroundColor(resources.getColor(R.color.colorNeutral))
         toastie.setToastMsgColor(resources.getColor(R.color.colorPrimaryDark))
     }
@@ -67,7 +97,40 @@ inline fun Context.toast(message:String){
 
 }
 
-inline fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner, stateLgaMap:HashMap<String, List<CityClass>> ) {
+//fun BottomSheetDialog.inflate(layout: Int, activity: Activity):View{
+//    return LayoutInflater.from(this.context).inflate(
+//        layout,
+//        activity.findViewById(R.id.uploadBottomSheetContainer)
+//    )
+//}
+
+/**
+ * Display error toast
+ *
+ * @param message
+ */
+fun Context.errorToast(message: String) {
+    val toastie = FBCustomToast(this)
+    toastie.setMsg(message)
+    toastie.setIcon(resources.getDrawable(R.drawable.bad, theme))
+    toastie.setGravity(Gravity.CENTER_VERTICAL)
+
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        toastie.setBackgroundColor(resources.getColor(R.color.errorRed, theme))
+        toastie.setToastMsgColor(resources.getColor(R.color.colorNeutral, theme))
+    } else {
+        toastie.setBackgroundColor(resources.getColor(R.color.errorRed))
+        toastie.setToastMsgColor(resources.getColor(R.color.colorNeutral))
+    }
+    toastie.show()
+
+}
+
+inline fun Context.setSpinnerAdapterData(
+    spinnerOne: Spinner,
+    spinnerTwo: Spinner,
+    stateLgaMap: HashMap<String, List<CityClass>>
+) {
 
     val newList = arrayListOf<String>()
     newList.add("States")
@@ -88,7 +151,7 @@ inline fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner,
             position: Int,
             id: Long
         ) {
-            val context:Context = spinnerOne.context
+            val context: Context = spinnerOne.context
             val lga = ArrayList<String>()
             stateLgaMap.get(newList[position])!!.toList().mapTo(lga, {
                 it.name
@@ -105,11 +168,22 @@ inline fun Context.setSpinnerAdapterData(spinnerOne:Spinner, spinnerTwo:Spinner,
     }
 }
 
-inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Data>>,
-                                   progressBar: ProgressBar?, button: Button?
+/**
+ * Observe request response
+ * and manipulate progressbar
+ * and button behaviour
+ *
+ * @param request
+ * @param progressBar
+ * @param button
+ * @return
+ */
+inline fun Fragment.observeRequest(
+    request: LiveData<ServicesResponseWrapper<Data>>,
+    progressBar: ProgressBar?, button: Button?
 ): LiveData<Pair<Boolean, Any?>> {
     val result = MutableLiveData<Pair<Boolean, Any?>>()
-    val title:String by lazy{
+    val title: String by lazy {
         this.getName()
     }
 
@@ -118,6 +192,7 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
         try {
             val responseData = it.data
             val errorResponse = it.message
+            val errorCode = it.code
             when (it) {
                 is ServicesResponseWrapper.Loading<*> -> {
                     progressBar?.show()
@@ -134,23 +209,32 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
                 is ServicesResponseWrapper.Error -> {
                     progressBar?.hide()
                     button?.show()
-                    result.postValue(Pair(false, errorResponse))
-//                    requireContext().toast("$errorResponse")
+                    when(errorCode){
+                        0 -> {
+                            Log.i(title, "Errorcode ${errorCode}")
+                            requireContext().errorToast(requireContext().getLocalisedString(R.string.bad_network))
+                        }
+                        in 500..600 ->{
+                            requireContext().errorToast(requireContext().getLocalisedString(R.string.server_error))
+                        }
+                        else ->{
+                            result.postValue(Pair(false, errorResponse))
+                            requireContext().toast("$errorResponse")
+                        }
+                    }
+
                     Log.i(title, "Error ${it.message}")
                 }
-                is ServicesResponseWrapper.Logout ->{
+                is ServicesResponseWrapper.Logout -> {
                     progressBar?.hide()
                     button?.show()
+                    result.postValue(Pair(false, errorResponse))
                     requireContext().toast("$errorResponse")
                     Log.i(title, "Log out $errorResponse")
-                    val request = NavDeepLinkRequest.Builder
-                        .fromUri("android-app://anapfoundation.navigation/signin".toUri())
-                        .build()
-                    findNavController().navigate(request)
+                    navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
                 }
             }
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             Log.i(title, e.localizedMessage)
         }
 
@@ -159,7 +243,13 @@ inline fun Fragment.observeRequest(request: LiveData<ServicesResponseWrapper<Dat
     return result
 }
 
-inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline request:()->Unit) {
+/**
+ * Set enter key for form submission
+ *
+ * @param editText
+ * @param request
+ */
+inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline request: () -> Unit) {
     editText.setOnKeyListener { view, keyCode, keyEvent ->
         if (keyEvent.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
 
@@ -170,9 +260,41 @@ inline fun Fragment.initEnterKeyToSubmitForm(editText: EditText, crossinline req
     }
 }
 
-fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistrict:HashMap<String, String>,
-                           states:HashMap<String, String>, userViewModel: UserViewModel
+/**
+ * To set up local government spinner
+ *
+ * @param spinnerState
+ * @param spinnerLGA
+ * @param lgaAndDistrict
+ * @param states
+ * @param userViewModel
+ * @param user
+ * @param lgaHeader
+ */
+fun Fragment.setLGASpinner(
+    spinnerState: Spinner,
+    spinnerLGA: Spinner,
+    lgaAndDistrict: HashMap<String, String>,
+    states: HashMap<String, String>,
+    userViewModel: UserViewModel,
+    user: User? = null,
+    lgaHeader: String? = null
 ) {
+
+    var defaultList = arrayListOf<String>()
+    if (user != null) {
+        Log.i("Spinner", "${user.lgName.toString()}")
+        defaultList.add(0, user.lgName.toString())
+    } else if (lgaHeader != null) {
+        defaultList.add(0, lgaHeader)
+    }
+    var adapterLga = ArrayAdapter(
+        requireContext(),
+        R.layout.support_simple_spinner_dropdown_item,
+        defaultList
+    )
+    spinnerLGA.adapter = adapterLga
+
     spinnerState.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
         override fun onNothingSelected(parent: AdapterView<*>?) {
             TODO("Not yet implemented")
@@ -184,9 +306,11 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
             position: Int,
             id: Long
         ) {
+
             lgaAndDistrict.clear()
             val selectedState = spinnerState.selectedItem
-            val stateID = states.get(selectedState)
+            val valueOfStateSelected = states.get(selectedState)?.split(" ")
+            val stateID = valueOfStateSelected?.get(0).toString()
             val request = userViewModel.getLocal(stateID.toString(), "47", "")
             val response = observeRequest(request, null, null)
             response.observe(viewLifecycleOwner, Observer {
@@ -198,14 +322,26 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
                     }, {
                         "${it.id} ${it.district}"
                     })
-                    val lga = lgaAndDistrict.keys.sorted()
-                    Log.i("$this", "LGA $lga")
-                    val adapterLga = ArrayAdapter(
-                        requireContext(),
-                        R.layout.support_simple_spinner_dropdown_item,
-                        lga
-                    )
-                    spinnerLGA.adapter = adapterLga
+                    val lga = lgaAndDistrict.keys.sorted().toMutableList()
+                    if (spinnerState.selectedItem == user?.stateName.toString()){
+                        lga.add(0, user?.lgName.toString())
+                        adapterLga = ArrayAdapter(
+                            requireContext(),
+                            R.layout.support_simple_spinner_dropdown_item,
+                            lga
+                        )
+                        spinnerLGA.adapter = adapterLga
+                    }else{
+                        Log.i("$this", "LGA $lga")
+                        adapterLga = ArrayAdapter(
+                            requireContext(),
+                            R.layout.support_simple_spinner_dropdown_item,
+                            lga
+                        )
+                        spinnerLGA.adapter = adapterLga
+                    }
+
+
 
                 } catch (e: Exception) {
 
@@ -217,11 +353,22 @@ fun Fragment.setLGASpinner(spinnerState:Spinner, spinnerLGA:Spinner, lgaAndDistr
 
     }
 }
-fun Fragment.navigateWithUri(uri: Uri){
+
+fun Fragment.logout(storageRequest: StorageRequest, bottomSheetDialog: BottomSheetDialog? = null) {
+    val user = storageRequest.checkUser("loggedInUser")
+    user?.loggedIn = false
+    user?.isReviewer = false
+    user?.token = ""
+    storageRequest.saveData(user, "loggedInUser")
+    bottomSheetDialog?.dismiss()
+    navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+
+}
+
+fun Fragment.navigateWithUri(uri: Uri) {
     val request = NavDeepLinkRequest.Builder
         .fromUri(uri)
         .build()
-
     findNavController().navigate(request)
 }
 
@@ -233,6 +380,60 @@ fun setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
         }
     }
 
+}
+
+internal fun Fragment.displayNotificationBell(
+    authViewModel: AuthViewModel, loggedInUser: User?,
+    dataFactory: ReviewerUnapprovedReportsDataFactory, icon: ImageView, countTextView: TextView
+) {
+    var total = 0
+    when (loggedInUser?.isReviewer) {
+        true -> {
+
+            authViewModel.getUnapprovedReportCount(dataFactory)
+                .observe(viewLifecycleOwner, Observer {
+                    total = total + it
+                    countTextView.text = "${total - 1}"
+
+                    Log.i("Counter", "counter $total")
+                })
+            icon.show()
+            countTextView.show()
+        }
+        false -> {
+            icon.hide()
+            countTextView.hide()
+        }
+    }
+}
+
+
+fun Fragment.getUnapprovedReportCounts(
+    recyclerView: RecyclerView,
+    dataFactory: ReviewerUnapprovedReportsDataFactory,
+    authViewModel: AuthViewModel
+):LiveData<Int> {
+    var dataReturn = MutableLiveData<Int>()
+    var total = 0
+    recyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item) { adapter, context, list ->
+        bind { itemView, position, item ->
+
+            itemView.reportImage.transitionName = item?.mediaURL
+            itemView.reportStory.text = item?.story
+
+        }
+        authViewModel.getUnapprovedReports(dataFactory).observe(viewLifecycleOwner, Observer {
+            submitList(it)
+        })
+
+    }
+    authViewModel.getUnapprovedReportCount(dataFactory).observe(viewLifecycleOwner, Observer {
+        total += it
+        dataReturn.postValue(total)
+        Log.i("UnapprovedCount", "NewUnapprovedcount $")
+
+    })
+    return dataReturn
 }
 
 

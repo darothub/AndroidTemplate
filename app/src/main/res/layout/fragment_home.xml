@@ -12,73 +12,23 @@
     tools:context=".ui.HomeFragment"
     >
     <androidx.constraintlayout.widget.ConstraintLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
        >
-
-        <!-- TODO: Update blank fragment layout -->
 
         <ImageView
             android:id="@+id/logo"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="50dp"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
             android:scaleType="fitCenter"
-            app:layout_constraintBottom_toTopOf="@id/anap"
-            app:layout_constraintEnd_toEndOf="@id/anap"
             app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toStartOf="@id/anap"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/logo_blue" />
-
-        <TextView
-            android:id="@+id/anap"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/anap"
-            android:textSize="55sp"
-            android:includeFontPadding="false"
-            android:lineSpacingExtra="0dp"
-            android:height="75dp"
-            android:textAllCaps="true"
-            app:layout_constraintLeft_toLeftOf="parent"
-            android:textStyle="bold"
-            app:layout_constraintTop_toBottomOf="@id/logo"
-            android:textColor="@color/colorNeutral"
-            />
-
-
-        <TextView
-            android:id="@+id/foundation"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:letterSpacing="0.6"
-            android:text="@string/foundation"
-            android:textColor="@color/colorNeutral"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="@id/anap"
-            app:layout_constraintTop_toBottomOf="@id/anap" />
-
-        <TextView
-            android:id="@+id/themeText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/themeText"
-            android:textSize="40sp"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            android:textStyle="normal"
-            android:lineHeight="50dp"
-            android:textColor="@color/colorNeutral"
-            app:layout_constraintVertical_bias="0.3"
-            app:layout_constraintTop_toBottomOf="@id/foundation"
-            app:layout_constraintBottom_toTopOf="@id/homeProgressView1"
-            />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/homeProgressView1"
+            app:layout_constraintVertical_bias=".5"
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/logo_white" />
 
         <com.skydoves.progressview.ProgressView
             android:id="@+id/homeProgressView1"
