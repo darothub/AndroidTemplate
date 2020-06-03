@@ -177,7 +177,7 @@ class AuthViewModel @Inject constructor(
         responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>,
         t: Throwable
     ) {
-        responseLiveData.postValue(ServicesResponseWrapper.Error(t.localizedMessage, 502, null))
+        responseLiveData.postValue(ServicesResponseWrapper.Error(t.localizedMessage, 0, null))
     }
 
     internal fun onResponseTask(

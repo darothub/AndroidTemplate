@@ -210,6 +210,10 @@ inline fun Fragment.observeRequest(
                     progressBar?.hide()
                     button?.show()
                     when(errorCode){
+                        0 -> {
+                            Log.i(title, "Errorcode ${errorCode}")
+                            requireContext().errorToast(requireContext().getLocalisedString(R.string.bad_network))
+                        }
                         in 500..600 ->{
                             requireContext().errorToast(requireContext().getLocalisedString(R.string.server_error))
                         }

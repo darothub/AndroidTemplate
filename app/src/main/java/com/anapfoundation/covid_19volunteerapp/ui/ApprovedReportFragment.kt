@@ -138,9 +138,11 @@ class ApprovedReportFragment : DaggerFragment() {
                         singleReport.topic = itemView.reportTopic.text.toString()
                         singleReport.story = itemView.reportStory.text.toString()
                         singleReport.mediaURL = item?.mediaURL
-
-                        singleReport.localGovernment = lga
-                        singleReport.state = state
+                        val location = itemView.reportLocation.text.toString()
+                        val localGovernment = location.split(",")[0]
+                        val itemState = location.split(",")[1]
+                        singleReport.localGovernment = localGovernment
+                        singleReport.state = itemState
                         val action = ReviewerScreenFragmentDirections.fromReviewToSingleReport()
                         action.singleReport = singleReport
                         Navigation.findNavController(requireView()).navigate(action)
@@ -176,6 +178,9 @@ class ApprovedReportFragment : DaggerFragment() {
                         true -> {
                             if(loggedInUser?.totalApprovedReports == 0.toLong()){
                                 noReportApproved.show()
+                            }
+                            else{
+                                noReportApproved.hide()
                             }
                         }
                     }

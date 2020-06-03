@@ -149,9 +149,13 @@ class UnapprovedReportFragment : DaggerFragment() {
                         singleReport.topic = itemView.reportTopic.text.toString()
                         singleReport.story = itemView.reportStory.text.toString()
                         singleReport.mediaURL = item?.mediaURL
+                        val location = itemView.reportLocation.text.toString()
+                        val localGovernment = location.split(",")[0]
+                        val itemState = location.split(",")[1]
 
-                        singleReport.localGovernment = lga
-                        singleReport.state = state
+                        Log.i(title, "LOCAL $localGovernment")
+                        singleReport.localGovernment = localGovernment
+                        singleReport.state = itemState
                         val action = ReviewerScreenFragmentDirections.toApprovalFragment()
                         action.singleReport = singleReport
                         Navigation.findNavController(requireView()).navigate(action)

@@ -4,7 +4,7 @@
     <item
         android:id="@+id/reportHomeFragment"
         android:title="Home"
-        android:icon="@drawable/icon_state"/>
+        android:icon="@drawable/ic_home"/>
 
     <item
         android:id="@+id/createReportFragment"

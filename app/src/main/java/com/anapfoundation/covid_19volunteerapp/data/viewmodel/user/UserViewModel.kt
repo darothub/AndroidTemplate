@@ -183,7 +183,7 @@ class UserViewModel @Inject constructor(
         responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>,
         t: Throwable
     ) {
-        responseLiveData.postValue(ServicesResponseWrapper.Error(t.localizedMessage, 502, null))
+        responseLiveData.postValue(ServicesResponseWrapper.Error(t.localizedMessage, 0, null))
     }
     internal fun onResponseTask(response: Response<Data>, responseLiveData: MutableLiveData<ServicesResponseWrapper<Data>>){
         val res = response.body()

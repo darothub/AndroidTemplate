@@ -137,7 +137,7 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
     val capture by lazy {
-        Bitmap.createBitmap(300, 300, Bitmap.Config.ARGB_8888)
+        Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888)
     }
     val canvas by lazy {
         Canvas(capture)
