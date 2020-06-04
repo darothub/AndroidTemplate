@@ -110,10 +110,15 @@ class ReportApprovalFragment : DaggerFragment() {
                 storyLen <= 80 -> reportApprovalStory.text = story
                 storyLen > 80 -> {
                     val fullStopIndex = story.indexOf(".", 100)
-                    val contdText = story.substring(fullStopIndex+1)
-                    reportApprovalStory.text = story.substring(0..fullStopIndex)
-                    reportApprovalStoryContd.text = contdText
-                    reportApprovalStoryContd.show()
+                    if (fullStopIndex == -1){
+                        reportApprovalStory.text = story
+                    }else{
+                        val contdText = story.substring(fullStopIndex+1)
+                        reportApprovalStory.text = story.substring(0..fullStopIndex)
+                        reportApprovalStoryContd.text = contdText
+                        reportApprovalStoryContd.show()
+                    }
+
                 }
             }
         }

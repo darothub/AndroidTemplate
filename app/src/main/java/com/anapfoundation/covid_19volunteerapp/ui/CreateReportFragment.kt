@@ -41,41 +41,43 @@ import javax.inject.Inject
  */
 class CreateReportFragment : DaggerFragment() {
 
+    //Get class title
     val title: String by lazy {
         getName()
     }
-    private val nav by lazy {
-        Navigation.findNavController(createReportAppBar)
-    }
 
-    private val navController by lazy {
-        findNavController()
-    }
-
+    //Declare hash map for check box values
     val checkBoxMap by lazy {
         hashMapOf<Int, Topic>()
     }
+    //Declare hash map for check box views
     val checkBoxMapper by lazy {
         hashMapOf<Int, View>()
     }
-    val getUser by lazy {
+    //Get logged in user
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
+    //Get logged in user token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
+    //Set header
     val header by lazy {
         "Bearer $token"
     }
 
+    //Set bottom dialog
     val bottomSheetDialog by lazy {
         BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
     }
+    //Inflate bottom view
     val bottomSheetView by lazy {
         LayoutInflater.from(requireContext()).inflate(
             R.layout.layout_bottom_sheet, requireActivity().findViewById(R.id.bottomSheetContainer)
         )
     }
+    //New report
     val newReport by lazy {
         Report(
             "",
@@ -104,13 +106,6 @@ class CreateReportFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_create_report, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-//        NavigationUI.setupWithNavController(createReportToolbar, nav)
-
-
-    }
 
     override fun onResume() {
         super.onResume()
@@ -141,12 +136,15 @@ class CreateReportFragment : DaggerFragment() {
                     bottomSheetView.reportQuestionHeading.text = item?.topic
                 }
             }
+            //Adds network state layout
             addLoader(R.layout.network_state_loader) {
                 idLoader = R.id.progress_circular
                 idTextError = R.id.error_text_view
             }
+            //Set layout manager
             setLayoutManager(GridLayoutManager(requireContext(), 2))
 
+            //Set recyclerview data
             setRecyclerViewData(this, topics)
 
         }
@@ -166,20 +164,34 @@ class CreateReportFragment : DaggerFragment() {
 
     }
 
+    /**
+     * Set recyclerview data
+     *
+     * @param recycling
+     * @param topics
+     */
     private fun setRecyclerViewData(
         recycling: Recycling<Topic>,
         topics: MediatorLiveData<TopicResponse>
     ) {
+        //Get and observe topics
         topics.observe(viewLifecycleOwner, Observer {
 
             recycling.submitList(it.data)
         })
 
+        //Get and Observer network state
         authViewModel.getAuthLoader().observe(viewLifecycleOwner, Observer {
             recycling.submitNetworkState(it)
         })
     }
 
+    /**
+     * Get topics
+     *
+     * @param header
+     * @return
+     */
     private fun getTopic(header: String): MediatorLiveData<TopicResponse> {
         val data = MediatorLiveData<TopicResponse>()
         val request = authViewModel.getTopic(header)
@@ -194,13 +206,17 @@ class CreateReportFragment : DaggerFragment() {
             }
 
         }
-
-
-
         return data
 
     }
 
+    /**
+     * Get rating
+     *
+     * @param topicID
+     * @param header
+     * @return
+     */
     private fun getRating(topicID: String, header: String): MediatorLiveData<TopicResponse> {
         val data = MediatorLiveData<TopicResponse>()
         val request = authViewModel.getRating(topicID, header)
@@ -216,6 +232,11 @@ class CreateReportFragment : DaggerFragment() {
         return data
     }
 
+    /**
+     * Set up bottom sheet
+     *
+     * @param item
+     */
     private fun setUpBottomSheet(item: List<Topic>) {
 
         val myList = item
@@ -229,16 +250,19 @@ class CreateReportFragment : DaggerFragment() {
         submitRatingSelection()
     }
 
+    /**
+     * Submit rating selection
+     *
+     */
     private fun submitRatingSelection() {
         bottomSheetView.selectBtn.setOnClickListener {
             val checkBoxesKeys = checkBoxMap.keys
-
-            Log.i(title, "checkBoxMapChanged ${checkBoxMap}")
+//            Log.i(title, "checkBoxMapChanged ${checkBoxMap}")
             if (ratingList.isEmpty()) {
                 bottomSheetDialog.dismiss()
                 val action = CreateReportFragmentDirections.toUploadFragment()
                 action.report = newReport
-                findNavController().navigate(action)
+                goto(action)
             } else if (checkBoxesKeys.size != 1) {
                 requireContext().toast(requireContext().getLocalisedString(R.string.pick_one_rating))
             } else {
@@ -249,12 +273,16 @@ class CreateReportFragment : DaggerFragment() {
                 Log.i(title, "new report " + newReport.topic + " " + newReport.rating)
                 val action = CreateReportFragmentDirections.toUploadFragment()
                 action.report = newReport
-                findNavController().navigate(action)
+                goto(action)
             }
 
         }
     }
 
+    /**
+     * Clear bottom dialog
+     *
+     */
     private fun clearBottomDialogOnDismiss() {
         bottomSheetDialog.setOnDismissListener {
             checkBoxMap.clear()
@@ -262,14 +290,19 @@ class CreateReportFragment : DaggerFragment() {
         }
     }
 
+    /**
+     * Set data for bottom sheet recyclerview
+     *
+     * @param myList
+     */
     private fun setupBottomSheetRecyclerView(myList: List<Topic>) {
         bottomSheetView.reportQuestionRecyclerView.setupAdapter<Topic>(R.layout.options_item) { adapter, context, list ->
             bind { itemView, position, item ->
 
                 when {
-                    item?.rating?.length!! >= 1 -> itemView.optionText.text = item.rating
+                    item?.rating?.length!! >= 1 -> itemView.optionText.text = item.rating.capitalize()
                     else -> bottomSheetView.selectBtn.setOnClickListener {
-                        findNavController().navigate(R.id.reportUploadFragment)
+                        goto(R.id.reportUploadFragment)
                     }
                 }
 
@@ -280,17 +313,16 @@ class CreateReportFragment : DaggerFragment() {
 
                 if (two != null && three != null) {
                     viewRadioClickImpl(one, two, three)
-                    radioClickImpl(one.optionRadio, two.optionRadio, three.optionRadio)
+                    viewRadioClickImpl(one.optionRadio, two.optionRadio, three.optionRadio)
                 }
                 if (two != null && three != null ) {
                     viewRadioClickImpl(two, one, three)
-                    radioClickImpl(two.optionRadio, one.optionRadio,three.optionRadio)
+                    viewRadioClickImpl(two.optionRadio, one.optionRadio,three.optionRadio)
                 }
                 if (two != null && three != null) {
                     viewRadioClickImpl(three, one, two)
-                    radioClickImpl(three.optionRadio, two.optionRadio, one.optionRadio)
+                    viewRadioClickImpl(three.optionRadio, two.optionRadio, one.optionRadio)
                 }
-
 
                 ratingList.add(item.rating)
                 itemView.optionRadio.setOnCheckedChangeListener { buttonView, isChecked ->
@@ -306,7 +338,13 @@ class CreateReportFragment : DaggerFragment() {
         }
     }
 
-    fun viewRadioClickImpl(view: View, vararg views: View){
+    /**
+     * View and radio manipulation respect to radio events
+     *
+     * @param view
+     * @param views
+     */
+   private fun viewRadioClickImpl(view: View, vararg views: View){
         view.setOnClickListener {
             view.optionRadio.isChecked = true
             for (otherView in views){
@@ -314,7 +352,14 @@ class CreateReportFragment : DaggerFragment() {
             }
         }
     }
-    fun radioClickImpl(radio: ToggleableRadioButton, vararg radios: ToggleableRadioButton){
+
+    /**
+     * View and radio manipulation respect to radio events
+     *
+     * @param radio
+     * @param radios
+     */
+    private fun viewRadioClickImpl(radio: ToggleableRadioButton, vararg radios: ToggleableRadioButton){
         radio.setOnClickListener {
             radio.optionRadio.isChecked = true
             for (otherView in radios){

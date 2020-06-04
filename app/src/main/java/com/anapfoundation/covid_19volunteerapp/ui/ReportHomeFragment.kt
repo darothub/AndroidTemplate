@@ -97,13 +97,6 @@ class ReportHomeFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-//        this.displayNotificationBell(
-//            authViewModel,
-//            loggedInUser,
-//            reviewerUnapprovedReportsDataFactory,
-//            reporterNotificationIcon,
-//            reporterNotificationCount
-//        )
         getReportCount()
 
     }
@@ -130,10 +123,9 @@ class ReportHomeFragment : DaggerFragment() {
                         var singleReport = prepareSingleReport(item, itemView)
                         val action = ReportHomeFragmentDirections.toSingleReportScreen()
                         action.singleReport = singleReport
-                        Navigation.findNavController(requireView()).navigate(action)
-                        sendReportToSingleReportScreen()
+                        goto(action)
 
-                        Log.i(title, "report items ${singleReport.localGovernment}")
+//                        Log.i(title, "report items ${singleReport.localGovernment}")
                     }
 
                     loadItemImage(item, itemView)
@@ -160,7 +152,7 @@ class ReportHomeFragment : DaggerFragment() {
             if (loggedInUser?.totalReports == 0.toLong()){
                 noReportHome.show()
                 noReportHome.setOnClickListener {
-                    findNavController().navigate(R.id.createReportFragment)
+                    goto(R.id.createReportFragment)
                 }
 
             }else{
@@ -173,12 +165,16 @@ class ReportHomeFragment : DaggerFragment() {
         }
 
         reporterNotificationIcon.setOnClickListener {
-            findNavController().navigate(R.id.reviewerScreenFragment)
+            goto(R.id.reviewerScreenFragment)
         }
 
 
     }
 
+    /**
+     * Get unapproved and approved reports count
+     *
+     */
     private fun getReportCount() {
         when (loggedInUser?.isReviewer) {
             true -> {
@@ -190,8 +186,8 @@ class ReportHomeFragment : DaggerFragment() {
 
                         override fun onInserted(position: Int, count: Int) {
                             unApprovedTotal += count
-                            Log.i(title, "NewUnapprovedcount ${unApprovedTotal}")
-                            reporterNotificationCount.text = "${unApprovedTotal}"
+//                            Log.i(title, "NewUnapprovedcount $unApprovedTotal")
+                            reporterNotificationCount.text = "$unApprovedTotal"
                             loggedInUser?.totalUnapprovedReports = unApprovedTotal.toLong()
                             storageRequest.saveData(loggedInUser, "loggedInUser")
                         }
@@ -242,6 +238,9 @@ class ReportHomeFragment : DaggerFragment() {
         return singleReport
     }
 
+    /***
+     * load image from itemView
+     */
     private fun loadItemImage(
         item: ReportResponse?,
         itemView: View
@@ -251,11 +250,6 @@ class ReportHomeFragment : DaggerFragment() {
             .into(itemView.reportImage)
         itemView.reportImage.clipToOutline = true
     }
-
-    private fun sendReportToSingleReportScreen() {
-
-    }
-
 
     private fun getTopicAndRatingById(
         item: ReportResponse?,
@@ -277,6 +271,9 @@ class ReportHomeFragment : DaggerFragment() {
         })
     }
 
+    /***
+     * Get state and lga by id
+     */
     private fun getStateAndLgaById(
         item: ReportResponse?,
         itemView: View
@@ -290,9 +287,8 @@ class ReportHomeFragment : DaggerFragment() {
                     val res = result as Location
                     lga = res.data.localGovernment.toString()
                     state = res.data.stateName.toString()
-                    Log.i("State", "${res.data.stateName}")
+//                    Log.i("State", "${res.data.stateName}")
                     itemView.reportLocation.text = "$lga, $state"
-
                 }
             }
         })
@@ -300,20 +296,11 @@ class ReportHomeFragment : DaggerFragment() {
 
     override fun onPause() {
         super.onPause()
-        Log.i(title, "onpause")
+//        Log.i(title, "onpause")
         total = 0
     }
 
 
-    override fun onStart() {
-        super.onStart()
-        Log.i(title, "onStart")
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        Log.i(title, "detached")
-    }
 
 
 

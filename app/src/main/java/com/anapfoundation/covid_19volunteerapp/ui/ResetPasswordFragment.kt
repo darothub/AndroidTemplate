@@ -70,7 +70,7 @@ class ResetPasswordFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
 
-        Log.i(title, "onStart")
+//        Log.i(title, "onStart")
         arguments?.let {
             token = ResetPasswordFragmentArgs.fromBundle(it).token!!
         }
@@ -78,10 +78,10 @@ class ResetPasswordFragment : DaggerFragment() {
         header += token
         requireActivity().onBackPressedDispatcher.addCallback {
 
-            findNavController().navigate(R.id.signinFragment)
+            goto(R.id.signinFragment)
         }
 
-        Log.i(title, "token $token")
+//        Log.i(title, "token $token")
     }
 
     override fun onResume() {
@@ -106,6 +106,10 @@ class ResetPasswordFragment : DaggerFragment() {
 
     }
 
+    /**
+     * Reset password request
+     *
+     */
     private fun resetPasswordRequest() {
         val password = resetPasswordPasswordEdit.text.toString().trim()
         val checkForEmpty =
@@ -131,6 +135,12 @@ class ResetPasswordFragment : DaggerFragment() {
         }
     }
 
+    /**
+     * Handles request live response
+     *
+     * @param bool
+     * @param result
+     */
     private fun onRequestResponseTask(
         bool: Boolean,
         result: Any?
@@ -141,7 +151,7 @@ class ResetPasswordFragment : DaggerFragment() {
                 requireContext().toast(res.data.toString())
 
                 activity?.finish()
-                Log.i(title, "result of reset ${res.data}")
+//                Log.i(title, "result of reset ${res.data}")
             }
             else -> Log.i(title, "error $result")
         }
@@ -152,7 +162,7 @@ class ResetPasswordFragment : DaggerFragment() {
     override fun onPause() {
         super.onPause()
 
-        Log.i(title, "onPause")
+//        Log.i(title, "onPause")
     }
 
 }

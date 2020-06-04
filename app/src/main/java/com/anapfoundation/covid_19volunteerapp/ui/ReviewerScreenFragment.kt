@@ -103,18 +103,11 @@ class ReviewerScreenFragment : DaggerFragment() {
                 reviewerNotificationCount.text = loggedInUser?.totalUnapprovedReports.toString()
             }
         }
-//        this.displayNotificationBell(
-//            authViewModel,
-//            loggedInUser,
-//            reviewerUnapprovedReportsDataFactory,
-//            reviewerNotificationIcon,
-//            reviewerNotificationCount
-//        )
     }
     override fun onResume() {
         super.onResume()
 
-        Log.i(title, "Onresume")
+//        Log.i(title, "Onresume")
         val pageAdapter = ViewPagerAdapter(childFragmentManager, lifecycle)
         viewPager2.adapter = pageAdapter
         var names = arrayListOf<String>("Unapproved reports", "Approved reports")
@@ -122,17 +115,8 @@ class ReviewerScreenFragment : DaggerFragment() {
             tab.text = names[position]
         }.attach()
 
-
-
-
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        Log.i(title, "onStart")
-
-    }
 
 
 }

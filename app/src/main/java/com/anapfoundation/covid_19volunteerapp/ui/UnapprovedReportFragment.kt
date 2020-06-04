@@ -71,8 +71,7 @@ class UnapprovedReportFragment : DaggerFragment() {
     var state = ""
 
     var singleReport = ReportResponse()
-    var total = 0
-    val countLiveData = MutableLiveData<Int>()
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,25 +85,30 @@ class UnapprovedReportFragment : DaggerFragment() {
         super.onStart()
 
 
-        Log.i(title, "Onstart")
+//        Log.i(title, "Onstart")
     }
 
 
     override fun onPause() {
         super.onPause()
 
-        Log.i(title, "onPause")
+//        Log.i(title, "onPause")
     }
 
     override fun onResume() {
         super.onResume()
         setRecyclerViewForUnapprovedReports()
-        Log.i(title, "OnResume")
+//        Log.i(title, "OnResume")
     }
+
+    /**
+     * Set up recyclerview for unapproved reports
+     *
+     */
     private fun setRecyclerViewForUnapprovedReports() {
         try {
 
-            Log.i(title, "header $header")
+//            Log.i(title, "header $header")
             reviewerRecyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item) { adapter, context, list ->
 
                 bind { itemView, position, item ->
@@ -134,7 +138,7 @@ class UnapprovedReportFragment : DaggerFragment() {
                                 val res = result as Location
                                 lga = res.data.localGovernment.toString()
                                 state = res.data.stateName.toString()
-                                Log.i("State", "${res.data.stateName}")
+//                                Log.i("State", "${res.data.stateName}")
                                 itemView.reportLocation.text = "$lga, $state"
 
 
@@ -153,12 +157,12 @@ class UnapprovedReportFragment : DaggerFragment() {
                         val localGovernment = location.split(",")[0]
                         val itemState = location.split(",")[1]
 
-                        Log.i(title, "LOCAL $localGovernment")
+//                        Log.i(title, "LOCAL $localGovernment")
                         singleReport.localGovernment = localGovernment
                         singleReport.state = itemState
                         val action = ReviewerScreenFragmentDirections.toApprovalFragment()
                         action.singleReport = singleReport
-                        Navigation.findNavController(requireView()).navigate(action)
+                        goto(action)
                     }
 
                     Picasso.get().load(item?.mediaURL)
@@ -177,20 +181,24 @@ class UnapprovedReportFragment : DaggerFragment() {
                         submitList(it)
                     })
                 authViewModel.unApprovedReportLoader(reviewerUnapprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    //Observe unapproved report error code
                     reviewerUnapprovedReportsDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
                         val code = it.code
                         if(code == 401){
                             requireContext().toast(it.message.toString())
-                            navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
+                            goto("android-app://anapfoundation.navigation/signin".toUri())
                         }
                     })
                     submitNetwork(it)
-                    when(loggedInUser?.isReviewer){
-                        true -> {
-                            if(loggedInUser?.totalUnapprovedReports == 0.toLong()){
-                                noReportUnapproved.show()
-                            }
+                    if (loggedInUser?.totalReports == 0.toLong()){
+                        noReportUnapproved.show()
+                        noReportUnapproved.setOnClickListener {
+                            goto(R.id.createReportFragment)
                         }
+
+                    }else{
+                        noReportUnapproved.hide()
+
                     }
                 })
 

@@ -5,32 +5,28 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
-import com.anapfoundation.covid_19volunteerapp.model.*
-import com.anapfoundation.covid_19volunteerapp.model.response.Data
+import com.anapfoundation.covid_19volunteerapp.model.CityClass
+import com.anapfoundation.covid_19volunteerapp.model.StatesList
+import com.anapfoundation.covid_19volunteerapp.model.UserData
 import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.google.gson.Gson
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_address.*
-import java.lang.Exception
 import javax.inject.Inject
 
 
@@ -42,12 +38,12 @@ class AddressFragment : DaggerFragment() {
     val title: String by lazy {
         getName()
     }
-    val stateLgaMap: HashMap<String, List<CityClass>> by lazy {
-        requireActivity().readCitiesAndLgaData()
-    }
 
     val gson: Gson by lazy {
         Gson()
+    }
+    private val navController by lazy {
+        findNavController()
     }
 
     @Inject
@@ -100,25 +96,29 @@ class AddressFragment : DaggerFragment() {
         super.onActivityCreated(savedInstanceState)
 
 
-//        requireContext().setSpinnerAdapterData(spinnerState, spinnerLGA, stateLgaMap)
-
+        //receive userdata
         arguments?.let {
             userData = AddressFragmentArgs.fromBundle(it).userData!!
         }
+
+        //Customize button text
         submitBtn.text = requireContext().getLocalisedString(R.string.submit_text)
+
+        //Sign-up onclick event
         submitBtn.setOnClickListener {
             completeSignupRequest()
         }
+        //Signup on enter-key event
         initEnterKeyToSubmitForm(streetEditText) { completeSignupRequest() }
 
+        //Back button navigation
         addressBackBtn.setOnClickListener {
-            findNavController().navigate(R.id.signupFragment)
+            goto(R.id.signupFragment)
         }
 
+        //Phone back button navigation
         requireActivity().onBackPressedDispatcher.addCallback {
-
-            findNavController().navigate(R.id.signupFragment)
-
+            goto(R.id.signupFragment)
         }
 
     }
@@ -126,8 +126,13 @@ class AddressFragment : DaggerFragment() {
     override fun onResume() {
         super.onResume()
         getStateAndSendToSpinner()
+
     }
 
+    /**
+     * Get the state-list and inflate state spinner
+     *
+     */
     private fun getStateAndSendToSpinner() {
         val stateData = getStates("37", "")
         stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
@@ -136,6 +141,13 @@ class AddressFragment : DaggerFragment() {
         })
     }
 
+    /**
+     * Get states
+     *
+     * @param first
+     * @param after
+     * @return
+     */
     private fun getStates(first:String, after:String): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
         val request = userViewModel.getStates(first, after)
@@ -152,15 +164,24 @@ class AddressFragment : DaggerFragment() {
         return data
     }
 
+    /**
+     * Extract state-list from livedata
+     * and put inside hashmap(states)
+     * @param it
+     */
     private fun extractStateList(it: StatesList) {
         it.data.associateByTo(states, {
             it.state /* key */
         }, {
             "${it.id} ${it.zone}" /* value */
         })
-        Log.i(title, "${states.get("Bauchi")?.split(" ")?.get(0)}")
+//        Log.i(title, "${states.get("Bauchi")?.split(" ")?.get(0)}")
     }
 
+    /**
+     * Set up spinner
+     *
+     */
     private fun setupSpinner() {
         val stateArray = states.keys.sorted().toMutableList()
         stateArray.add(0, requireContext().getLocalisedString(R.string.states))
@@ -173,10 +194,13 @@ class AddressFragment : DaggerFragment() {
         spinnerState.adapter = adapterState
 
         setLGASpinner(spinnerState, spinnerLGA, lgaAndDistrict, states, userViewModel, null, "Local government")
-//        Log.i(title, "states $states")
     }
 
 
+    /**
+     * Sign-up request
+     *
+     */
     private fun completeSignupRequest() {
 
         val checkForEmpty =
@@ -227,6 +251,12 @@ class AddressFragment : DaggerFragment() {
 
     }
 
+    /**
+     * Handles sign-up request live response
+     *
+     * @param bool
+     * @param result
+     */
     private fun onRequestResponseTask(
         bool: Boolean,
         result: Any?
@@ -236,7 +266,7 @@ class AddressFragment : DaggerFragment() {
                 val res = result as UserResponse
                 requireContext().toast(requireContext().getLocalisedString(R.string.signup_successful))
                 val clearRegister = userViewModel.clearSavedRegisteredUser()
-                findNavController().navigate(R.id.signinFragment)
+                goto(R.id.signinFragment)
                 Log.i(title, "result of registration ${res.data}")
                 Log.i(title, "clearedRegister $clearRegister")
             }

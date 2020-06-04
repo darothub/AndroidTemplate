@@ -1,6 +1,7 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
@@ -46,14 +47,9 @@ class SignupFragment : DaggerFragment() {
     val spannableString: SpannableString by lazy {
         signinText.setAsSpannable()
     }
-    val color: Int by lazy {
-        resources.getColor(R.color.colorPrimary)
-    }
+    var color:Int = resources.getColor(R.color.colorPrimary, requireContext().theme)
     val textLen: Int by lazy {
         signinText.length
-    }
-    val progressBar by lazy {
-        signupBottom.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
     lateinit var signupBtn:Button
@@ -76,7 +72,7 @@ class SignupFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback {
-            findNavController().navigate(R.id.signinFragment)
+            goto(R.id.signinFragment)
         }
     }
 
@@ -108,19 +104,25 @@ class SignupFragment : DaggerFragment() {
             }
             return@doOnTextChanged
         }
-//        emailEdit.doOnTextChanged { text, start, count, after ->
-//            emailEdit
-//        }
         emailEdit.doAfterTextChanged {
             emailEdit.text.toString().toLowerCase()
         }
     }
 
+    /**
+     * Custom sign in link
+     * Using spannable string
+     */
     private fun setupSignInLink() {
         val start = 25
         val end = textLen
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            color = resources.getColor(R.color.colorPrimary, requireContext().theme)
+        } else {
+           color = resources.getColor(R.color.colorPrimary)
+        }
         spannableString.enableClickOnSubstring(start, end) {
-            findNavController().navigate(R.id.signinFragment)
+            goto(R.id.signinFragment)
         }
         spannableString.setColorToSubstring(color, start, end)
         spannableString.removeUnderLine(start, end)
@@ -128,6 +130,10 @@ class SignupFragment : DaggerFragment() {
         signinLink.movementMethod = LinkMovementMethod.getInstance()
     }
 
+    /**
+     * Sign up request
+     *
+     */
     private fun signupRequest() {
 
         val firstName = firstNameEdit.text.toString().trim()
@@ -158,7 +164,7 @@ class SignupFragment : DaggerFragment() {
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)
                 val action = SignupFragmentDirections.toAddressFragment()
                 action.userData = userData
-                findNavController().navigate(action)
+                goto(action)
             }
         }
 
@@ -168,7 +174,7 @@ class SignupFragment : DaggerFragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-        Log.i(title, "RestoredInstance")
+//        Log.i(title, "RestoredInstance")
         if (userViewModel.state.contains("registeringUser")){
             try {
                 val registeringUser = userViewModel.getSavedUserForm()
@@ -188,6 +194,12 @@ class SignupFragment : DaggerFragment() {
 
     }
 
+    /**
+     * validate email and password field
+     *
+     * @param text
+     * @param passwordStandard
+     */
     fun validateEmailAndPassword(text: CharSequence, passwordStandard:TextView) {
         val passwordPattern = Regex("""^[a-zA-Z0-9@$.!%*#?&]{6,}$""")
         val matchedPassword = passwordPattern.matches(text)

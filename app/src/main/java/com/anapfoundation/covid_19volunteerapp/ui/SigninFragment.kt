@@ -99,13 +99,6 @@ class SigninFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_signin, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-
-
-    }
-
     override fun onResume() {
         super.onResume()
 
@@ -143,7 +136,7 @@ class SigninFragment : DaggerFragment() {
 
         }
         forgotPassword.setOnClickListener {
-            findNavController().navigate(R.id.forgotPasswordFragment)
+            goto(R.id.forgotPasswordFragment)
         }
 
     }
@@ -167,7 +160,7 @@ class SigninFragment : DaggerFragment() {
         val returningUser = storageRequest.checkUser("loggedInUser")
 
         if (returningUser != null) {
-            Log.i("returning", "user $returningUser")
+//            Log.i("returning", "user $returningUser")
 //            requireContext().toast("$returningUser")
             when {
                 returningUser.rememberPassword -> {
@@ -184,7 +177,7 @@ class SigninFragment : DaggerFragment() {
         val start = 23
         val end = textLen
         spannableString.enableClickOnSubstring(start, end) {
-            findNavController().navigate(R.id.signupFragment)
+            goto(R.id.signupFragment)
         }
         spannableString.setColorToSubstring(color, start, end)
         spannableString.removeUnderLine(start, end)
@@ -218,6 +211,14 @@ class SigninFragment : DaggerFragment() {
 
     }
 
+    /**
+     * Handle response live data
+     *
+     * @param bool
+     * @param result
+     * @param emailAddress
+     * @param passwordString
+     */
     private fun onRequestResponseTask(
         bool: Boolean,
         result: Any?,
@@ -236,18 +237,23 @@ class SigninFragment : DaggerFragment() {
                 checkIsReviewer(userExist)
 
                 requireContext().toast(requireContext().getLocalisedString(R.string.successful))
-                Log.i("UserExist", "${userExist}")
-                Log.i(title, "message ${result.data}")
+//                Log.i("UserExist", "${userExist}")
+//                Log.i(title, "message ${result.data}")
 
 //                findNavController().popBackStack(R.id.reportFragment, false)
             }
             else -> {
                 requireContext().toast("$result")
-                Log.i(title, "error $result")
+//                Log.i(title, "error $result")
             }
         }
     }
 
+    /**
+     * Check if user is a reviewer
+     *
+     * @param userExist
+     */
     private fun checkIsReviewer(userExist: User) {
         val header = "Bearer ${userExist.token}"
         val request = authViewModel.getProfileData(header)
@@ -272,21 +278,21 @@ class SigninFragment : DaggerFragment() {
                     userExist.districtID = data.districtID
                     userExist.totalReports = data.totalReports
                     userExist.id = data.id
-                    Log.i("Local", "local ${data.lgName}")
+//                    Log.i("Local", "local ${data.lgName}")
                     when (data.isReviewer) {
                         true -> {
                             userExist.isReviewer = true
                             storageRequest.saveData(userExist, "loggedInUser")
-                            navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
+                            goto("android-app://anapfoundation.navigation/reportfrag".toUri())
 
                         }
                         false -> {
                             userExist.isReviewer = false
                             storageRequest.saveData(userExist, "loggedInUser")
-                            navigateWithUri("android-app://anapfoundation.navigation/reportfrag".toUri())
+                            goto("android-app://anapfoundation.navigation/reportfrag".toUri())
                         }
                     }
-                    Log.i(title, "Reviewer ${res.data.isReviewer}")
+//                    Log.i(title, "Reviewer ${res.data.isReviewer}")
                 }
                 else -> Log.i(title, "error $result")
             }

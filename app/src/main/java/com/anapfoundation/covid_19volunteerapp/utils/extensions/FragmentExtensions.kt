@@ -8,19 +8,17 @@ import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.KeyEvent
-import android.view.LayoutInflater
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.NavDeepLinkRequest
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.RecyclerView
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
@@ -35,37 +33,24 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tfb.fbtoast.FBCustomToast
-import com.tfb.fbtoast.FBToast
 import com.utsman.recycling.paged.setupAdapterPaged
-import kotlinx.android.synthetic.main.fragment_report_home.*
-import kotlinx.android.synthetic.main.fragment_signin.*
-import kotlinx.android.synthetic.main.fragment_single_report.*
 import kotlinx.android.synthetic.main.report_item.view.*
-import java.lang.Exception
 
-/**
- * Get fragment name
- *
- * @return
- */
-//inline fun Fragment.getName(): String {
-//    return this::class.qualifiedName!!
-//}
 
 /**
  * show status bar
  *
  */
-inline fun Fragment.showStatusBar() {
+ fun Fragment.showStatusBar() {
     requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     requireActivity().window.statusBarColor = resources.getColor(R.color.colorNeutral)
 }
 
-inline fun Fragment.hideKeyboard() {
+ fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
 
-inline fun Activity.hideKeyboard() {
+ fun Activity.hideKeyboard() {
     if (currentFocus == null) View(this) else currentFocus?.let { hideKeyboard(it) }
 }
 
@@ -75,12 +60,17 @@ inline fun Activity.hideKeyboard() {
  * @param view
  */
 @SuppressLint("ServiceCast")
-inline fun Context.hideKeyboard(view: View) {
+fun Context.hideKeyboard(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-inline fun Context.toast(message: String) {
+/**
+ * Show toast message
+ *
+ * @param message
+ */
+fun Context.toast(message: String) {
     val toastie = FBCustomToast(this)
     toastie.setMsg(message)
     toastie.setIcon(resources.getDrawable(R.drawable.applogo, theme))
@@ -97,12 +87,6 @@ inline fun Context.toast(message: String) {
 
 }
 
-//fun BottomSheetDialog.inflate(layout: Int, activity: Activity):View{
-//    return LayoutInflater.from(this.context).inflate(
-//        layout,
-//        activity.findViewById(R.id.uploadBottomSheetContainer)
-//    )
-//}
 
 /**
  * Display error toast
@@ -354,6 +338,12 @@ fun Fragment.setLGASpinner(
     }
 }
 
+/**
+ * Log out
+ *
+ * @param storageRequest
+ * @param bottomSheetDialog
+ */
 fun Fragment.logout(storageRequest: StorageRequest, bottomSheetDialog: BottomSheetDialog? = null) {
     val user = storageRequest.checkUser("loggedInUser")
     user?.loggedIn = false
@@ -372,8 +362,13 @@ fun Fragment.navigateWithUri(uri: Uri) {
     findNavController().navigate(request)
 }
 
-//Event listener for upload card or upload forward icon
-fun setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
+/**
+ * Event listener for upload card or upload forward icon
+ *
+ * @param views
+ * @param action
+ */
+fun Fragment.setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
     for (view in views) {
         view.setOnClickListener {
             action()
@@ -382,6 +377,9 @@ fun setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
 
 }
 
+/***
+ * Display notification bell
+ */
 internal fun Fragment.displayNotificationBell(
     authViewModel: AuthViewModel, loggedInUser: User?,
     dataFactory: ReviewerUnapprovedReportsDataFactory, icon: ImageView, countTextView: TextView
@@ -436,4 +434,39 @@ fun Fragment.getUnapprovedReportCounts(
     return dataReturn
 }
 
+/**
+ * Navigate to destination id
+ *
+ * @param destinationId
+ */
+fun Fragment.goto(destinationId: Int){
+    findNavController().navigate(destinationId)
+}
 
+/**
+ * Navigate to destination id
+ *
+ * @param destinationId
+ */
+fun Fragment.goto(destinationId: NavDirections){
+    findNavController().navigate(destinationId)
+}
+
+/**
+ * Navigate up
+ *
+ */
+fun Fragment.gotoUp(){
+    findNavController().navigateUp()
+}
+/**
+ * Navigate to uri
+ *
+ * @param uri
+ */
+fun Fragment.goto(uri: Uri) {
+    val request = NavDeepLinkRequest.Builder
+        .fromUri(uri)
+        .build()
+    findNavController().navigate(request)
+}

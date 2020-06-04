@@ -32,19 +32,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:text="This is going to be very long. pppppppppppppppppppppppp ppppppppppppp Longer than expected lets keep going"
+            android:text="@string/dash"
             android:gravity="center"
             android:textColor="@color/colorPrimaryDark"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:autoSizeTextType="uniform"
             android:maxLines="6"
-
-            android:autoSizeMinTextSize="11sp"
-            android:autoSizeMaxTextSize="13sp"
-            android:autoSizeStepGranularity="15sp"
             android:textStyle="normal" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

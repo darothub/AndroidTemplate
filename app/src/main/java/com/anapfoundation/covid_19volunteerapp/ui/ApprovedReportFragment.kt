@@ -2,20 +2,17 @@ package com.anapfoundation.covid_19volunteerapp.ui
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
-
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerApprovedReportsDataFactory
-import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
@@ -29,9 +26,7 @@ import com.squareup.picasso.Picasso
 import com.utsman.recycling.paged.extentions.NetworkState
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.approved_report_item.view.*
 import kotlinx.android.synthetic.main.fragment_approved_report.*
-import kotlinx.android.synthetic.main.fragment_unapproved_report.*
 import kotlinx.android.synthetic.main.report_item.view.*
 import javax.inject.Inject
 
@@ -57,11 +52,13 @@ class ApprovedReportFragment : DaggerFragment() {
     val header by lazy {
         "Bearer $token"
     }
+
     @Inject
     lateinit var reviewerApprovedReportsDataFactory: ReviewerApprovedReportsDataFactory
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
+
     val authViewModel: AuthViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
@@ -82,11 +79,6 @@ class ApprovedReportFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_approved_report, container, false)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-
-    }
 
     override fun onResume() {
         super.onResume()
@@ -94,14 +86,20 @@ class ApprovedReportFragment : DaggerFragment() {
     }
 
 
+    /**
+     * Set recyclerview for approved reports
+     *
+     */
     private fun setRecyclerViewForApprovedReports() {
         try {
             approvedReportsRecyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item) { adapter, context, list ->
 
                 bind { itemView, position, item ->
 
+                    //Get rating
                     val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
                     val ratingResponse = observeRequest(ratingRequest, null, null)
+                    //Observe and un-wrap response
                     ratingResponse.observe(viewLifecycleOwner, Observer {
                         val (bool, result) = it
                         when (bool) {
@@ -116,8 +114,10 @@ class ApprovedReportFragment : DaggerFragment() {
                         }
                     })
 
+                    //Get location
                     val locationRequest = userViewModel.getSingleLGA("${item?.localGovernment}")
                     val stateResponse = observeRequest(locationRequest, null, null)
+                    //Observe and un-wrap response
                     stateResponse.observe(viewLifecycleOwner, Observer {
                         val (bool, result) = it
                         when (bool) {
@@ -145,7 +145,7 @@ class ApprovedReportFragment : DaggerFragment() {
                         singleReport.state = itemState
                         val action = ReviewerScreenFragmentDirections.fromReviewToSingleReport()
                         action.singleReport = singleReport
-                        Navigation.findNavController(requireView()).navigate(action)
+                        goto(action)
                     }
 
                     Picasso.get().load(item?.mediaURL)
@@ -154,18 +154,24 @@ class ApprovedReportFragment : DaggerFragment() {
                     itemView.reportImage.clipToOutline = true
                 }
 
+                //Adds network state layout
                 addLoader(R.layout.network_state_loader) {
                     idLoader = R.id.progress_circular
                     idTextError = R.id.error_text_view
                 }
 
+                //Set layout manager
                 val layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
                 setLayoutManager(layoutManager)
+
+                //Get paged approved reports
                 authViewModel.getApprovedReports(reviewerApprovedReportsDataFactory)
                     .observe(viewLifecycleOwner, Observer {
                         submitList(it)
                     })
+                //Observe paged approved reports network state
                 authViewModel.approvedLoader(reviewerApprovedReportsDataFactory).observe(viewLifecycleOwner, Observer {
+                    //Observe error code
                     reviewerApprovedReportsDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
                         val code = it.code
                         if(code == 401){
@@ -173,7 +179,9 @@ class ApprovedReportFragment : DaggerFragment() {
                             navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
                         }
                     })
+                    //Submit network state
                     submitNetwork(it as NetworkState)
+                    //When user is a reviewer
                     when(loggedInUser?.isReviewer){
                         true -> {
                             if(loggedInUser?.totalApprovedReports == 0.toLong()){

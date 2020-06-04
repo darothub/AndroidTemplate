@@ -19,10 +19,6 @@
         android:text="@string/very_high"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="16sp"
-        android:autoSizeTextType="uniform"
-        android:autoSizeMinTextSize="12sp"
-        android:autoSizeMaxTextSize="14sp"
-        android:autoSizeStepGranularity="1sp"
         />
 
     <com.anapfoundation.covid_19volunteerapp.helpers.ToggleableRadioButton
@@ -53,8 +49,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
-
-
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

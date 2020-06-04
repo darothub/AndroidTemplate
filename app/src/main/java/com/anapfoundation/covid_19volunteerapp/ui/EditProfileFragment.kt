@@ -66,7 +66,7 @@ class EditProfileFragment : DaggerFragment() {
     val bottomSheetDialog by lazy {
         BottomSheetDialog(requireContext(), R.style.BottomSheetDialogTheme)
     }
-    //inflate bottomSheetView
+    //Inflate bottomSheetView
     val bottomSheetView by lazy {
         LayoutInflater.from(requireContext()).inflate(
             R.layout.layout_upload_gallery,
@@ -78,31 +78,30 @@ class EditProfileFragment : DaggerFragment() {
         bottomSheetView.findViewById<View>(R.id.galleryBottomSheet)
     }
 
+    //Set camera icon
     val cameraIcon by lazy {
         bottomSheetView.cameraIcon
     }
-
+    //Set gallery icon
     val galleryIcon by lazy {
         bottomSheetView.galleryIcon
     }
 
+    //Set image preview
     val imagePreview by lazy {
         bottomSheetView.imagePreview
     }
+    //Set capture params
     val capture by lazy {
         Bitmap.createBitmap(cameraIcon.width, cameraIcon.height, Bitmap.Config.ARGB_8888)
     }
+    //Set image canvas
     val canvas by lazy {
         Canvas(capture)
     }
-
-    val firebaseStorage by lazy {
-        FirebaseStorage.getInstance()
-    }
-    val storageRef by lazy {
-        firebaseStorage.reference
-    }
+    //Set states hashmap
     val states = hashMapOf<String, String>()
+    //Set lga and district hashmap
     val lgaAndDistrict = hashMapOf<String, String>()
 
     @Inject
@@ -118,7 +117,6 @@ class EditProfileFragment : DaggerFragment() {
 
     //Get logged-in user
     val loggedInUser by lazy {
-
         storageRequest.checkUser("loggedInUser")
     }
 
@@ -131,20 +129,21 @@ class EditProfileFragment : DaggerFragment() {
     val header by lazy {
         "Bearer $token"
     }
+    //Set progress bar
     val progressBar by lazy {
         editProfileBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
+
+    //Set bottom progress bar
     val bottomSheetProgressBar by lazy {
         bottomSheetIncludeLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
+    //Get image file and path
     val imageFileAndPath by lazy {
         requireActivity().createImageFile()
     }
-
-    val timeStamp by lazy {
-        SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-    }
+    //Set camera permission
     private val cameraPermission by lazy {
         net.codecision.startask.permissions.Permission.Builder(Manifest.permission.CAMERA)
             .setRequestCode(REQUEST_TAKE_PHOTO)
@@ -153,6 +152,7 @@ class EditProfileFragment : DaggerFragment() {
     //Get upload button from the included layout
     lateinit var uploadPictureBtn:Button
 
+    //Set update button
     lateinit var updateBtn:Button
     var imageText = ""
 
@@ -168,14 +168,9 @@ class EditProfileFragment : DaggerFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-//        requireContext().setSpinnerAdapterData(editInfoStateSpinner, editInfoLGASpinner, stateLgaMap)
-
         editInfoBackButton.setOnClickListener {
             findNavController().popBackStack()
         }
-
-
-
     }
 
     override fun onStart() {
@@ -229,9 +224,12 @@ class EditProfileFragment : DaggerFragment() {
     @ExperimentalStdlibApi
     private fun camerPermissionRequest(){
         setOnClickEventForPicture(editInfoUploadCard, moreIcon){ showBottomSheet() }
-
     }
 
+    /**
+     * Show bottom sheet
+     *
+     */
     @ExperimentalStdlibApi
     private fun showBottomSheet() {
         val firstName = "${editInfoFNameEditText.text}"
@@ -254,11 +252,13 @@ class EditProfileFragment : DaggerFragment() {
                 uploadPictureBtn.show()
                 bottomSheetDialog.dismiss()
             }
-
-//            findNavController().navigate(R.id.reportUploadFragment)
         }
     }
 
+    /**
+     * Check camera permission
+     *
+     */
     private fun checkCameraPermission() {
         cameraPermission.check(this)
             .onGranted {
@@ -268,6 +268,10 @@ class EditProfileFragment : DaggerFragment() {
             }
     }
 
+    /**
+     * Show permission rationale
+     *
+     */
     private fun showRationaleDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Camera permission")
@@ -304,8 +308,10 @@ class EditProfileFragment : DaggerFragment() {
     }
 
 
-
-
+    /**
+     * Get the state-list and inflate state spinner
+     *
+     */
     private fun getStateAndSendToSpinner() {
         val stateData = getStates("37", "")
         stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
@@ -314,6 +320,13 @@ class EditProfileFragment : DaggerFragment() {
         })
     }
 
+    /**
+     * Get states
+     *
+     * @param first
+     * @param after
+     * @return
+     */
     private fun getStates(first:String, after:String): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
         val request = userViewModel.getStates(first, after)
@@ -330,6 +343,11 @@ class EditProfileFragment : DaggerFragment() {
         return data
     }
 
+    /**
+     * Extract state-list from livedata
+     * and put inside hashmap(states)
+     * @param it
+     */
     private fun extractStateList(it: StatesList) {
         it.data.associateByTo(states, {
             it.state /* key */
@@ -340,6 +358,10 @@ class EditProfileFragment : DaggerFragment() {
 
     }
 
+    /**
+     * Set up spinner
+     *
+     */
     private fun setupSpinner() {
         val stateArray = states.keys.sorted().toMutableList()
         stateArray.add(0, loggedInUser?.stateName.toString())
@@ -422,7 +444,12 @@ class EditProfileFragment : DaggerFragment() {
 
 
     }
-
+    /**
+     * Handles request live response
+     *
+     * @param bool
+     * @param result
+     */
     private fun onRequestResponseTask(
         bool: Boolean,
         result: Any?

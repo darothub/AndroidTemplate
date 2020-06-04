@@ -31,10 +31,6 @@ class MainActivity : DaggerAppCompatActivity() {
     @Inject
     lateinit var storageRequest: StorageRequest
 
-    private val navController by lazy {
-        Navigation.findNavController(this, R.id.fragment)
-    }
-    lateinit var destinationChangedListener: NavController.OnDestinationChangedListener
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,46 +45,12 @@ class MainActivity : DaggerAppCompatActivity() {
         )
     }
 
-    override fun onStart() {
-        super.onStart()
 
-//        destinationChangedListener =
-//            NavController.OnDestinationChangedListener { controller, destination, arguments ->
-//                when (destination.id) {
-//                    R.id.notificationFragment -> {
-//                        this.onBackPressedDispatcher.addCallback {
-//
-//                            navController.navigateUp()
-//
-//                        }
-//
-//                    }
-//
-//                }
-//            }
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-//        navController.addOnDestinationChangedListener(destinationChangedListener)
-    }
-    override fun onPause() {
-        super.onPause()
-        Log.i(title, "OnPause")
-//        navController.removeOnDestinationChangedListener(destinationChangedListener)
-
-
-    }
 
     override fun onBackPressed() {
         super.onBackPressed()
         Log.i(title, "backpressed")
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
 }
 

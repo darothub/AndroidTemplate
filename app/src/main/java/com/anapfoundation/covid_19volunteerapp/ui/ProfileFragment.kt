@@ -115,7 +115,7 @@ class ProfileFragment : DaggerFragment() {
             navigateToEditProfile(loggedInUser)
 
             profileBackBtn.setOnClickListener {
-                findNavController().navigate(R.id.reportHomeFragment)
+                goto(R.id.reportHomeFragment)
             }
         }
 
@@ -133,15 +133,8 @@ class ProfileFragment : DaggerFragment() {
                 profileNotificationCount.text = loggedInUser?.totalUnapprovedReports.toString()
             }
         }
-//        this.displayNotificationBell(
-//            authViewModel,
-//            loggedInUser,
-//            reviewerUnapprovedReportsDataFactory,
-//            profileNotificationIcon,
-//            profileNotificationCount
-//        )
         profileNotificationIcon.setOnClickListener {
-            findNavController().navigate(R.id.reviewerScreenFragment)
+            goto(R.id.reviewerScreenFragment)
         }
     }
 
@@ -149,7 +142,7 @@ class ProfileFragment : DaggerFragment() {
         editProfileBtn.setOnClickListener {
             val action = ProfileFragmentDirections.toEditProfile()
             action.profileData = user
-            Navigation.findNavController(requireView()).navigate(action)
+            goto(action)
         }
     }
 }

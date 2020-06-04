@@ -142,6 +142,7 @@
     <string name="unauthorized">Unauthorized</string>
     <string name="no_reports">No reports</string>
     <string name="server_error">Server error</string>
+    <string name="dash">---------</string>
 
 
 </resources>

@@ -72,11 +72,14 @@ class ForgotPasswordFragment : DaggerFragment() {
         initEnterKeyToSubmitForm(forgotPasswordEmailEdit) { forgotPasswordRequest() }
 
         requireActivity().onBackPressedDispatcher.addCallback {
-            findNavController().navigateUp()
-
+            gotoUp()
         }
     }
 
+    /**
+     * Forgot password request
+     *
+     */
     private fun forgotPasswordRequest(){
 
         val email = forgotPasswordEmailEdit.text.toString().trim()
@@ -100,6 +103,12 @@ class ForgotPasswordFragment : DaggerFragment() {
             }
         }
     }
+    /**
+     * Handles request live response
+     *
+     * @param bool
+     * @param result
+     */
     private fun onRequestResponseTask(
         bool: Boolean,
         result: Any?

@@ -1,6 +1,7 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.getName
+import com.anapfoundation.covid_19volunteerapp.utils.extensions.goto
 import com.skydoves.progressview.OnProgressChangeListener
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_home.*
@@ -45,14 +47,18 @@ class HomeFragment : DaggerFragment() {
 
         requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
         requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-        requireActivity().window.statusBarColor = resources.getColor(R.color.colorPrimary)
+
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            requireActivity().window.statusBarColor = resources.getColor(R.color.colorPrimary, requireContext().theme)
+        } else {
+            requireActivity().window.statusBarColor = resources.getColor(R.color.colorPrimary)
+        }
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         loadProgressBar()
-
 
     }
 
@@ -63,9 +69,9 @@ class HomeFragment : DaggerFragment() {
                 kotlin.run {
                     Thread.sleep(5505)
                     when{
-                        user?.loggedIn == true -> findNavController().navigate(R.id.reportFragment)
-                        user?.loggedIn == false -> findNavController().navigate(R.id.signinFragment)
-                        else -> findNavController().navigate(R.id.signinFragment)
+                        user?.loggedIn == true -> goto(R.id.reportFragment)
+                        user?.loggedIn == false -> goto(R.id.signinFragment)
+                        else -> goto(R.id.signinFragment)
                     }
 
                 }

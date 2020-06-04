@@ -32,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:ellipsize="end"
-            android:text="This is going to be very long. pppppppppppppppppppppppp ppppppppppppp Longer than expected lets keep going"
+            android:text="@string/dash"
             android:gravity="center"
             android:textColor="@color/colorPrimaryDark"
             app:layout_constraintTop_toTopOf="parent"

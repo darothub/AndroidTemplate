@@ -136,24 +136,20 @@ class ReportUploadFragment : DaggerFragment() {
         "Bearer $token"
     }
 
+    //Set capture params
     val capture by lazy {
         Bitmap.createBitmap(200, 200, Bitmap.Config.ARGB_8888)
     }
+    //Set image canvas
     val canvas by lazy {
         Canvas(capture)
-    }
-
-    val firebaseStorage by lazy {
-        FirebaseStorage.getInstance()
-    }
-    val storageRef by lazy {
-        firebaseStorage.reference
     }
 
     val timeStamp by lazy {
         SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
     }
 
+    //Set camera permission
     private val cameraPermission by lazy {
         net.codecision.startask.permissions.Permission.Builder(Manifest.permission.CAMERA)
             .setRequestCode(REQUEST_TAKE_PHOTO)
@@ -163,6 +159,7 @@ class ReportUploadFragment : DaggerFragment() {
     var suggestion:String?=null
 
 
+    //Get image file and path
     val imageFileAndPath by lazy {
         requireActivity().createImageFile()
     }
@@ -239,6 +236,9 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
 
+    /***
+     * Add report request
+     */
     private fun addReportRequest() {
         submitBtn.setOnClickListener {
 
@@ -308,16 +308,19 @@ class ReportUploadFragment : DaggerFragment() {
                         requestResponseTask(it)
                     })
 
-
-                    Log.i(title, "Inside Observer $it")
+//                    Log.i(title, "Inside Observer $it")
                 })
 
-
-            Log.i(title, "Report $report")
+//            Log.i(title, "Report $report")
 
         }
     }
 
+    /**
+     * Handles request response
+     *
+     * @param it
+     */
     private fun requestResponseTask(it: Pair<Boolean, Any?>) {
         val (bool, result) = it
         when (bool) {
@@ -339,15 +342,22 @@ class ReportUploadFragment : DaggerFragment() {
         }
     }
 
+    /**
+     * Get the state-list and inflate state spinner
+     *
+     */
     private fun getStateAndSendToSpinner() {
-
-        val stateData = getStates(header)
+        val stateData = getStates()
         stateData.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             extractStateList(it)
             setupSpinner()
         })
     }
 
+    /**
+     * Get report data from create report screen
+     *
+     */
     private fun receiveReportFromPreviousScreen() {
         arguments?.let {
             report = ReportUploadFragmentArgs.fromBundle(it).report!!
@@ -359,6 +369,10 @@ class ReportUploadFragment : DaggerFragment() {
         submitBtn.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
     }
 
+    /**
+     * Set up spinner
+     *
+     */
     private fun setupSpinner() {
         val stateArray = states.keys.sorted().toMutableList()
         stateArray.add(0, loggedInUser?.stateName.toString())
@@ -368,14 +382,17 @@ class ReportUploadFragment : DaggerFragment() {
                 R.layout.support_simple_spinner_dropdown_item,
                 stateArray
             )
-//        reportUploadState.setText(loggedInUser?.stateName)
-//        reportUploadLGA.setText(loggedInUser?.lgName)
         reportUploadState.adapter = adapterState
         reportUploadState.isEnabled = false
         setLGASpinner(reportUploadState, reportUploadLGA, lgaAndDistrict, states, userViewModel, loggedInUser)
         Log.i(title, "states $states")
     }
 
+    /**
+     * Extract state-list from livedata
+     * and put inside hashmap(states)
+     * @param it
+     */
     private fun extractStateList(it: StatesList) {
         it.data.associateByTo(states, {
             it.state /* key */
@@ -385,7 +402,12 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
 
-    private fun getStates(header:String): MediatorLiveData<StatesList> {
+    /**
+     * Get states
+     *
+     * @return
+     */
+    private fun getStates(): MediatorLiveData<StatesList> {
         val data = MediatorLiveData<StatesList>()
         val request = userViewModel.getStates("37")
         val response = observeRequest(request, null, null)
@@ -396,39 +418,23 @@ class ReportUploadFragment : DaggerFragment() {
     }
 
 
-
+    /**
+     * Show bottom sheet
+     *
+     */
     private fun showBottomSheet() {
         uploadPictureText.text = requireContext().getLocalisedString(R.string.upload_picture)
-//        val state = reportUploadState.selectedItem
-
-
-
-
         uploadPictureBtn.text = requireContext().getLocalisedString(R.string.upload_image)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
 
-//        uploadPictureBtn.setOnClickListener {
-//
-//            bottomSheetProgressBar.show()
-//            uploadPictureBtn.hide()
-//            uploadImage(path, imagePreview, capture, canvas, storageRef, imageUrlField)
-//            CoroutineScope(Main).launch {
-//                delay(3000)
-//                bottomSheetProgressBar.hide()
-//                uploadPictureBtn.show()
-//                bottomSheetDialog.dismiss()
-//            }
-//
-////            findNavController().navigate(R.id.reportUploadFragment)
-//        }
-
 
     }
 
-
-
+    /***
+     * Check permission
+     */
     private fun checkCameraPermission() {
         cameraPermission.check(this)
             .onGranted {
@@ -440,6 +446,10 @@ class ReportUploadFragment : DaggerFragment() {
             }
     }
 
+    /**
+     * Show permission rationale
+     *
+     */
     private fun showRationaleDialog() {
         AlertDialog.Builder(requireContext())
             .setTitle("Camera permission")
@@ -483,11 +493,6 @@ class ReportUploadFragment : DaggerFragment() {
         }
     }
 
-    override fun onPause() {
-        super.onPause()
-
-    }
-
     @ExperimentalStdlibApi
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
@@ -515,6 +520,12 @@ class ReportUploadFragment : DaggerFragment() {
         }
     }
 
+    /**
+     * upload picture
+     *
+     * @param imageBitmap
+     * @param uri
+     */
     @ExperimentalStdlibApi
     private fun uploadPictureEvent(imageBitmap: Bitmap?, uri:Uri?) {
         path = "images/report_$timeStamp"

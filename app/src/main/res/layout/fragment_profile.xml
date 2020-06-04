@@ -95,8 +95,8 @@
                     tools:visibility="visible"
                     android:textSize="12sp"
                     android:textColor="@android:color/holo_red_dark"
-                    android:layout_alignParentEnd="true"
-                    android:layout_marginTop="7dp"
+                    android:layout_alignRight="@id/profileNotificationIcon"
+                    android:layout_marginTop="8dp"
 
                     android:textStyle="bold"/>
             </RelativeLayout>

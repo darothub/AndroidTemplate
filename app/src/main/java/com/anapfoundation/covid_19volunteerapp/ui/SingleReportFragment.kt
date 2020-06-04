@@ -98,8 +98,6 @@ class SingleReportFragment : DaggerFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-//        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(android.R.transition.move)
-
         return inflater.inflate(R.layout.fragment_single_report, container, false)
     }
 
@@ -116,7 +114,6 @@ class SingleReportFragment : DaggerFragment() {
             singleReport = SingleReportFragmentArgs.fromBundle(it).singleReport!!
         }
 
-//        uri = args?.uri.toString()
         val story = singleReport.story
         val storyLen = story?.length
         if (storyLen != null) {
@@ -124,10 +121,16 @@ class SingleReportFragment : DaggerFragment() {
                 storyLen <= 100 -> singleReportStory.text = story
                 storyLen > 100 -> {
                     val fullStopIndex = story.indexOf(".", 100)
-                    val contdText = story.substring(fullStopIndex+1)
-                    singleReportStory.text = story.substring(0..fullStopIndex)
-                    singleReportStoryContd.text = contdText
-                    singleReportStoryContd.show()
+                    Log.i(title, "Index $fullStopIndex")
+                    if (fullStopIndex == -1){
+                        singleReportStory.text = story
+                    }else{
+                        val contdText = story.substring(fullStopIndex+1)
+                        singleReportStory.text = story.substring(0..fullStopIndex)
+                        singleReportStoryContd.text = contdText
+                        singleReportStoryContd.show()
+                    }
+
                 }
             }
         }

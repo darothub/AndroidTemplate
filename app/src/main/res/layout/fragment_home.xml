@@ -33,7 +33,7 @@
         <com.skydoves.progressview.ProgressView
             android:id="@+id/homeProgressView1"
             android:layout_width="match_parent"
-            android:layout_height="15dp"
+            android:layout_height="12dp"
             app:progressView_colorBackground="@color/progressBackground"
             app:progressView_colorProgress="@color/progressColor"
             app:progressView_max="500"
