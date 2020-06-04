@@ -22,7 +22,7 @@
         >
         <meta-data
             android:name="CLOUDINARY_URL"
-            android:value="@string/cloudinary_url" />
+            android:value="@string/cloudinary"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.anapfoundation.android.fileprovider"
