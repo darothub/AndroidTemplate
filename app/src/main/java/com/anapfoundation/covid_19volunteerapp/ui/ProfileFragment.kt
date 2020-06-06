@@ -11,8 +11,6 @@ import android.view.ViewGroup
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
@@ -21,11 +19,9 @@ import com.anapfoundation.covid_19volunteerapp.model.User
 import com.anapfoundation.covid_19volunteerapp.model.UserData
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.anapfoundation.covid_19volunteerapp.utils.extensions.displayNotificationBell
 import com.squareup.picasso.Picasso
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_profile.*
-import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import javax.inject.Inject
 
 /**
@@ -126,16 +122,11 @@ class ProfileFragment : DaggerFragment() {
     override fun onStart() {
         super.onStart()
 
-        when(loggedInUser?.isReviewer){
-            true -> {
-                profileNotificationIcon.show()
-                profileNotificationCount.show()
-                profileNotificationCount.text = loggedInUser?.totalUnapprovedReports.toString()
-            }
-        }
-        profileNotificationIcon.setOnClickListener {
-            goto(R.id.reviewerScreenFragment)
-        }
+        this.displayNotificationBell(
+            loggedInUser,
+            profileNotificationIcon,
+            profileNotificationCount
+        )
     }
 
     private fun navigateToEditProfile(user: User?) {

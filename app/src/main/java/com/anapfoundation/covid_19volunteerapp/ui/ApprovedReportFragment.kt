@@ -182,18 +182,16 @@ class ApprovedReportFragment : DaggerFragment() {
                     //Submit network state
                     submitNetwork(it as NetworkState)
                     //When user is a reviewer
-                    when(loggedInUser?.isReviewer){
-                        true -> {
-                            if(loggedInUser?.totalApprovedReports == 0.toLong()){
-                                noReportApproved.show()
-                            }
-                            else{
-                                noReportApproved.hide()
-                            }
-                        }
-                    }
+
+
                 })
             }
+
+            when(loggedInUser?.totalApprovedReports){
+                0.toLong() ->  noReportApproved.show()
+                in 1.toLong()..1000.toLong() -> noReportApproved.hide()
+            }
+
 
         } catch (e: Exception) {
             Log.e(title, "Erro1 ${e.message.toString()}")

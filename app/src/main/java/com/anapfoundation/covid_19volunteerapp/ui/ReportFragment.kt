@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.core.net.toUri
+import androidx.core.view.children
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
@@ -77,11 +78,11 @@ class ReportFragment : DaggerFragment() {
         ViewModelProvider(this, viewModelProviderFactory).get(AuthViewModel::class.java)
     }
     //Get logged-in user
-    val user by lazy {
+    val loggedInUser by lazy {
         storageRequest.checkUser("loggedInUser")
     }
     val token by lazy {
-        user?.token
+        loggedInUser?.token
     }
     val header by lazy {
         "Bearer $token"
@@ -177,7 +178,7 @@ class ReportFragment : DaggerFragment() {
         //
         Log.i(title, "OnResume")
 
-        when(user?.isReviewer){
+        when(loggedInUser?.isReviewer){
             true ->{
                 val screen = bottomNav.menu.findItem(R.id.reviewerScreenFragment)
                 screen.isVisible = true
@@ -197,7 +198,6 @@ class ReportFragment : DaggerFragment() {
         super.onPause()
         Log.i(title, "OnPause")
         navController.removeOnDestinationChangedListener(destinationChangedListener)
-
 
     }
 

@@ -157,7 +157,6 @@ class ReportHomeFragment : DaggerFragment() {
 
             }else{
                 noReportHome.hide()
-
             }
 
         }catch (e:Exception){
@@ -190,6 +189,7 @@ class ReportHomeFragment : DaggerFragment() {
                             reporterNotificationCount.text = "$unApprovedTotal"
                             loggedInUser?.totalUnapprovedReports = unApprovedTotal.toLong()
                             storageRequest.saveData(loggedInUser, "loggedInUser")
+                            Log.i(title, "approved report total ${unApprovedTotal.toLong()}")
                         }
 
                         override fun onRemoved(position: Int, count: Int) {}
@@ -207,6 +207,9 @@ class ReportHomeFragment : DaggerFragment() {
                                 approvedTotal += count
                                 Log.i(title, "NewApprovedcount ${approvedTotal}")
                                 loggedInUser?.totalApprovedReports = approvedTotal.toLong()
+                                storageRequest.saveData(loggedInUser, "loggedInUser")
+                                Log.i(title, "approved report total ${approvedTotal.toLong()}")
+
                             }
 
                             override fun onRemoved(position: Int, count: Int) {}

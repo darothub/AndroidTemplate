@@ -96,13 +96,11 @@ class ReviewerScreenFragment : DaggerFragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        when(loggedInUser?.isReviewer){
-            true -> {
-                reviewerNotificationIcon.show()
-                reviewerNotificationCount.show()
-                reviewerNotificationCount.text = loggedInUser?.totalUnapprovedReports.toString()
-            }
-        }
+        this.displayNotificationBell(
+            loggedInUser,
+            reviewerNotificationIcon,
+            reviewerNotificationCount
+        )
     }
     override fun onResume() {
         super.onResume()

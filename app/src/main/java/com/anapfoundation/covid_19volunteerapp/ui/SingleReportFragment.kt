@@ -151,9 +151,7 @@ class SingleReportFragment : DaggerFragment() {
         }
 
         this.displayNotificationBell(
-            authViewModel,
             loggedInUser,
-            reviewerUnapprovedReportsDataFactory,
             singleReportNotificationIcon,
             singleReportNotificationCount
         )

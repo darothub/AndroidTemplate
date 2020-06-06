@@ -34,6 +34,7 @@ import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.tfb.fbtoast.FBCustomToast
 import com.utsman.recycling.paged.setupAdapterPaged
+import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import kotlinx.android.synthetic.main.report_item.view.*
 
 
@@ -380,27 +381,17 @@ fun Fragment.setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
 /***
  * Display notification bell
  */
-internal fun Fragment.displayNotificationBell(
-    authViewModel: AuthViewModel, loggedInUser: User?,
-    dataFactory: ReviewerUnapprovedReportsDataFactory, icon: ImageView, countTextView: TextView
+internal fun Fragment.displayNotificationBell(loggedInUser: User?,
+   icon: ImageView, countTextView: TextView
 ) {
-    var total = 0
-    when (loggedInUser?.isReviewer) {
+    when(loggedInUser?.isReviewer){
         true -> {
-
-            authViewModel.getUnapprovedReportCount(dataFactory)
-                .observe(viewLifecycleOwner, Observer {
-                    total = total + it
-                    countTextView.text = "${total - 1}"
-
-                    Log.i("Counter", "counter $total")
-                })
             icon.show()
             countTextView.show()
-        }
-        false -> {
-            icon.hide()
-            countTextView.hide()
+            countTextView.text = loggedInUser.totalUnapprovedReports.toString()
+            icon.setOnClickListener {
+                goto(R.id.reviewerScreenFragment)
+            }
         }
     }
 }

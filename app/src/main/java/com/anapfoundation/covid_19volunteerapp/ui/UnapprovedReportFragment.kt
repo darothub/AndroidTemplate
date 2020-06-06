@@ -27,6 +27,7 @@ import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
 import com.squareup.picasso.Picasso
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.fragment_approved_report.*
 import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import kotlinx.android.synthetic.main.fragment_unapproved_report.*
@@ -190,19 +191,20 @@ class UnapprovedReportFragment : DaggerFragment() {
                         }
                     })
                     submitNetwork(it)
-                    if (loggedInUser?.totalReports == 0.toLong()){
-                        noReportUnapproved.show()
-                        noReportUnapproved.setOnClickListener {
-                            goto(R.id.createReportFragment)
-                        }
 
-                    }else{
-                        noReportUnapproved.hide()
-
-                    }
                 })
 
             }
+            when (loggedInUser?.totalUnapprovedReports) {
+                0.toLong() -> {
+                    noReportUnapproved.setOnClickListener {
+                        goto(R.id.createReportFragment)
+                    }
+                    noReportUnapproved.show()
+                }
+                else ->  noReportUnapproved.hide()
+            }
+            Log.i(title, "unapproved report total ${loggedInUser?.totalUnapprovedReports}")
 
         } catch (e: Exception) {
             Log.e(title, e.message.toString())
