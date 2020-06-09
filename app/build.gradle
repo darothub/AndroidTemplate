@@ -5,6 +5,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs"
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.firebase.crashlytics'
 
 
 android {
@@ -115,8 +116,7 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle_version"
     //Cloudinary
     implementation group: 'com.cloudinary', name: 'cloudinary-android', version: '1.27.0'
-    //Firebase sdk
-    implementation 'com.google.firebase:firebase-analytics:17.4.1'
+
     //Firebase storage
     implementation 'com.google.firebase:firebase-storage-ktx:19.1.1'
     //Coroutines
@@ -132,6 +132,16 @@ dependencies {
 
     kapt "org.androidannotations:androidannotations:$versions.AAVersion"
     implementation "org.androidannotations:androidannotations-api:$versions.AAVersion"
+
+    // Recommended: Add the Firebase SDK for Google Analytics.
+    implementation 'com.google.firebase:firebase-analytics-ktx:17.4.3'
+
+    // Add the Firebase Crashlytics SDK.
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.1'
+
+    implementation 'com.intuit.sdp:sdp-android:1.0.6'
+
+    implementation 'com.intuit.ssp:ssp-android:1.0.6'
 
 
 

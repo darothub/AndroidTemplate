@@ -194,6 +194,7 @@ class EditProfileFragment : DaggerFragment() {
     @ExperimentalStdlibApi
     override fun onResume() {
         super.onResume()
+
         getStateAndSendToSpinner()
         updateBtn = editProfileBottomLayout.findViewById<Button>(R.id.includeBtn)
         updateBtn.setButtonText(requireContext().getLocalisedString(R.string.update_profile))
@@ -219,6 +220,7 @@ class EditProfileFragment : DaggerFragment() {
             startActivityForResult(intent, REQUEST_FROM_GALLERY)
         }
         imagePreview.clipToOutline = true
+        crashReportByUser(loggedInUser)
     }
 
     @ExperimentalStdlibApi

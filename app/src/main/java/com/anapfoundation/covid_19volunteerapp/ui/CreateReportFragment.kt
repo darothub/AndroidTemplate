@@ -111,7 +111,7 @@ class CreateReportFragment : DaggerFragment() {
         super.onResume()
         extractAndSetTopics()
         bottomSheetDialog.dismiss()
-        Log.i(title, "Resumed")
+        crashReportByUser(loggedInUser)
     }
 
     private fun extractAndSetTopics() {

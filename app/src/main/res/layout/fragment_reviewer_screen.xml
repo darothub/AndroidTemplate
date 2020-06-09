@@ -78,7 +78,7 @@
             android:layout_marginStart="16dp"
             android:text="@string/report_review"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="20sp"
+            android:textSize="@dimen/_12ssp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/reviewerScreenAppBar"
             app:layout_constraintVertical_bias="0.052" />
@@ -114,9 +114,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
-
-
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -83,7 +83,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/recent_report"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/medium_margin_size"
+            android:textSize="@dimen/_12ssp"
             app:layout_constraintBottom_toTopOf="@id/recyclerView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/reportAppBar" />

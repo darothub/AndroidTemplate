@@ -50,7 +50,7 @@
             android:layout_marginTop="10dp"
             android:text="@string/choose_a_topic"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="@dimen/vlarge_font_size"
+            android:textSize="@dimen/_24ssp"
             app:layout_constraintBottom_toTopOf="@id/createReportRecyclerView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

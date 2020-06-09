@@ -18,7 +18,6 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderF
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
-import com.anapfoundation.covid_19volunteerapp.model.CityClass
 import com.anapfoundation.covid_19volunteerapp.model.StatesList
 import com.anapfoundation.covid_19volunteerapp.model.UserData
 import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
@@ -60,14 +59,14 @@ class AddressFragment : DaggerFragment() {
     lateinit var storageRequest: StorageRequest
 
     //Get logged-in user
-    val getUser by lazy {
+    val loggedInUser by lazy {
 
         storageRequest.checkUser("loggedInUser")
     }
 
     //Get token
     val token by lazy {
-        getUser?.token
+        loggedInUser?.token
     }
 
     //Set header
@@ -120,6 +119,8 @@ class AddressFragment : DaggerFragment() {
         requireActivity().onBackPressedDispatcher.addCallback {
             goto(R.id.signupFragment)
         }
+
+        crashReportByUser(loggedInUser)
 
     }
 

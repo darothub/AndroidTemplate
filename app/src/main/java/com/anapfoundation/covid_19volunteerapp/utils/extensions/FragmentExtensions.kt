@@ -32,9 +32,9 @@ import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.tfb.fbtoast.FBCustomToast
 import com.utsman.recycling.paged.setupAdapterPaged
-import kotlinx.android.synthetic.main.fragment_reviewer_screen.*
 import kotlinx.android.synthetic.main.report_item.view.*
 
 
@@ -460,4 +460,8 @@ fun Fragment.goto(uri: Uri) {
         .fromUri(uri)
         .build()
     findNavController().navigate(request)
+}
+
+fun Fragment.crashReportByUser(loggedInUser: User?){
+    FirebaseCrashlytics.getInstance().setUserId(loggedInUser?.email.toString())
 }

@@ -83,6 +83,7 @@ class ApprovedReportFragment : DaggerFragment() {
     override fun onResume() {
         super.onResume()
         setRecyclerViewForApprovedReports()
+        crashReportByUser(loggedInUser)
     }
 
 
