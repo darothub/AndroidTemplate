@@ -143,6 +143,8 @@
     <string name="no_reports">No reports</string>
     <string name="server_error">Server error</string>
     <string name="dash">---------</string>
+    <string name="channel_name">reset</string>
+    <string name="channel_description">reset password</string>
 
 
 </resources>

@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -101,18 +102,24 @@ class SingleReportFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_single_report, container, false)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        sharedElementEnterTransition =
+            TransitionInflater.from(context).inflateTransition(android.R.transition.move)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        singleReport = args.singleReport!!
     }
 
     @SuppressLint("SetTextI18n")
     override fun onStart() {
         super.onStart()
 
-        arguments?.let {
-            singleReport = SingleReportFragmentArgs.fromBundle(it).singleReport!!
-        }
+//        arguments?.let {
+//            singleReport = SingleReportFragmentArgs.fromBundle(it).singleReport!!
+//        }
 
         val story = singleReport.story
         val storyLen = story?.length

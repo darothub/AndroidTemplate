@@ -15,7 +15,11 @@
             app:uri="android-app://anapfoundation.navigation/reporthomefrag" />
         <action
             android:id="@+id/toSingleReportScreen"
-            app:destination="@id/toSingleReportScreen" />
+            app:destination="@id/toSingleReportScreen"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/createReportFragment"
@@ -24,7 +28,11 @@
         tools:layout="@layout/fragment_create_report" >
         <action
             android:id="@+id/toUploadFragment"
-            app:destination="@id/reportUploadFragment" />
+            app:destination="@id/reportUploadFragment"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -33,7 +41,11 @@
         tools:layout="@layout/fragment_profile" >
         <action
             android:id="@+id/toEditProfile"
-            app:destination="@id/editProfileFragment" />
+            app:destination="@id/editProfileFragment"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/toNavGraphOne"
             app:destination="@id/nav_graph" />
@@ -89,10 +101,18 @@
         tools:layout="@layout/fragment_reviewer_screen" >
         <action
             android:id="@+id/toApprovalFragment"
-            app:destination="@id/reportApprovalFragment" />
+            app:destination="@id/reportApprovalFragment"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
         <action
             android:id="@+id/fromReviewToSingleReport"
-            app:destination="@id/toSingleReportScreen" />
+            app:destination="@id/toSingleReportScreen"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
         android:id="@+id/reportApprovalFragment"

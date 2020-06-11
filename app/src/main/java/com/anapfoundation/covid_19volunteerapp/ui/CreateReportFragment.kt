@@ -264,7 +264,7 @@ class CreateReportFragment : DaggerFragment() {
                 action.report = newReport
                 goto(action)
             } else if (checkBoxesKeys.size != 1) {
-                requireContext().toast(requireContext().getLocalisedString(R.string.pick_one_rating))
+                toast(requireContext().getLocalisedString(R.string.pick_one_rating))
             } else {
                 bottomSheetDialog.dismiss()
                 val topicItem = checkBoxMap.values.elementAt(0)

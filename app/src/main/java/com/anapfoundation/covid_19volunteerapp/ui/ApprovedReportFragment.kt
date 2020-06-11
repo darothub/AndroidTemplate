@@ -176,7 +176,7 @@ class ApprovedReportFragment : DaggerFragment() {
                     reviewerApprovedReportsDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
                         val code = it.code
                         if(code == 401){
-                            requireContext().toast(it.message.toString())
+                            toast(it.message.toString())
                             navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
                         }
                     })

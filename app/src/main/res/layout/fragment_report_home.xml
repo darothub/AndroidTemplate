@@ -98,6 +98,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             layout="@layout/layout_noreport"/>
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"

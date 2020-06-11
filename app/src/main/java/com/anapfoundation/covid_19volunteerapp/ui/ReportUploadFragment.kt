@@ -326,7 +326,7 @@ class ReportUploadFragment : DaggerFragment() {
         when (bool) {
 
             true -> {
-                requireContext().toast(requireContext().getLocalisedString(R.string.upload_successful))
+                toast(requireContext().getLocalisedString(R.string.upload_successful))
                 loggedInUser?.totalReports = loggedInUser?.totalReports?.plus(1)
                 storageRequest.saveData(loggedInUser, "loggedInUser")
                 val res = result as AddReportResponse

@@ -209,7 +209,7 @@ class AddressFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} is empty")
+                toast("${checkForEmpty.hint} is empty")
             }
             else -> {
                 val selectedState = spinnerState.selectedItem
@@ -265,7 +265,7 @@ class AddressFragment : DaggerFragment() {
         when (bool) {
             true -> {
                 val res = result as UserResponse
-                requireContext().toast(requireContext().getLocalisedString(R.string.signup_successful))
+                toast(requireContext().getLocalisedString(R.string.signup_successful))
                 val clearRegister = userViewModel.clearSavedRegisteredUser()
                 goto(R.id.signinFragment)
                 Log.i(title, "result of registration ${res.data}")

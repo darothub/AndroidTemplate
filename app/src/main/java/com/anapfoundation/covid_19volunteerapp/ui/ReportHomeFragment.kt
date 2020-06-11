@@ -93,6 +93,11 @@ class ReportHomeFragment : DaggerFragment() {
         return inflater.inflate(R.layout.fragment_report_home, container, false)
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+    }
+
     @SuppressLint("SetTextI18n")
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -112,6 +117,7 @@ class ReportHomeFragment : DaggerFragment() {
                 bind { itemView, position, item ->
                     Log.i(title, "report items ${list}")
 
+//                    val bundle = transformationLayout.withView(itemView, "myTransitionName")
                     getTopicAndRatingById(item, itemView)
 
                     getStateAndLgaById(item, itemView)
@@ -124,6 +130,7 @@ class ReportHomeFragment : DaggerFragment() {
                         val action = ReportHomeFragmentDirections.toSingleReportScreen()
                         action.singleReport = singleReport
                         goto(action)
+
 
 //                        Log.i(title, "report items ${singleReport.localGovernment}")
                     }
@@ -142,7 +149,7 @@ class ReportHomeFragment : DaggerFragment() {
                     reportDataFactory.responseLiveData.observe(viewLifecycleOwner, Observer {
                         val code = it.code
                         if(code == 401){
-                            requireContext().toast(it.message.toString())
+                            toast(it.message.toString())
                             navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
                         }
                     })

@@ -415,9 +415,9 @@ class EditProfileFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} is empty")
+                toast("${checkForEmpty.hint} is empty")
             }
-            validation != null -> requireActivity().toast("email is invalid")
+            validation != null -> toast("email is invalid")
             else -> {
                 val updateProfileRequest = authViewModel.updateProfile(
                     firstName,
@@ -459,7 +459,7 @@ class EditProfileFragment : DaggerFragment() {
         when (bool) {
             true -> {
                 val res = result as ProfileData
-                requireContext().toast(requireContext().getLocalisedString(R.string.profile_updated))
+                toast(requireContext().getLocalisedString(R.string.profile_updated))
                 Log.i(title, "result of registration ${res.data.firstName}")
                 var user = storageRequest.checkUser("loggedInUser")
                 user?.imageUrl = imageText.subSequence(10, imageText.length).toString()

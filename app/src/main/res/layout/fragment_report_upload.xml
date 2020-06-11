@@ -79,7 +79,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:srcCompat="@drawable/cameraa_icon"/>
+                app:srcCompat="@drawable/ic_photo_camera_pry_24dp"/>
             <TextView
                 android:id="@+id/uploadPictureText"
                 android:layout_width="wrap_content"
@@ -208,8 +208,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/street_hint_text"
+                style="@style/CustomEditTextStyle"
                 android:textColorHint="@color/colorTextHint"
-                android:singleLine="true" />
+                />
         </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
         <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
             android:id="@+id/suggestion"

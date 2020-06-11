@@ -1,5 +1,15 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Context.NOTIFICATION_SERVICE
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -9,6 +19,9 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
 import androidx.activity.addCallback
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -40,11 +53,14 @@ class ResetPasswordFragment : DaggerFragment() {
         getName()
     }
 
+    val CHANNEL_ID = "reset"
+
 
     private val progressBar by lazy {
         resetPasswordBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
     lateinit var resetButton: Button
+    lateinit var logoDrawable: Drawable
 
     var signupFragment = SignupFragment()
 
@@ -80,8 +96,29 @@ class ResetPasswordFragment : DaggerFragment() {
 
             goto(R.id.signinFragment)
         }
+       createNotificationChannel()
+
 
 //        Log.i(title, "token $token")
+    }
+
+    private fun createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = getString(R.string.channel_name)
+            val descriptionText = getString(R.string.channel_description)
+            val importance = NotificationManager.IMPORTANCE_HIGH
+            val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+                description = descriptionText
+                setShowBadge(true)
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager = requireContext().getSystemService(
+                NOTIFICATION_SERVICE) as NotificationManager
+
+            notificationManager.createNotificationChannel(channel)
+        }
     }
 
     override fun onResume() {
@@ -119,9 +156,9 @@ class ResetPasswordFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} is empty")
+                toast("${checkForEmpty.hint} is empty")
             }
-            validation != null -> requireActivity().toast(requireContext().getLocalisedString(R.string.password_invalid))
+            validation != null -> toast(requireContext().getLocalisedString(R.string.password_invalid))
             else -> {
                 val request = authViewModel.resetPassword(password, token)
                 val response = observeRequest(request, progressBar, resetButton)
@@ -145,11 +182,38 @@ class ResetPasswordFragment : DaggerFragment() {
         bool: Boolean,
         result: Any?
     ) {
+//        resources.getDrawable(R.drawable.applogo, requireContext().theme)
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            logoDrawable = resources.getDrawable(R.drawable.logo_black, requireContext().theme)
+        } else {
+            logoDrawable = resources.getDrawable(R.drawable.logo_black)
+        }
+        val icon = BitmapFactory.decodeResource(resources, R.drawable.logo_black)
         when (bool) {
             true -> {
                 val res = result as UserResponse
-                requireContext().toast(res.data.toString())
+                toast(res.data.toString())
 
+                // Create an explicit intent for an Activity in your app
+                val intent = Intent(requireContext(), MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                }
+                val pendingIntent: PendingIntent = PendingIntent.getActivity(requireContext(), 0, intent, 0)
+
+                val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
+                    .setSmallIcon(R.drawable.notification_icon)
+                    .setContentTitle("Password reset")
+                    .setContentText("Reset is successful. Click here")
+                    .setPriority(NotificationCompat.PRIORITY_HIGH)
+                    .setContentIntent(pendingIntent)
+                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+                    .setStyle(NotificationCompat.BigPictureStyle()
+                        .bigPicture(icon))
+                    .setAutoCancel(true)
+                with(NotificationManagerCompat.from(requireContext())) {
+                    // notificationId is a unique int for each notification that you must define
+                    notify(0, builder.build())
+                }
                 activity?.finish()
 //                Log.i(title, "result of reset ${res.data}")
             }

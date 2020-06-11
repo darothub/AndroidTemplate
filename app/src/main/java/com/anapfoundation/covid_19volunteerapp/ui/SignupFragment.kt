@@ -47,7 +47,7 @@ class SignupFragment : DaggerFragment() {
     val spannableString: SpannableString by lazy {
         signinText.setAsSpannable()
     }
-    var color:Int = resources.getColor(R.color.colorPrimary, requireContext().theme)
+    var color:Int = 0
     val textLen: Int by lazy {
         signinText.length
     }
@@ -152,14 +152,14 @@ class SignupFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} is empty")
+                toast("${checkForEmpty.hint} is empty")
             }
             !checkboxForSignup.isChecked -> {
-                requireActivity().toast(requireContext().getLocalisedString(R.string.agree_to_term))
+                toast(requireContext().getLocalisedString(R.string.agree_to_term))
 
             }
-            validation != null -> requireActivity().toast("$validation is invalid")
-            passwordString != cpassword -> requireActivity().toast(requireContext().getLocalisedString(R.string.passwords_do_not_match))
+            validation != null -> toast("$validation is invalid")
+            passwordString != cpassword -> toast(requireContext().getLocalisedString(R.string.passwords_do_not_match))
             else -> {
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)
                 val action = SignupFragmentDirections.toAddressFragment()

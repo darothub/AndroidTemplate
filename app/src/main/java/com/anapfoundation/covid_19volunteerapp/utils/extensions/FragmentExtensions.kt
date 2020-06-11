@@ -6,9 +6,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.util.Log
-import android.view.Gravity
-import android.view.KeyEvent
-import android.view.View
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.core.net.toUri
@@ -33,7 +31,6 @@ import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.services.ServicesResponseWrapper
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.tfb.fbtoast.FBCustomToast
 import com.utsman.recycling.paged.setupAdapterPaged
 import kotlinx.android.synthetic.main.report_item.view.*
 
@@ -42,16 +39,16 @@ import kotlinx.android.synthetic.main.report_item.view.*
  * show status bar
  *
  */
- fun Fragment.showStatusBar() {
+fun Fragment.showStatusBar() {
     requireActivity().window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
     requireActivity().window.statusBarColor = resources.getColor(R.color.colorNeutral)
 }
 
- fun Fragment.hideKeyboard() {
+fun Fragment.hideKeyboard() {
     view?.let { activity?.hideKeyboard(it) }
 }
 
- fun Activity.hideKeyboard() {
+fun Activity.hideKeyboard() {
     if (currentFocus == null) View(this) else currentFocus?.let { hideKeyboard(it) }
 }
 
@@ -71,47 +68,75 @@ fun Context.hideKeyboard(view: View) {
  *
  * @param message
  */
-fun Context.toast(message: String) {
-    val toastie = FBCustomToast(this)
-    toastie.setMsg(message)
-    toastie.setIcon(resources.getDrawable(R.drawable.applogo, theme))
-    toastie.setGravity(Gravity.CENTER_VERTICAL)
 
-    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-        toastie.setBackgroundColor(resources.getColor(R.color.colorNeutral, theme))
-        toastie.setToastMsgColor(resources.getColor(R.color.colorPrimaryDark, theme))
-    } else {
-        toastie.setBackgroundColor(resources.getColor(R.color.colorNeutral))
-        toastie.setToastMsgColor(resources.getColor(R.color.colorPrimaryDark))
+fun Fragment.toast(message: String) {
+
+    //Inflate bottom view
+    val layout by lazy {
+        LayoutInflater.from(requireContext()).inflate(
+            R.layout.toast_layout, requireActivity().findViewById(R.id.toast_layout_vg)
+        )
     }
-    toastie.show()
+    val container: ViewGroup = layout.findViewById(R.id.toast_layout_vg)
+    val text: TextView = layout.findViewById(R.id.toast_text)
+    var image: ImageView = layout.findViewById(R.id.toast_logo)
+    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+        image.setImageDrawable(resources.getDrawable(R.drawable.logo_black, requireContext().theme))
+//        container.setBackgroundColor(resources.getColor(R.color.errorRed, requireContext().theme))
+        text.setTextColor(resources.getColor(R.color.colorPrimary, requireContext().theme))
+    } else {
+        image.setImageDrawable(resources.getDrawable(R.drawable.logo_black))
+        text.setTextColor(resources.getColor(R.color.colorPrimary))
+//        container.setBackgroundColor(resources.getColor(R.color.errorRed))
+    }
 
+    text.text = message
+    with(Toast(requireContext())) {
+        setGravity(Gravity.TOP, 0, 650)
+        duration = Toast.LENGTH_LONG
+        view = layout
+        show()
+    }
 }
-
-
 /**
  * Display error toast
  *
  * @param message
  */
-fun Context.errorToast(message: String) {
-    val toastie = FBCustomToast(this)
-    toastie.setMsg(message)
-    toastie.setIcon(resources.getDrawable(R.drawable.bad, theme))
-    toastie.setGravity(Gravity.CENTER_VERTICAL)
+fun Fragment.errorToast(message: String) {
+    //Inflate bottom view
+    val layout by lazy {
+        LayoutInflater.from(requireContext()).inflate(
+            R.layout.toast_layout, requireActivity().findViewById(R.id.toast_layout_vg)
+        )
+    }
+    val container: ViewGroup = layout.findViewById(R.id.toast_layout_vg)
+    val text: TextView = layout.findViewById(R.id.toast_text)
+    var image: ImageView = layout.findViewById(R.id.toast_logo)
+
+    text.text = message
 
     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-        toastie.setBackgroundColor(resources.getColor(R.color.errorRed, theme))
-        toastie.setToastMsgColor(resources.getColor(R.color.colorNeutral, theme))
+        image.setImageDrawable(resources.getDrawable(R.drawable.logo_black, requireContext().theme))
+//        container.setBackgroundColor(resources.getColor(R.color.errorRed, requireContext().theme))
+        text.setTextColor(resources.getColor(R.color.errorRed, requireContext().theme))
     } else {
-        toastie.setBackgroundColor(resources.getColor(R.color.errorRed))
-        toastie.setToastMsgColor(resources.getColor(R.color.colorNeutral))
+//        container.setBackgroundColor(resources.getColor(R.color.errorRed))
+        text.setTextColor(resources.getColor(R.color.colorNeutral))
+        image.setImageDrawable(resources.getDrawable(R.drawable.logo_black))
     }
-    toastie.show()
 
+    with(Toast(requireContext())) {
+        setGravity(Gravity.CENTER_VERTICAL, 0, 0)
+        duration = Toast.LENGTH_LONG
+        view = layout
+        show()
+    }
 }
 
-inline fun Context.setSpinnerAdapterData(
+
+
+fun Context.setSpinnerAdapterData(
     spinnerOne: Spinner,
     spinnerTwo: Spinner,
     stateLgaMap: HashMap<String, List<CityClass>>
@@ -194,17 +219,17 @@ inline fun Fragment.observeRequest(
                 is ServicesResponseWrapper.Error -> {
                     progressBar?.hide()
                     button?.show()
-                    when(errorCode){
+                    when (errorCode) {
                         0 -> {
                             Log.i(title, "Errorcode ${errorCode}")
-                            requireContext().errorToast(requireContext().getLocalisedString(R.string.bad_network))
+                            errorToast(requireContext().getLocalisedString(R.string.bad_network))
                         }
-                        in 500..600 ->{
-                            requireContext().errorToast(requireContext().getLocalisedString(R.string.server_error))
+                        in 500..600 -> {
+                            errorToast(requireContext().getLocalisedString(R.string.server_error))
                         }
-                        else ->{
+                        else -> {
                             result.postValue(Pair(false, errorResponse))
-                            requireContext().toast("$errorResponse")
+                            toast("$errorResponse")
                         }
                     }
 
@@ -214,7 +239,7 @@ inline fun Fragment.observeRequest(
                     progressBar?.hide()
                     button?.show()
                     result.postValue(Pair(false, errorResponse))
-                    requireContext().toast("$errorResponse")
+                    toast("$errorResponse")
                     Log.i(title, "Log out $errorResponse")
                     navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
                 }
@@ -308,7 +333,7 @@ fun Fragment.setLGASpinner(
                         "${it.id} ${it.district}"
                     })
                     val lga = lgaAndDistrict.keys.sorted().toMutableList()
-                    if (spinnerState.selectedItem == user?.stateName.toString()){
+                    if (spinnerState.selectedItem == user?.stateName.toString()) {
                         lga.add(0, user?.lgName.toString())
                         adapterLga = ArrayAdapter(
                             requireContext(),
@@ -316,7 +341,7 @@ fun Fragment.setLGASpinner(
                             lga
                         )
                         spinnerLGA.adapter = adapterLga
-                    }else{
+                    } else {
                         Log.i("$this", "LGA $lga")
                         adapterLga = ArrayAdapter(
                             requireContext(),
@@ -325,7 +350,6 @@ fun Fragment.setLGASpinner(
                         )
                         spinnerLGA.adapter = adapterLga
                     }
-
 
 
                 } catch (e: Exception) {
@@ -381,10 +405,11 @@ fun Fragment.setOnClickEventForPicture(vararg views: View, action: () -> Unit) {
 /***
  * Display notification bell
  */
-internal fun Fragment.displayNotificationBell(loggedInUser: User?,
-   icon: ImageView, countTextView: TextView
+internal fun Fragment.displayNotificationBell(
+    loggedInUser: User?,
+    icon: ImageView, countTextView: TextView
 ) {
-    when(loggedInUser?.isReviewer){
+    when (loggedInUser?.isReviewer) {
         true -> {
             icon.show()
             countTextView.show()
@@ -401,7 +426,7 @@ fun Fragment.getUnapprovedReportCounts(
     recyclerView: RecyclerView,
     dataFactory: ReviewerUnapprovedReportsDataFactory,
     authViewModel: AuthViewModel
-):LiveData<Int> {
+): LiveData<Int> {
     var dataReturn = MutableLiveData<Int>()
     var total = 0
     recyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item) { adapter, context, list ->
@@ -430,7 +455,7 @@ fun Fragment.getUnapprovedReportCounts(
  *
  * @param destinationId
  */
-fun Fragment.goto(destinationId: Int){
+fun Fragment.goto(destinationId: Int) {
     findNavController().navigate(destinationId)
 }
 
@@ -439,7 +464,7 @@ fun Fragment.goto(destinationId: Int){
  *
  * @param destinationId
  */
-fun Fragment.goto(destinationId: NavDirections){
+fun Fragment.goto(destinationId: NavDirections) {
     findNavController().navigate(destinationId)
 }
 
@@ -447,9 +472,10 @@ fun Fragment.goto(destinationId: NavDirections){
  * Navigate up
  *
  */
-fun Fragment.gotoUp(){
+fun Fragment.gotoUp() {
     findNavController().navigateUp()
 }
+
 /**
  * Navigate to uri
  *
@@ -462,6 +488,6 @@ fun Fragment.goto(uri: Uri) {
     findNavController().navigate(request)
 }
 
-fun Fragment.crashReportByUser(loggedInUser: User?){
+fun Fragment.crashReportByUser(loggedInUser: User?) {
     FirebaseCrashlytics.getInstance().setUserId(loggedInUser?.email.toString())
 }

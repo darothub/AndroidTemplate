@@ -1,5 +1,7 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
+import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
@@ -10,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
@@ -29,8 +32,10 @@ import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
+import com.skydoves.transformationlayout.TransformationLayout
 import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
+import kotlinx.android.synthetic.main.bottom_indicator.*
 import kotlinx.android.synthetic.main.fragment_report.*
 import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.fragment_signin.*
@@ -57,9 +62,9 @@ class SigninFragment : DaggerFragment() {
     val spannableString: SpannableString by lazy {
         signupText.setAsSpannable()
     }
-    val color: Int by lazy {
-        resources.getColor(R.color.colorPrimary)
-    }
+    var color: Int = 0
+
+
 
     private val textLen: Int by lazy {
         signupText.length
@@ -69,6 +74,7 @@ class SigninFragment : DaggerFragment() {
     }
 
     lateinit var signinBtn:Button
+    lateinit var transformationLayout: TransformationLayout
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
@@ -104,10 +110,12 @@ class SigninFragment : DaggerFragment() {
 
         val localTime = Locale.getDefault().displayLanguage
         signinBtn = signinBottomLayout.findViewById<Button>(R.id.includeBtn)
+
         Log.i(title, "onResume $localTime")
         initEnterKeyToSubmitForm(signinPasswordEdit) { loginRequest() }
         submitLoginRequest()
         setButtonText()
+
     }
 
     override fun onPause() {
@@ -138,6 +146,8 @@ class SigninFragment : DaggerFragment() {
         forgotPassword.setOnClickListener {
             goto(R.id.forgotPasswordFragment)
         }
+
+
 
     }
 
@@ -176,6 +186,11 @@ class SigninFragment : DaggerFragment() {
     fun setupSignUpLink() {
         val start = 23
         val end = textLen
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
+            color = resources.getColor(R.color.colorPrimary, requireContext().theme)
+        } else {
+            color = resources.getColor(R.color.colorPrimary)
+        }
         spannableString.enableClickOnSubstring(start, end) {
             goto(R.id.signupFragment)
         }
@@ -194,9 +209,9 @@ class SigninFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} field is empty")
+                toast("${checkForEmpty.hint} field is empty")
             }
-            validation != null -> requireActivity().toast("$validation is invalid")
+            validation != null -> toast("$validation is invalid")
             else -> {
                 val request = userViewModel.loginUserRequest(
                    emailAddress, passwordString
@@ -225,6 +240,8 @@ class SigninFragment : DaggerFragment() {
         emailAddress: String,
         passwordString: String
     ) {
+
+
         when (bool) {
             true -> {
                 val res = result as UserResponse
@@ -236,15 +253,16 @@ class SigninFragment : DaggerFragment() {
 
                 checkIsReviewer(userExist)
 
-                requireContext().toast(requireContext().getLocalisedString(R.string.successful))
+
+                toast(requireContext().getLocalisedString(R.string.successful))
 //                Log.i("UserExist", "${userExist}")
 //                Log.i(title, "message ${result.data}")
 
 //                findNavController().popBackStack(R.id.reportFragment, false)
             }
             else -> {
-                requireContext().toast("$result")
-//                Log.i(title, "error $result")
+                errorToast("$result")
+                Log.i(title, "error $result")
             }
         }
     }

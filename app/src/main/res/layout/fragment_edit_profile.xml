@@ -82,7 +82,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/cameraa_icon" />
+                app:srcCompat="@drawable/ic_photo_camera_pry_24dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -121,11 +121,8 @@
             app:layout_constraintStart_toStartOf="parent"
             android:text="@string/image_url"
             app:layout_constraintTop_toBottomOf="@id/editInfoUploadCard"
-            android:textSize="@dimen/smallest_font_size"
-            android:gravity="left|center"
-            android:autoSizeTextType="uniform"
-            android:autoSizeMinTextSize="12sp"
-            android:autoSizeMaxTextSize="14sp"
+            android:textSize="@dimen/_9sdp"
+            android:gravity="start|center"
             android:maxLines="4"
             android:visibility="gone"
             tools:visibility="visible"
@@ -291,7 +288,7 @@
             android:layout_marginTop="16dp"
             android:background="@drawable/spinner_backgrnd"
             android:dropDownVerticalOffset="95dp"
-            android:gravity="left|center"
+            android:gravity="start|center"
             android:hint="@string/states"
             android:padding="10dp"
             android:popupTheme="@style/AppThemeActivity"
@@ -310,7 +307,7 @@
             android:layout_marginRight="@dimen/normal_margin"
             android:layout_marginTop="16dp"
             android:background="@drawable/spinner_backgrnd"
-            android:gravity="left|center"
+            android:gravity="start|center"
             android:hint="@string/lga"
             android:padding="10dp"
             android:textColor="@color/colorPrimaryDark"

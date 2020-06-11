@@ -187,9 +187,9 @@ class ReportApprovalFragment : DaggerFragment() {
                     Log.i(title, res.data.toString())
                     if (approve) {
 
-                        requireContext().toast(requireContext().getLocalisedString(R.string.approved_successful))
+                        toast(requireContext().getLocalisedString(R.string.approved_successful))
                     } else {
-                        requireContext().toast(requireContext().getLocalisedString(R.string.dismissed_successfully))
+                        toast(requireContext().getLocalisedString(R.string.dismissed_successfully))
                     }
                     loggedInUser?.totalUnapprovedReports =
                         loggedInUser?.totalUnapprovedReports?.minus(1.toLong())

@@ -88,9 +88,9 @@ class ForgotPasswordFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
-                requireActivity().toast("${checkForEmpty.hint} field is empty")
+                toast("${checkForEmpty.hint} field is empty")
             }
-            validation != null -> requireActivity().toast("$validation is invalid")
+            validation != null -> toast("$validation is invalid")
             else -> {
                 val request = userViewModel.forgotPasswordRequest(
                     email
@@ -116,7 +116,7 @@ class ForgotPasswordFragment : DaggerFragment() {
         when (bool) {
             true -> {
                 val res = result as UserResponse
-                requireActivity().toast("${res.data}")
+                toast("${res.data}")
                 findNavController().popBackStack()
             }
             else -> Log.i(title, "error $result")
