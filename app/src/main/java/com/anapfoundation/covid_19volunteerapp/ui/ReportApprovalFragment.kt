@@ -41,7 +41,7 @@ class ReportApprovalFragment : DaggerFragment() {
         getName()
     }
     val detailsText: String by lazy {
-        requireContext().getLocalisedString(R.string.report_details)
+        getLocalisedString(R.string.report_details)
     }
     val spannableString: SpannableString by lazy {
         detailsText.setAsSpannable()
@@ -132,9 +132,9 @@ class ReportApprovalFragment : DaggerFragment() {
 
 
         approveBtn = reportApprovalBottomLayout.findViewById(R.id.btn)
-        approveBtn.text = requireContext().getLocalisedString(R.string.approve_report)
+        approveBtn.text = getLocalisedString(R.string.approve_report)
         dismissBtn = reportApprovalBottomLayout.findViewById(R.id.secondBtn)
-        dismissBtn.text = requireContext().getLocalisedString(R.string.dismissText)
+        dismissBtn.text = getLocalisedString(R.string.dismissText)
         dismissBtn.show()
 
         approveBtn.setOnClickListener {
@@ -187,9 +187,9 @@ class ReportApprovalFragment : DaggerFragment() {
                     Log.i(title, res.data.toString())
                     if (approve) {
 
-                        toast(requireContext().getLocalisedString(R.string.approved_successful))
+                        toast(getLocalisedString(R.string.approved_successful))
                     } else {
-                        toast(requireContext().getLocalisedString(R.string.dismissed_successfully))
+                        toast(getLocalisedString(R.string.dismissed_successfully))
                     }
                     loggedInUser?.totalUnapprovedReports =
                         loggedInUser?.totalUnapprovedReports?.minus(1.toLong())

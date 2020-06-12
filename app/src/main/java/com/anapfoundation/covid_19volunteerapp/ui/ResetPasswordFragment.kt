@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -117,7 +118,18 @@ class ResetPasswordFragment : DaggerFragment() {
             val notificationManager: NotificationManager = requireContext().getSystemService(
                 NOTIFICATION_SERVICE) as NotificationManager
 
+            if(channel.sound == null){
+                val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, "com.anapfoundation.covid_19volunteerapp")
+                    putExtra(Settings.EXTRA_CHANNEL_ID, channel.id)
+                }
+                startActivity(intent)
+            }
             notificationManager.createNotificationChannel(channel)
+
+
+
+
         }
     }
 
@@ -125,7 +137,7 @@ class ResetPasswordFragment : DaggerFragment() {
         super.onResume()
         Log.i(title, "onResume")
         resetButton = resetPasswordBottomLayout.findViewById<Button>(R.id.includeBtn)
-        resetButton.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
+        resetButton.setButtonText(getLocalisedString(R.string.submit_text))
 
         initEnterKeyToSubmitForm(resetPasswordPasswordEdit) { resetPasswordRequest() }
         resetButton.setOnClickListener {
@@ -155,10 +167,10 @@ class ResetPasswordFragment : DaggerFragment() {
 
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
+                checkForEmpty.error = getLocalisedString(R.string.field_required)
                 toast("${checkForEmpty.hint} is empty")
             }
-            validation != null -> toast(requireContext().getLocalisedString(R.string.password_invalid))
+            validation != null -> toast(getLocalisedString(R.string.password_invalid))
             else -> {
                 val request = authViewModel.resetPassword(password, token)
                 val response = observeRequest(request, progressBar, resetButton)
@@ -202,10 +214,11 @@ class ResetPasswordFragment : DaggerFragment() {
 
                 val builder = NotificationCompat.Builder(requireContext(), CHANNEL_ID)
                     .setSmallIcon(R.drawable.notification_icon)
-                    .setContentTitle("Password reset")
-                    .setContentText("Reset is successful. Click here")
+                    .setContentTitle(requireContext().getString(R.string.password_reset))
+                    .setContentText(getLocalisedString(R.string.reset_success))
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
+                    .setColorized(true)
                     .setCategory(NotificationCompat.CATEGORY_MESSAGE)
                     .setStyle(NotificationCompat.BigPictureStyle()
                         .bigPicture(icon))

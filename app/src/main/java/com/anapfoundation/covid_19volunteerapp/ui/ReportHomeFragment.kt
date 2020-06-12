@@ -170,6 +170,8 @@ class ReportHomeFragment : DaggerFragment() {
             Log.e(title, e.message)
         }
 
+
+
         reporterNotificationIcon.setOnClickListener {
             goto(R.id.reviewerScreenFragment)
         }

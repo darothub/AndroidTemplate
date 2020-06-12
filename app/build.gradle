@@ -145,6 +145,8 @@ dependencies {
 
     implementation "com.github.skydoves:transformationlayout:1.0.3"
 
+    implementation "com.github.skydoves:androidveil:1.0.9"
+
 
 
 }

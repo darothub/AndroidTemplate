@@ -42,7 +42,7 @@ class SignupFragment : DaggerFragment() {
         getName()
     }
     val signinText: String by lazy {
-        requireContext().getLocalisedString(R.string.signin_link)
+        getLocalisedString(R.string.signin_link)
     }
     val spannableString: SpannableString by lazy {
         signinText.setAsSpannable()
@@ -85,7 +85,7 @@ class SignupFragment : DaggerFragment() {
         passwordCheckAlert()
 
         signupBtn = signupBottom.findViewById<Button>(R.id.includeBtn)
-        signupBtn.setButtonText(requireContext().getLocalisedString(R.string.proceed))
+        signupBtn.setButtonText(getLocalisedString(R.string.proceed))
 
         sendSignupRequest()
     }
@@ -151,15 +151,15 @@ class SignupFragment : DaggerFragment() {
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
+                checkForEmpty.error = getLocalisedString(R.string.field_required)
                 toast("${checkForEmpty.hint} is empty")
             }
             !checkboxForSignup.isChecked -> {
-                toast(requireContext().getLocalisedString(R.string.agree_to_term))
+                toast(getLocalisedString(R.string.agree_to_term))
 
             }
             validation != null -> toast("$validation is invalid")
-            passwordString != cpassword -> toast(requireContext().getLocalisedString(R.string.passwords_do_not_match))
+            passwordString != cpassword -> toast(getLocalisedString(R.string.passwords_do_not_match))
             else -> {
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)
                 val action = SignupFragmentDirections.toAddressFragment()

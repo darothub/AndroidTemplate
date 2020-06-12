@@ -326,7 +326,7 @@ class ReportUploadFragment : DaggerFragment() {
         when (bool) {
 
             true -> {
-                toast(requireContext().getLocalisedString(R.string.upload_successful))
+                toast(getLocalisedString(R.string.upload_successful))
                 loggedInUser?.totalReports = loggedInUser?.totalReports?.plus(1)
                 storageRequest.saveData(loggedInUser, "loggedInUser")
                 val res = result as AddReportResponse
@@ -366,7 +366,7 @@ class ReportUploadFragment : DaggerFragment() {
 
     private fun setButtonText() {
         submitBtn = reportUploadBottomLayout.findViewById<Button>(R.id.includeBtn)
-        submitBtn.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
+        submitBtn.setButtonText(getLocalisedString(R.string.submit_text))
     }
 
     /**
@@ -423,8 +423,8 @@ class ReportUploadFragment : DaggerFragment() {
      *
      */
     private fun showBottomSheet() {
-        uploadPictureText.text = requireContext().getLocalisedString(R.string.upload_picture)
-        uploadPictureBtn.text = requireContext().getLocalisedString(R.string.upload_image)
+        uploadPictureText.text = getLocalisedString(R.string.upload_picture)
+        uploadPictureBtn.text = getLocalisedString(R.string.upload_image)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
@@ -546,7 +546,7 @@ class ReportUploadFragment : DaggerFragment() {
                     imageUploadPreview.show()
                 }
 
-                uploadPictureText.setText(requireContext().getLocalisedString(R.string.new_picture))
+                uploadPictureText.text = getLocalisedString(R.string.new_picture)
                 bottomSheetDialog.dismiss()
 
 

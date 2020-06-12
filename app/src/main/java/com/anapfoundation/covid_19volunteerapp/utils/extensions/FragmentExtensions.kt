@@ -92,7 +92,7 @@ fun Fragment.toast(message: String) {
 
     text.text = message
     with(Toast(requireContext())) {
-        setGravity(Gravity.TOP, 0, 650)
+        setGravity(Gravity.TOP, 0, 550)
         duration = Toast.LENGTH_LONG
         view = layout
         show()
@@ -222,10 +222,10 @@ inline fun Fragment.observeRequest(
                     when (errorCode) {
                         0 -> {
                             Log.i(title, "Errorcode ${errorCode}")
-                            errorToast(requireContext().getLocalisedString(R.string.bad_network))
+                            errorToast(getLocalisedString(R.string.bad_network))
                         }
                         in 500..600 -> {
-                            errorToast(requireContext().getLocalisedString(R.string.server_error))
+                            errorToast(getLocalisedString(R.string.server_error))
                         }
                         else -> {
                             result.postValue(Pair(false, errorResponse))

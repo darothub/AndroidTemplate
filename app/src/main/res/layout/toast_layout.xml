@@ -3,16 +3,20 @@
     android:id="@+id/toast_layout_vg"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:layout_margin="@dimen/_8sdp"
-    android:padding="@dimen/_12sdp"
+    android:layout_height="wrap_content"
+    android:elevation="3dp"
+    android:background="@drawable/rounded_border_with_backgrnd_white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ImageView
         android:id="@+id/toast_logo"
-        android:layout_width="@dimen/_30sdp"
-        android:layout_height="@dimen/_30sdp"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
         app:srcCompat="@drawable/logo_black"
+        android:cropToPadding="true"
+        android:scaleType="fitCenter"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:layout_marginEnd="@dimen/_6sdp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias=".5"
@@ -20,7 +24,7 @@
 
     <TextView
         android:id="@+id/toast_text"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dash"
         android:textSize="@dimen/_8sdp"
@@ -31,6 +35,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         android:gravity="start|center_vertical"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:layout_marginEnd="@dimen/_6sdp"
+
         />
 </androidx.constraintlayout.widget.ConstraintLayout>

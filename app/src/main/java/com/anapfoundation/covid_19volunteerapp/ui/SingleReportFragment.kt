@@ -42,7 +42,7 @@ class SingleReportFragment : DaggerFragment() {
         getName()
     }
     val detailsText: String by lazy {
-        requireContext().getLocalisedString(R.string.report_details)
+        getLocalisedString(R.string.report_details)
     }
     val spannableString: SpannableString by lazy {
         detailsText.setAsSpannable()

@@ -1,7 +1,8 @@
 package com.anapfoundation.covid_19volunteerapp.utils.extensions
 
-import android.content.Context
+import androidx.fragment.app.Fragment
 
-inline fun Context.getLocalisedString(int: Int):String{
-    return this.resources.getText(int).toString()
+
+fun Fragment.getLocalisedString(resId: Int):String{
+    return getString(resId)
 }

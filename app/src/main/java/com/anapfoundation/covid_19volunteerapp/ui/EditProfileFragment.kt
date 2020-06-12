@@ -197,7 +197,7 @@ class EditProfileFragment : DaggerFragment() {
 
         getStateAndSendToSpinner()
         updateBtn = editProfileBottomLayout.findViewById<Button>(R.id.includeBtn)
-        updateBtn.setButtonText(requireContext().getLocalisedString(R.string.update_profile))
+        updateBtn.setButtonText(getLocalisedString(R.string.update_profile))
         updateBtn.setOnClickListener {
             updateProfileRequest()
         }
@@ -238,7 +238,7 @@ class EditProfileFragment : DaggerFragment() {
         val id = loggedInUser?.id
         val path = "images/profile_$firstName _$id" + "_.jpg"
 
-        uploadPictureBtn.text = requireContext().getLocalisedString(R.string.done)
+        uploadPictureBtn.text = getLocalisedString(R.string.done)
 
         bottomSheetDialog.setContentView(bottomSheetView)
         bottomSheetDialog.show()
@@ -414,7 +414,7 @@ class EditProfileFragment : DaggerFragment() {
 
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
+                checkForEmpty.error = getLocalisedString(R.string.field_required)
                 toast("${checkForEmpty.hint} is empty")
             }
             validation != null -> toast("email is invalid")
@@ -459,7 +459,7 @@ class EditProfileFragment : DaggerFragment() {
         when (bool) {
             true -> {
                 val res = result as ProfileData
-                toast(requireContext().getLocalisedString(R.string.profile_updated))
+                toast(getLocalisedString(R.string.profile_updated))
                 Log.i(title, "result of registration ${res.data.firstName}")
                 var user = storageRequest.checkUser("loggedInUser")
                 user?.imageUrl = imageText.subSequence(10, imageText.length).toString()

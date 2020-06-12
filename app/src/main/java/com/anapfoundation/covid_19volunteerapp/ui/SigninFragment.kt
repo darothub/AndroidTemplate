@@ -57,7 +57,7 @@ class SigninFragment : DaggerFragment() {
         getName()
     }
     val signupText: String by lazy {
-        requireContext().getLocalisedString(R.string.signup_link)
+        getLocalisedString(R.string.signup_link)
     }
     val spannableString: SpannableString by lazy {
         signupText.setAsSpannable()
@@ -149,11 +149,12 @@ class SigninFragment : DaggerFragment() {
 
 
 
+
     }
 
 
     private fun setButtonText() {
-        signinBtn.setButtonText(requireContext().getLocalisedString(R.string.signin_text))
+        signinBtn.setButtonText(getLocalisedString(R.string.signin_text))
     }
 
     override fun onDetach() {
@@ -208,7 +209,7 @@ class SigninFragment : DaggerFragment() {
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, null)
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
+                checkForEmpty.error = getLocalisedString(R.string.field_required)
                 toast("${checkForEmpty.hint} field is empty")
             }
             validation != null -> toast("$validation is invalid")
@@ -254,7 +255,7 @@ class SigninFragment : DaggerFragment() {
                 checkIsReviewer(userExist)
 
 
-                toast(requireContext().getLocalisedString(R.string.successful))
+                toast(getLocalisedString(R.string.successful))
 //                Log.i("UserExist", "${userExist}")
 //                Log.i(title, "message ${result.data}")
 

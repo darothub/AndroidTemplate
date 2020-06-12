@@ -101,7 +101,7 @@ class AddressFragment : DaggerFragment() {
         }
 
         //Customize button text
-        submitBtn.text = requireContext().getLocalisedString(R.string.submit_text)
+        submitBtn.text = getLocalisedString(R.string.submit_text)
 
         //Sign-up onclick event
         submitBtn.setOnClickListener {
@@ -185,7 +185,7 @@ class AddressFragment : DaggerFragment() {
      */
     private fun setupSpinner() {
         val stateArray = states.keys.sorted().toMutableList()
-        stateArray.add(0, requireContext().getLocalisedString(R.string.states))
+        stateArray.add(0, getLocalisedString(R.string.states))
         val adapterState =
             ArrayAdapter(
                 requireContext(),
@@ -208,7 +208,7 @@ class AddressFragment : DaggerFragment() {
             IsEmptyCheck(houseNumberEditText, streetEditText)
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
+                checkForEmpty.error = getLocalisedString(R.string.field_required)
                 toast("${checkForEmpty.hint} is empty")
             }
             else -> {
@@ -265,7 +265,7 @@ class AddressFragment : DaggerFragment() {
         when (bool) {
             true -> {
                 val res = result as UserResponse
-                toast(requireContext().getLocalisedString(R.string.signup_successful))
+                toast(getLocalisedString(R.string.signup_successful))
                 val clearRegister = userViewModel.clearSavedRegisteredUser()
                 goto(R.id.signinFragment)
                 Log.i(title, "result of registration ${res.data}")

@@ -63,7 +63,7 @@ class ForgotPasswordFragment : DaggerFragment() {
 
     override fun onResume() {
         super.onResume()
-        btn.setButtonText(requireContext().getLocalisedString(R.string.submit_text))
+        btn.setButtonText(getLocalisedString(R.string.submit_text))
 
         btn.setOnClickListener {
             forgotPasswordRequest()
@@ -87,7 +87,7 @@ class ForgotPasswordFragment : DaggerFragment() {
         val validation = IsEmptyCheck.fieldsValidation(email, null)
         when {
             checkForEmpty != null -> {
-                checkForEmpty.error = requireContext().getLocalisedString(R.string.field_required)
+                checkForEmpty.error = getLocalisedString(R.string.field_required)
                 toast("${checkForEmpty.hint} field is empty")
             }
             validation != null -> toast("$validation is invalid")

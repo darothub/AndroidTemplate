@@ -93,7 +93,7 @@ class ProfileFragment : DaggerFragment() {
         }
 
         if(loggedInUser?.token.isNullOrEmpty()){
-            toast(requireContext().getLocalisedString(R.string.unauthorized))
+            toast(getLocalisedString(R.string.unauthorized))
             navigateWithUri("android-app://anapfoundation.navigation/signin".toUri())
         }else{
             profileName.text =
