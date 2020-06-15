@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.fragment_report.*
 import java.util.*
 import javax.inject.Inject
 
+@SuppressWarnings("unchecked")
 class MainActivity : DaggerAppCompatActivity() {
 
     val title:String by lazy {
@@ -35,7 +36,8 @@ class MainActivity : DaggerAppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val navController = Navigation.findNavController(this, R.id.fragment)
+//        val navController = Navigation.findNavController(this, R.id.fragment)
+
 
     }
     override fun onSupportNavigateUp(): Boolean {

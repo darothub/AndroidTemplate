@@ -1,25 +1,20 @@
 package com.anapfoundation.covid_19volunteerapp.ui
 
-import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
-import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.net.toUri
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
-
 import com.anapfoundation.covid_19volunteerapp.R
 import com.anapfoundation.covid_19volunteerapp.data.paging.ReviewerUnapprovedReportsDataFactory
 import com.anapfoundation.covid_19volunteerapp.data.viewmodel.ViewModelProviderFactory
@@ -28,23 +23,11 @@ import com.anapfoundation.covid_19volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.covid_19volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.covid_19volunteerapp.model.ProfileData
 import com.anapfoundation.covid_19volunteerapp.model.User
-import com.anapfoundation.covid_19volunteerapp.model.response.ReportResponse
 import com.anapfoundation.covid_19volunteerapp.model.user.UserResponse
 import com.anapfoundation.covid_19volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.covid_19volunteerapp.utils.extensions.*
-import com.skydoves.transformationlayout.TransformationLayout
-import com.utsman.recycling.paged.setupAdapterPaged
 import dagger.android.support.DaggerFragment
-import kotlinx.android.synthetic.main.bottom_indicator.*
-import kotlinx.android.synthetic.main.fragment_report.*
-import kotlinx.android.synthetic.main.fragment_report_home.*
 import kotlinx.android.synthetic.main.fragment_signin.*
-import kotlinx.android.synthetic.main.report_item.view.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.Dispatchers.Main
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -74,7 +57,7 @@ class SigninFragment : DaggerFragment() {
     }
 
     lateinit var signinBtn:Button
-    lateinit var transformationLayout: TransformationLayout
+
 
     @Inject
     lateinit var viewModelProviderFactory: ViewModelProviderFactory
@@ -175,7 +158,7 @@ class SigninFragment : DaggerFragment() {
 //            requireContext().toast("$returningUser")
             when {
                 returningUser.rememberPassword -> {
-                    signinEmailEdit.setText(returningUser?.email)
+                    signinEmailEdit.setText(returningUser.email)
                     signinPasswordEdit.setText(returningUser.password)
                 }
             }

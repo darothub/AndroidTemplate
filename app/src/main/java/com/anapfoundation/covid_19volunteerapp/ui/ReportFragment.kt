@@ -176,7 +176,7 @@ class ReportFragment : DaggerFragment() {
     override fun onResume() {
         super.onResume()
         //
-        Log.i(title, "OnResume")
+//        Log.i(title, "OnResume")
 
         when(loggedInUser?.isReviewer){
             true ->{
@@ -196,18 +196,13 @@ class ReportFragment : DaggerFragment() {
 
     override fun onPause() {
         super.onPause()
-        Log.i(title, "OnPause")
+//        Log.i(title, "OnPause")
         navController.removeOnDestinationChangedListener(destinationChangedListener)
 
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.i(title, "OnDestroy")
 
-    }
-
-   fun showBottomSheet() {
+   private fun showBottomSheet() {
 
         logoutLayout.show()
         uploadLayout.hide()

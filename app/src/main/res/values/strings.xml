@@ -147,6 +147,7 @@
     <string name="channel_description">reset password</string>
     <string name="password_reset">Password reset</string>
     <string name="reset_success">Password reset is successful. Click here</string>
+    <string name="log_out">Log out</string>
 
 
 </resources>

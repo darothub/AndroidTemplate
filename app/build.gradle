@@ -18,7 +18,6 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     dokka {
@@ -31,6 +30,9 @@ android {
             reportUndocumented = true
             jdkVersion = 8
         }
+    }
+    testOptions {
+        unitTests.includeAndroidResources = true
     }
 
     buildTypes {
@@ -108,10 +110,6 @@ dependencies {
     implementation "androidx.preference:preference-ktx:1.1.1"
     //OkHttp
     implementation 'com.squareup.okhttp3:okhttp:4.5.0'
-    //Room
-//    implementation "androidx.room:room-runtime:$versions.room_version"
-//    kapt "androidx.room:room-compiler:$versions.room_version"
-//    implementation "androidx.room:room-ktx:$versions.room_version"
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle_version"
     //Cloudinary
@@ -143,9 +141,19 @@ dependencies {
 
     implementation 'com.intuit.ssp:ssp-android:1.0.6'
 
-    implementation "com.github.skydoves:transformationlayout:1.0.3"
+    // JUnit 4 framework
+    testImplementation 'junit:junit:4.13'
 
-    implementation "com.github.skydoves:androidveil:1.0.9"
+    // Robolectric environment
+    testImplementation 'androidx.test:core:1.2.0'
+    //Mockito framework
+    testImplementation 'org.mockito:mockito-core:2.19.0'
+
+    testImplementation 'org.robolectric:robolectric:4.3.1'
+
+    debugImplementation "androidx.fragment:fragment-testing:$versions.fragment"
+
+
 
 
 
