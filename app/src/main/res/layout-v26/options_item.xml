@@ -27,7 +27,7 @@
         android:autoSizeStepGranularity="16sp"
         />
 
-    <com.anapfoundation.covid_19volunteerapp.helpers.ToggleableRadioButton
+    <com.anapfoundation.volunteerapp.helpers.ToggleableRadioButton
         android:id="@+id/optionRadio"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
