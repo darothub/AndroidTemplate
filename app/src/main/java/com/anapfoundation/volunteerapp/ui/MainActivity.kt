@@ -10,7 +10,7 @@ import com.anapfoundation.volunteerapp.utils.extensions.getName
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
-@SuppressWarnings("unchecked")
+
 class MainActivity : DaggerAppCompatActivity() {
 
     val title:String by lazy {
@@ -22,9 +22,6 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-//        val navController = Navigation.findNavController(this, R.id.fragment)
-
 
     }
     override fun onSupportNavigateUp(): Boolean {

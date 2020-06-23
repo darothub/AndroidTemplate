@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="3dp"
+    android:padding="10dp"
     android:background="@drawable/rounded_border_with_backgrnd_white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 

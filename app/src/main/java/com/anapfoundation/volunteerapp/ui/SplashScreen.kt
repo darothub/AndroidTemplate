@@ -3,8 +3,11 @@ package com.anapfoundation.volunteerapp.ui
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
+import android.widget.Toast
 import com.anapfoundation.volunteerapp.R
+import com.peacedude.gdtoast.gdToast
 import java.lang.Thread.sleep
 
 class SplashScreen : AppCompatActivity() {
@@ -12,6 +15,12 @@ class SplashScreen : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
+
+        gdToast(
+            "Hello",
+            R.drawable.ic_android_black_24dp,
+            Gravity.CENTER
+        )
         val myThread = Thread(){
             try {
                 kotlin.run {
@@ -25,6 +34,9 @@ class SplashScreen : AppCompatActivity() {
             }
         }
         myThread.start()
+
+
+
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

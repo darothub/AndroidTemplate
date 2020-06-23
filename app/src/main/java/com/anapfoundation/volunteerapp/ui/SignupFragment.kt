@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.util.Log
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -24,6 +25,8 @@ import com.anapfoundation.volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.model.UserData
 import com.anapfoundation.volunteerapp.utils.extensions.*
+import com.peacedude.gdtoast.Darot
+import com.peacedude.gdtoast.gdToast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signup.*
 import java.lang.Exception
@@ -141,7 +144,7 @@ class SignupFragment : DaggerFragment() {
         val user = User(firstName, lastName, emailAddress, passwordString, phoneNumber)
         user.rememberPassword = checkboxForSignup.isChecked
 
-        userViewModel.saveRegisteringUser(user)
+        userViewModel.registerFormData = user
         val checkForEmpty =
             IsEmptyCheck(firstNameEdit, lastNameEdit, emailEdit, phoneNumberEdit, passwordEdit, cpasswordEdit)
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
@@ -157,6 +160,7 @@ class SignupFragment : DaggerFragment() {
             validation != null -> toast("$validation is invalid")
             passwordString != cpassword -> toast(getLocalisedString(R.string.passwords_do_not_match))
             else -> {
+
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)
                 val action = SignupFragmentDirections.toAddressFragment()
                 action.userData = userData
@@ -173,7 +177,7 @@ class SignupFragment : DaggerFragment() {
 //        Log.i(title, "RestoredInstance")
         if (userViewModel.state.contains("registeringUser")){
             try {
-                val registeringUser = userViewModel.getSavedUserForm()
+                val registeringUser = userViewModel.registerFormData
                 firstNameEdit.setText(registeringUser?.firstName)
                 lastNameEdit.setText(registeringUser?.lastName)
                 emailEdit.setText(registeringUser?.email)
@@ -181,6 +185,8 @@ class SignupFragment : DaggerFragment() {
                 cpasswordEdit.setText(registeringUser?.password)
                 phoneNumberEdit.setText(registeringUser?.phone)
                 checkboxForSignup.isChecked = registeringUser?.rememberPassword!!
+
+
             }
             catch (e:Exception){
                 Log.i(title, "RestoringError ${e.localizedMessage}")

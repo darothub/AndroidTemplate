@@ -266,7 +266,7 @@ class AddressFragment : DaggerFragment() {
             true -> {
                 val res = result as UserResponse
                 toast(getLocalisedString(R.string.signup_successful))
-                val clearRegister = userViewModel.clearSavedRegisteredUser()
+                val clearRegister = userViewModel.clearSavedUser
                 goto(R.id.signinFragment)
                 Log.i(title, "result of registration ${res.data}")
                 Log.i(title, "clearedRegister $clearRegister")

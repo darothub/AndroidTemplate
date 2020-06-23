@@ -5,11 +5,13 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.method.LinkMovementMethod
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
@@ -26,6 +28,7 @@ import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.model.user.UserResponse
 import com.anapfoundation.volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.volunteerapp.utils.extensions.*
+import com.peacedude.gdtoast.gdToast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signin.*
 import java.util.*
@@ -48,7 +51,6 @@ class SigninFragment : DaggerFragment() {
     var color: Int = 0
 
 
-
     private val textLen: Int by lazy {
         signupText.length
     }
@@ -56,7 +58,7 @@ class SigninFragment : DaggerFragment() {
         signinBottomLayout.findViewById<ProgressBar>(R.id.includedProgressBar)
     }
 
-    lateinit var signinBtn:Button
+    lateinit var signinBtn: Button
 
 
     @Inject
@@ -114,6 +116,7 @@ class SigninFragment : DaggerFragment() {
         Log.i(title, "onStop")
 //        setButtonText()
     }
+
     override fun onStart() {
         super.onStart()
         Log.i(title, "onStart")
@@ -131,8 +134,6 @@ class SigninFragment : DaggerFragment() {
         }
 
 
-
-
     }
 
 
@@ -144,6 +145,7 @@ class SigninFragment : DaggerFragment() {
         super.onDetach()
         Log.i(title, "detached")
     }
+
     private fun submitLoginRequest() {
         signinBtn.setOnClickListener {
             loginRequest()
@@ -198,7 +200,7 @@ class SigninFragment : DaggerFragment() {
             validation != null -> toast("$validation is invalid")
             else -> {
                 val request = userViewModel.loginUserRequest(
-                   emailAddress, passwordString
+                    emailAddress, passwordString
                 )
                 val response = observeRequest(request, progressBar, signinBtn)
                 response.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
@@ -238,6 +240,15 @@ class SigninFragment : DaggerFragment() {
                 checkIsReviewer(userExist)
 
 
+//                requireActivity().gdToast(
+//                    getLocalisedString(R.string.successful),
+//                    R.drawable.logo_black,
+//                    R.color.colorNeutral,
+//                    R.color.colorPrimary,
+//                    Gravity.CENTER,
+//                    Toast.LENGTH_LONG
+//                )
+//                requireActivity().gdToast(getLocalisedString(R.string.successful), Gravity.CENTER)
                 toast(getLocalisedString(R.string.successful))
 //                Log.i("UserExist", "${userExist}")
 //                Log.i(title, "message ${result.data}")

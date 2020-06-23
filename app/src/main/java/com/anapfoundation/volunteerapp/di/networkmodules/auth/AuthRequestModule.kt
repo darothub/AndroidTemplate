@@ -33,6 +33,9 @@ class AuthRequestModule {
         )
     }
 
+    val anything:Hey
+           @Provides get()=Hey()
+
     @Provides
     fun provideReportDataFactory(authApiRequests: AuthApiRequests, storageRequest: StorageRequest):DataSource.Factory<Long, ReportResponse>{
         return ReportDataFactory(
@@ -42,3 +45,6 @@ class AuthRequestModule {
 
 }
 
+class Hey(){
+
+}

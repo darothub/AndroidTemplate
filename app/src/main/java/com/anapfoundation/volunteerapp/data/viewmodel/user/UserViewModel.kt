@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.anapfoundation.volunteerapp.di.networkmodules.auth.Hey
 import com.anapfoundation.volunteerapp.model.response.Data
 import com.anapfoundation.volunteerapp.model.DefaultResponse
 import com.anapfoundation.volunteerapp.model.LGA
@@ -27,6 +28,7 @@ class UserViewModel @Inject constructor(
     val state: SavedStateHandle
 ) : ViewModel() {
 
+
     val title: String by lazy {
         this.getName()
 
@@ -34,18 +36,15 @@ class UserViewModel @Inject constructor(
     val registeringUser:String by lazy {
         "registeringUser"
     }
+    var registerFormData:User? = state.get<User>(registeringUser)
+    set(user) = state.set(registeringUser, user)
 
-    fun getSavedUserForm(): User?{
-        return state.get<User>(registeringUser)
-    }
-    fun saveRegisteringUser(user: User){
-        state.set(registeringUser, user)
+    val clearSavedUser:User? = state.remove<User>(registeringUser)
 
-    }
-    fun clearSavedRegisteredUser():String{
-        state.remove<User>(registeringUser)
-        return "done"
-    }
+//    fun clearSavedRegisteredUser():String{
+//        state.remove<User>(registeringUser)
+//        return "done"
+//    }
 
     fun registerUser(
         firstName: String,
