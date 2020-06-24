@@ -194,9 +194,9 @@ class SigninFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = getLocalisedString(R.string.field_required)
-                toast("${checkForEmpty.hint} field is empty")
+                errorToast("${checkForEmpty.hint} field is empty")
             }
-            validation != null -> toast("$validation is invalid")
+            validation != null -> errorToast("$validation is invalid")
             else -> {
                 val request = userViewModel.loginUserRequest(
                     emailAddress, passwordString

@@ -149,14 +149,14 @@ class SignupFragment : DaggerFragment() {
         when {
             checkForEmpty != null -> {
                 checkForEmpty.error = getLocalisedString(R.string.field_required)
-                toast("${checkForEmpty.hint} is empty")
+                errorToast("${checkForEmpty.hint} is empty")
             }
             !checkboxForSignup.isChecked -> {
                 toast(getLocalisedString(R.string.agree_to_term))
 
             }
-            validation != null -> toast("$validation is invalid")
-            passwordString != cpassword -> toast(getLocalisedString(R.string.passwords_do_not_match))
+            validation != null -> errorToast("$validation is invalid")
+            passwordString != cpassword -> errorToast(getLocalisedString(R.string.passwords_do_not_match))
             else -> {
 
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)

@@ -170,7 +170,7 @@ inline fun Fragment.observeRequest(
                     progressBar?.hide()
                     button?.show()
                     result.postValue(Pair(true, responseData))
-//                requireContext().toast(requireContext().localized(R.string.successful))
+
                     Log.i(title, "success ${it.data}")
                 }
                 is ServicesResponseWrapper.Error -> {
