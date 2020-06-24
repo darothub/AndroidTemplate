@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:elevation="3dp"
-    android:padding="10dp"
+    android:padding="2dp"
     android:background="@drawable/rounded_border_with_backgrnd_white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/dash"
-        android:textSize="@dimen/_8sdp"
+        android:textSize="@dimen/_9sdp"
         app:layout_constraintStart_toEndOf="@id/toast_logo"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

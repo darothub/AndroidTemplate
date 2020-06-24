@@ -28,7 +28,6 @@ import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.model.user.UserResponse
 import com.anapfoundation.volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.volunteerapp.utils.extensions.*
-import com.peacedude.gdtoast.gdToast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signin.*
 import java.util.*
@@ -239,16 +238,6 @@ class SigninFragment : DaggerFragment() {
 
                 checkIsReviewer(userExist)
 
-
-//                requireActivity().gdToast(
-//                    getLocalisedString(R.string.successful),
-//                    R.drawable.logo_black,
-//                    R.color.colorNeutral,
-//                    R.color.colorPrimary,
-//                    Gravity.CENTER,
-//                    Toast.LENGTH_LONG
-//                )
-//                requireActivity().gdToast(getLocalisedString(R.string.successful), Gravity.CENTER)
                 toast(getLocalisedString(R.string.successful))
 //                Log.i("UserExist", "${userExist}")
 //                Log.i(title, "message ${result.data}")

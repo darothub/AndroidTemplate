@@ -135,49 +135,6 @@ fun Fragment.errorToast(message: String) {
 }
 
 
-
-fun Context.setSpinnerAdapterData(
-    spinnerOne: Spinner,
-    spinnerTwo: Spinner,
-    stateLgaMap: HashMap<String, List<CityClass>>
-) {
-
-    val newList = arrayListOf<String>()
-    newList.add("States")
-
-    newList.addAll(stateLgaMap.keys.toSortedSet())
-
-    val adapterState =
-        ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, newList)
-    spinnerOne.adapter = adapterState
-    spinnerOne.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-        override fun onNothingSelected(parent: AdapterView<*>?) {
-            TODO("Not yet implemented")
-        }
-
-        override fun onItemSelected(
-            parent: AdapterView<*>?,
-            view: View?,
-            position: Int,
-            id: Long
-        ) {
-            val context: Context = spinnerOne.context
-            val lga = ArrayList<String>()
-            stateLgaMap.get(newList[position])!!.toList().mapTo(lga, {
-                it.name
-            })
-
-            val adapterLga = ArrayAdapter(
-                context,
-                R.layout.support_simple_spinner_dropdown_item,
-                lga
-            )
-            spinnerTwo.adapter = adapterLga
-        }
-
-    }
-}
-
 /**
  * Observe request response
  * and manipulate progressbar
@@ -229,7 +186,7 @@ inline fun Fragment.observeRequest(
                         }
                         else -> {
                             result.postValue(Pair(false, errorResponse))
-                            toast("$errorResponse")
+//                            toast("$errorResponse")
                         }
                     }
 

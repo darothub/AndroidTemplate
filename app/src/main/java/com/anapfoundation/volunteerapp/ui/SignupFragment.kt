@@ -25,8 +25,6 @@ import com.anapfoundation.volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.model.UserData
 import com.anapfoundation.volunteerapp.utils.extensions.*
-import com.peacedude.gdtoast.Darot
-import com.peacedude.gdtoast.gdToast
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signup.*
 import java.lang.Exception
