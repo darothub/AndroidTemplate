@@ -24,6 +24,7 @@ import com.anapfoundation.volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.model.UserData
+import com.anapfoundation.volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.volunteerapp.utils.extensions.*
 import dagger.android.support.DaggerFragment
 import kotlinx.android.synthetic.main.fragment_signup.*
@@ -56,6 +57,8 @@ class SignupFragment : DaggerFragment() {
     val userViewModel: UserViewModel by lazy {
         ViewModelProvider(this, viewModelProviderFactory).get(UserViewModel::class.java)
     }
+    @Inject
+    lateinit var storageRequest: StorageRequest
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -85,6 +88,7 @@ class SignupFragment : DaggerFragment() {
         signupBtn.setButtonText(getLocalisedString(R.string.proceed))
 
         sendSignupRequest()
+
     }
 
     private fun sendSignupRequest() {
@@ -142,7 +146,11 @@ class SignupFragment : DaggerFragment() {
         val user = User(firstName, lastName, emailAddress, passwordString, phoneNumber)
         user.rememberPassword = checkboxForSignup.isChecked
 
+        val u = storageRequest.saveData(user,"u")
+        Log.i(title, "reg1 $u")
         userViewModel.registerFormData = user
+
+        Log.i(title, "reg2 ${userViewModel.registerFormData}")
         val checkForEmpty =
             IsEmptyCheck(firstNameEdit, lastNameEdit, emailEdit, phoneNumberEdit, passwordEdit, cpasswordEdit)
         val validation = IsEmptyCheck.fieldsValidation(emailAddress, passwordString)
@@ -158,8 +166,8 @@ class SignupFragment : DaggerFragment() {
             validation != null -> errorToast("$validation is invalid")
             passwordString != cpassword -> errorToast(getLocalisedString(R.string.passwords_do_not_match))
             else -> {
-
                 val userData = UserData(firstName, lastName, emailAddress, phoneNumber, passwordString)
+
                 val action = SignupFragmentDirections.toAddressFragment()
                 action.userData = userData
                 goto(action)
@@ -172,24 +180,23 @@ class SignupFragment : DaggerFragment() {
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
-//        Log.i(title, "RestoredInstance")
-        if (userViewModel.state.contains("registeringUser")){
-            try {
-                val registeringUser = userViewModel.registerFormData
-                firstNameEdit.setText(registeringUser?.firstName)
-                lastNameEdit.setText(registeringUser?.lastName)
-                emailEdit.setText(registeringUser?.email)
-                passwordEdit.setText(registeringUser?.password)
-                cpasswordEdit.setText(registeringUser?.password)
-                phoneNumberEdit.setText(registeringUser?.phone)
-                checkboxForSignup.isChecked = registeringUser?.rememberPassword!!
+        Log.i(title, "RestoredInstance")
 
-
-            }
-            catch (e:Exception){
-                Log.i(title, "RestoringError ${e.localizedMessage}")
-            }
+        try {
+            val registeringUsers = userViewModel.registerFormData
+            val registeringUser = storageRequest.checkUser("u")
+            firstNameEdit.setText(registeringUser?.firstName)
+            lastNameEdit.setText(registeringUser?.lastName)
+            emailEdit.setText(registeringUser?.email)
+            passwordEdit.setText(registeringUser?.password)
+            cpasswordEdit.setText(registeringUser?.password)
+            phoneNumberEdit.setText(registeringUser?.phone)
+            checkboxForSignup.isChecked = registeringUser?.rememberPassword!!
+            Log.i(title, "reg $registeringUser")
+        } catch (e: Exception) {
+            Log.i(title, "RestoringError ${e.localizedMessage}")
         }
+
 
 
     }

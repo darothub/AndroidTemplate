@@ -20,25 +20,14 @@ android {
         versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    dokka {
-        outputFormat = 'html'
-        outputDirectory = "$buildDir/javadoc"
-        configuration {
-            includeNonPublic = false
-            skipEmptyPackages = true
-            skipDeprecated = true
-            reportUndocumented = true
-            jdkVersion = 8
-        }
-    }
     testOptions {
         unitTests.includeAndroidResources = true
     }
 
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -110,7 +99,7 @@ dependencies {
     //preference
     implementation "androidx.preference:preference-ktx:1.1.1"
     //OkHttp
-    implementation 'com.squareup.okhttp3:okhttp:4.5.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.7.2'
     // ViewModel and LiveData
     implementation "androidx.lifecycle:lifecycle-extensions:$versions.lifecycle_version"
     //Cloudinary

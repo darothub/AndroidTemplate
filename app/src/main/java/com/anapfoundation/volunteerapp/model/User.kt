@@ -47,6 +47,7 @@ class ProfileData (
     val error: AnotherError?
 ):Serializable, Data
 
+
 class UserData(
     @SerializedName("first_name")
     val firstName: String,

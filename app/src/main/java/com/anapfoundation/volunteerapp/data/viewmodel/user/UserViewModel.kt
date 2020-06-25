@@ -12,6 +12,7 @@ import com.anapfoundation.volunteerapp.model.LGA
 import com.anapfoundation.volunteerapp.model.StatesList
 import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.model.user.UserResponse
+import com.anapfoundation.volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.volunteerapp.network.user.UserRequestInterface
 import com.anapfoundation.volunteerapp.services.ServicesResponseWrapper
 import com.anapfoundation.volunteerapp.utils.extensions.getName
@@ -25,26 +26,22 @@ import javax.inject.Inject
 class UserViewModel @Inject constructor(
     val userRequestInterface: UserRequestInterface,
     val retrofit: Retrofit,
-    val state: SavedStateHandle
+    val storage: StorageRequest
 ) : ViewModel() {
 
 
     val title: String by lazy {
         this.getName()
-
     }
     val registeringUser:String by lazy {
         "registeringUser"
     }
-    var registerFormData:User? = state.get<User>(registeringUser)
-    set(user) = state.set(registeringUser, user)
+    var registerFormData:User? = storage.checkUser(registeringUser)
+    set(user) = storage.keepData(user, registeringUser)
 
-    val clearSavedUser:User? = state.remove<User>(registeringUser)
+    val clearSavedUser= storage.clearByKey<User>(registeringUser)
 
-//    fun clearSavedRegisteredUser():String{
-//        state.remove<User>(registeringUser)
-//        return "done"
-//    }
+
 
     fun registerUser(
         firstName: String,

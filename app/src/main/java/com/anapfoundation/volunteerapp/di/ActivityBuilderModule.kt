@@ -81,7 +81,7 @@ open class ActivityStaticModule {
         callAdapter: RxJava2CallAdapterFactory
     ): Retrofit {
         return Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(BASE_URL_STAGING)
             .addCallAdapterFactory(callAdapter)
             .addConverterFactory(gson)
             .build()

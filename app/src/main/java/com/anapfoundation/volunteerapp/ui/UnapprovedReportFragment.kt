@@ -104,9 +104,9 @@ class UnapprovedReportFragment : DaggerFragment() {
         try {
 
 //            Log.i(title, "header $header")
-            reviewerRecyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item) { adapter, context, list ->
+            reviewerRecyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item) { _, _, _ ->
 
-                bind { itemView, position, item ->
+                bind { itemView, _, item ->
 
                     val ratingRequest = authViewModel.getRating(item?.topic.toString(), header)
                     val ratingResponse = observeRequest(ratingRequest, null, null)

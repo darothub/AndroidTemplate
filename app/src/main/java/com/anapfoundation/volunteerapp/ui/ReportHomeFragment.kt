@@ -104,9 +104,9 @@ class ReportHomeFragment : DaggerFragment() {
         try {
 
             Log.i(title, "header $header")
-            recyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item){ adapter, context, list ->
-                bind { itemView, position, item ->
-                    Log.i(title, "report items ${list}")
+            recyclerView.setupAdapterPaged<ReportResponse>(R.layout.report_item){ _, _, list ->
+                bind { itemView, _, item ->
+//                    Log.i(title, "report items ${list}")
 
 //                    val bundle = transformationLayout.withView(itemView, "myTransitionName")
                     getTopicAndRatingById(item, itemView)

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
 import com.anapfoundation.volunteerapp.R
+import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.network.storage.StorageRequest
 import com.anapfoundation.volunteerapp.utils.extensions.getName
 import dagger.android.support.DaggerAppCompatActivity
@@ -24,6 +25,8 @@ class MainActivity : DaggerAppCompatActivity() {
         setContentView(R.layout.activity_main)
 
     }
+
+
     override fun onSupportNavigateUp(): Boolean {
 
         return NavigationUI.navigateUp(
@@ -36,6 +39,12 @@ class MainActivity : DaggerAppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         Log.i(title, "backpressed")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val clearRegister = storageRequest.clearByKey<User>("u")
+        Log.i(title, "destroys activity")
     }
 
 }

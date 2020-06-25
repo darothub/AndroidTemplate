@@ -19,6 +19,7 @@ import com.anapfoundation.volunteerapp.data.viewmodel.auth.AuthViewModel
 import com.anapfoundation.volunteerapp.data.viewmodel.user.UserViewModel
 import com.anapfoundation.volunteerapp.helpers.IsEmptyCheck
 import com.anapfoundation.volunteerapp.model.StatesList
+import com.anapfoundation.volunteerapp.model.User
 import com.anapfoundation.volunteerapp.model.UserData
 import com.anapfoundation.volunteerapp.model.user.UserResponse
 import com.anapfoundation.volunteerapp.network.storage.StorageRequest
@@ -127,6 +128,8 @@ class AddressFragment : DaggerFragment() {
     override fun onResume() {
         super.onResume()
         getStateAndSendToSpinner()
+        val u = storageRequest.checkUser("u")
+        Log.i(title, "reg1 $u")
 
     }
 
@@ -266,10 +269,10 @@ class AddressFragment : DaggerFragment() {
             true -> {
                 val res = result as UserResponse
                 toast(getLocalisedString(R.string.signup_successful))
-                val clearRegister = userViewModel.clearSavedUser
+                val clearRegister = storageRequest.clearByKey<User>("u")
                 goto(R.id.signinFragment)
                 Log.i(title, "result of registration ${res.data}")
-                Log.i(title, "clearedRegister $clearRegister")
+//                Log.i(title, "clearedRegister $clearRegister")
             }
             else -> Log.i(title, "error $result")
         }
