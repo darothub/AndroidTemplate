@@ -24,7 +24,7 @@
             android:background="@drawable/rounded_border_with_backgrnd"
             app:lottie_loop="true"
             android:layout_centerInParent="true"
-            app:lottie_rawRes="@raw/create_report_1" />
+            app:lottie_rawRes="@raw/create_report_anim" />
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
