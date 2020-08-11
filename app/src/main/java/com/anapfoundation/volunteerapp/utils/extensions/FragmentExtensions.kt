@@ -145,7 +145,7 @@ fun Fragment.errorToast(message: String) {
  * @param button
  * @return
  */
-inline fun Fragment.observeRequest(
+fun Fragment.observeRequest(
     request: LiveData<ServicesResponseWrapper<Data>>,
     progressBar: ProgressBar?, button: Button?
 ): LiveData<Pair<Boolean, Any?>> {
