@@ -37,7 +37,7 @@
         app:layout_constraintHorizontal_bias="0"
         android:gravity="start|center_vertical"
         android:layout_marginStart="@dimen/_6sdp"
-        android:layout_marginEnd="@dimen/_6sdp"
+        android:layout_marginEnd="@dimen/_7sdp"
 
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
