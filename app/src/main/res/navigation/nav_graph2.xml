@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph2"
+    app:startDestination="@id/reportHomeFragment">
+
+    <fragment
+        android:id="@+id/reportHomeFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.ReportHomeFragment"
+        android:label="fragment_report_home"
+        tools:layout="@layout/fragment_report_home">
+        <deepLink
+            android:id="@+id/deepLink3"
+            app:uri="android-app://anapfoundation.navigation/reporthomefrag" />
+        <action
+            android:id="@+id/toSingleReportScreen"
+            app:destination="@id/toSingleReportScreen"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/createReportFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.CreateReportFragment"
+        android:label='""'
+        tools:layout="@layout/fragment_create_report" >
+        <action
+            android:id="@+id/toUploadFragment"
+            app:destination="@id/reportUploadFragment"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/toEditProfile"
+            app:destination="@id/editProfileFragment"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/toNavGraphOne"
+            app:destination="@id/nav_graph" />
+    </fragment>
+    <include app:graph="@navigation/nav_graph" />
+    <fragment
+        android:id="@+id/reportUploadFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.ReportUploadFragment"
+        android:label="fragment_report_upload"
+        tools:layout="@layout/fragment_report_upload" >
+        <argument
+            android:name="report"
+            app:argType="com.anapfoundation.volunteerapp.model.request.Report"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/editProfileFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.EditProfileFragment"
+        android:label="fragment_edit_profile"
+        tools:layout="@layout/fragment_edit_profile" >
+        <argument
+            android:name="profileData"
+            app:argType="com.anapfoundation.volunteerapp.model.User"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/toSingleReportScreen"
+        android:name="com.anapfoundation.volunteerapp.ui.SingleReportFragment"
+        android:label="fragment_single_report"
+        tools:layout="@layout/fragment_single_report" >
+        <argument
+            android:name="singleReport"
+            app:argType="com.anapfoundation.volunteerapp.model.response.ReportResponse"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <argument
+            android:name="uri"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+    <fragment
+        android:id="@+id/reviewerScreenFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.ReviewerScreenFragment"
+        android:label="fragment_reviewer_screen"
+        tools:layout="@layout/fragment_reviewer_screen" >
+        <action
+            android:id="@+id/toApprovalFragment"
+            app:destination="@id/reportApprovalFragment"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+        <action
+            android:id="@+id/fromReviewToSingleReport"
+            app:destination="@id/toSingleReportScreen"
+            app:enterAnim="@anim/show_down_center"
+            app:exitAnim="@anim/show_up_center"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
+    </fragment>
+    <fragment
+        android:id="@+id/reportApprovalFragment"
+        android:name="com.anapfoundation.volunteerapp.ui.ReportApprovalFragment"
+        android:label="fragment_report_approval"
+        tools:layout="@layout/fragment_report_approval" >
+        <argument
+            android:name="singleReport"
+            app:argType="com.anapfoundation.volunteerapp.model.response.ReportResponse"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+</navigation>

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "950478653415",
+    "firebase_url": "https://anap-foundation.firebaseio.com",
+    "project_id": "anap-foundation",
+    "storage_bucket": "anap-foundation.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:950478653415:android:bed967a8934c641a819f42",
+        "android_client_info": {
+          "package_name": "com.anapfoundation.volunteerapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "950478653415-el3cp1pjflvpojbcti7ekodraf87n5hp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBZVW0KFKYGuaTXlhx16_TluSBiLOnTG2c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "950478653415-el3cp1pjflvpojbcti7ekodraf87n5hp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

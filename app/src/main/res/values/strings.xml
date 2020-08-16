@@ -1,0 +1,153 @@
+<resources>
+    <string name="app_name">Anap Foundation\nVolunteer App</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="anap">ANAP</string>
+    <string name="themeText">Promoting Good\nGovernance</string>
+    <string name="foundation">FOUNDATION</string>
+    <string name="signin_title">Sign In</string>
+    <string name="signup_link">Don\'t have an account? Sign up</string>
+    <string name="email_hint_text">Email address</string>
+    <string name="password_hint_text">Password</string>
+    <string name="remember_me">Remember me</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="signin_text">Sign in</string>
+    <string name="register">Register</string>
+    <string name="signin_link">Already have an account? Sign in</string>
+    <string name="full_name_hint">Full name</string>
+    <string name="terms_and_conditions">I agree to all terms and conditions</string>
+    <string name="signup_text">Sign up</string>
+    <string name="cpassword_hint_text">Confirm password</string>
+    <string name="address_title">Your address</string>
+    <string name="house_number_hint_text">House number or Apartment</string>
+    <string name="states">State</string>
+    <string name="lga">LGA</string>
+    <string name="street_hint_text">Street</string>
+    <string name="save_text">Save</string>
+    <string name="profile_fragment">Hello profile fragment</string>
+    <string name="report_home_fragment">Hello report home fragment</string>
+    <string name="food_price">FOOD PRICE</string>
+    <string name="dummy_details">The new price of rice in Lagos is alarming</string>
+    <string name="location">Onipanu, Lagos</string>
+    <string name="recent_report">Recent Reports</string>
+    <string name="choose_a_topic">Choose a topic \nto report on</string>
+    <string name="hunger">Hunger</string>
+    <string name="death">Death</string>
+    <string name="food_prices">Food Prices</string>
+    <string name="category">Category</string>
+    <string name="health">Health</string>
+    <string name="lockdown">Lockdown</string>
+    <string name="create_new_report">Create New report</string>
+    <string name="index_cases_reported">INDEX CASES reported</string>
+    <string name="index_cases">Index Cases</string>
+    <string name="infections">Infections</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="question">How would rate the situation</string>
+    <string name="bad">Bad</string>
+    <string name="awareness_of_covid">Awareness of \nCovid-19</string>
+    <string name="very_high">Very High</string>
+    <string name="high">High</string>
+    <string name="low">Low</string>
+    <string name="very_low">Very low</string>
+    <string name="public_enlightenment">Public\nEnlightenment</string>
+    <string name="adequate">Adequate</string>
+    <string name="very_adequate">Very Adequate</string>
+    <string name="inadequate">Inadequate(explain)</string>
+    <string name="measures">Measures</string>
+    <string name="curfew">Curfew(when to when?)</string>
+    <string name="total_lockdown">Total lockdown</string>
+    <string name="partial_lockdown">Partial lockdown</string>
+    <string name="level_of_compliance">Level of Compliance</string>
+    <string name="high_total">High(total)</string>
+    <string name="average_largely">Average(largely)</string>
+    <string name="low_partial">Low(partial)</string>
+    <string name="challenge_observed">Challenge Observed with Enforcement</string>
+    <string name="defiance">Defiance</string>
+    <string name="no_surveillance">No surveillance</string>
+    <string name="security_forces">Security forces</string>
+    <string name="any_govt_palliatives">Any Government Palliatives</string>
+    <string name="food">Food</string>
+    <string name="money">Money</string>
+    <string name="material">Materials\n(sanitizers, face masks, shelter, etc)</string>
+    <string name="upload_picture">Upload Picture</string>
+    <string name="enter_your_report">Enter your report here</string>
+    <string name="submit_text">Submit</string>
+    <string name="notification_text">Notifications</string>
+    <string name="location_state">Yaba, Lagos</string>
+    <string name="notification_status">New</string>
+    <string name="notification_headline">Covid-19 process attacks the human body</string>
+    <string name="report_details">This is the details of the report. This is the details of the report.
+        This is the details of the report.This is the details of the report.This is the details of the report.
+        This is the details of the report.This is the details of the report.This is the details of the report.
+        This is the details of the report.This is the details of the report.This is the details of the report.
+        This is the details of the report.This is the details of the report.This is the details of the report.
+        This is the details of the report.This is the details of the report.This is the details of the report.
+
+
+    </string>
+    <string name="select_text">Select</string>
+    <string name="profile_text">Profile</string>
+    <string name="adddress">Block 16, Anthony Ajayi Street, Onike, Yaba, Lagos</string>
+    <string name="email_address">decagonhq@decagon.com</string>
+    <string name="upload_number">0</string>
+    <string name="uploaded_report_text">Uploaded Reports</string>
+    <string name="edit_profile_text">Edit Info</string>
+    <string name="change_profile_picture">Change profile picture</string>
+    <string name="update_info">Update Info</string>
+    <string name="headline_sample">Is Lagos prepared for outbreak of Covid-19?...Nothing seems so.</string>
+    <string name="approve_report">Approve Report</string>
+    <string name="do_something">Do something</string>
+    <string name="share_text">Share</string>
+    <string name="source_text">Source: </string>
+    <string name="passwordstandard">Ensure your password is atleast six characters</string>
+    <string name="last_name_hint">Last name</string>
+    <string name="first_name_hint">First name</string>
+    <string name="field_required">This field is required</string>
+    <string name="passwords_do_not_match">password and confirmed password do not match</string>
+    <string name="agree_to_term">Kindly agree to terms and condition</string>
+    <string name="phone_hint_text">Phone number</string>
+    <string name="user_successfully_registered">User successfully registered\nPlease sign in</string>
+    <string name="successful">Successful</string>
+    <string name="done">Done</string>
+    <string name="pick_one_rating">Only one rating is allowed</string>
+    <string name="cloudinary">cloudinary://591748591595243:benGkEBRvxue5v6DOeUV4-jfZEs@anap-foundation</string>
+    <string name="signup_successful">Sign up successfully</string>
+    <string name="upload_successful">Report has been uploaded successfully</string>
+    <string name="you_are_about">You are about to logout</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="proceed">Proceed</string>
+    <string name="placeholder_dash">_ _</string>
+    <string name="image_url">Image url: </string>
+    <string name="street_suggestion">Suggestion</string>
+    <string name="profile_updated">Profile has been updated successfully</string>
+    <string name="update_profile">Update</string>
+    <string name="forgot_password2">Forgot password</string>
+    <string name="reset_password">Reset password</string>
+    <string name="password_invalid">Password is invalid</string>
+    <string name="report_review">Review</string>
+    <string name="approved_successful">Approved successfully</string>
+    <string name="approved_report">Approved reports</string>
+    <string name="unapproved_report">Unapproved reports</string>
+    <string name="no_report_approved">No approved reports</string>
+    <string name="logout">Log out</string>
+    <string name="exit">Exit</string>
+    <string name="new_picture">Change picture</string>
+    <string name="upload_image">Upload</string>
+    <string name="bad_network">Bad network connection</string>
+    <string name="dismissText">Dismiss report</string>
+    <string name="dismissed_successfully">Dismissed successfully</string>
+    <string name="unauthorized">Unauthorized</string>
+    <string name="no_reports">No reports</string>
+    <string name="server_error">Server error</string>
+    <string name="dash">---------</string>
+    <string name="channel_name">reset</string>
+    <string name="channel_description">reset password</string>
+    <string name="password_reset">Password reset</string>
+    <string name="reset_success">Password reset is successful. Click here</string>
+    <string name="log_out">Log out</string>
+
+
+</resources>

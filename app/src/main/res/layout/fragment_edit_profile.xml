@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorNeutral"
+    tools:context=".ui.EditProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/editInfoAppBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="center"
+            android:textAlignment="center"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/editInfoToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                app:titleTextColor="@color/colorPrimaryDark">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/editInfoBackButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_back_icon" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/edit_profile_text"
+                        android:textColor="@color/colorPrimaryDark"
+                        android:textSize="@dimen/large_font_size"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/editInfoUploadCard"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@drawable/shadow"
+            android:elevation="10dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoAppBar">
+
+            <ImageView
+                android:id="@+id/cameraImage"
+                android:layout_width="20dp"
+                android:layout_height="45dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_photo_camera_pry_24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:text="@string/change_profile_picture"
+                android:textColor="@color/colorPrimary"
+                android:textSize="@dimen/_14ssp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cameraImage"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/moreIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:visibility="gone"
+                app:srcCompat="@drawable/ic_chevron_right" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/imageUrlText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginRight="@dimen/normal_margin"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:text="@string/image_url"
+            app:layout_constraintTop_toBottomOf="@id/editInfoUploadCard"
+            android:textSize="@dimen/_9sdp"
+            android:gravity="start|center"
+            android:maxLines="4"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:focusable="true"
+            android:clickable="true"
+            android:ellipsize="end"/>
+        <Space
+            android:id="@+id/bottomSpace"
+            android:layout_width="0dp"
+            android:layout_height="10dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/imageUrlText" />
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/editInfoFNameField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomInputLayoutStyle"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/bottomSpace"
+
+            >
+
+            <EditText
+                android:id="@+id/editInfoFNameEditText"
+                style="@style/CustomEditTextStyle"
+                android:hint="@string/first_name_hint"
+                android:inputType="textCapWords"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"
+                android:maxLines="50" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/editInfoLNameField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomInputLayoutStyle"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoFNameField"
+
+            >
+
+            <EditText
+                android:id="@+id/editInfoLNameEditText"
+                style="@style/CustomEditTextStyle"
+                android:hint="@string/last_name_hint"
+                android:inputType="textCapWords"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"
+                android:maxLines="50" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/editInfoEmailField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomInputLayoutStyle"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:visibility="visible"
+            android:clickable="false"
+            android:focusable="false"
+            app:layout_constraintTop_toBottomOf="@id/editInfoLNameField"
+
+            >
+            <EditText
+                android:id="@+id/editInfoEmailEditText"
+                style="@style/CustomEditTextStyle"
+                android:hint="@string/email_hint_text"
+                android:clickable="false"
+                android:focusable="false"
+                android:enabled="false"
+                android:inputType="textEmailAddress"
+                android:maxLines="50" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/editInfoPhoneField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomInputLayoutStyle"
+            app:cornerRadius="10dp"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoEmailField"
+
+            >
+            <EditText
+                android:id="@+id/editInfoPhoneEditText"
+                style="@style/CustomEditTextStyle"
+                android:hint="@string/phone_hint_text"
+                android:maxLines="50" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/editInfoHouseNoField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomInputLayoutStyle"
+            app:cornerRadius="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoPhoneField"
+
+            >
+            <EditText
+                android:id="@+id/editInfoHouseNoEditText"
+                style="@style/CustomEditTextStyle"
+                android:hint="@string/house_number_hint_text"
+                android:maxLines="50" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+        <ss.anoop.awesometextinputlayout.AwesomeTextInputLayout
+            android:id="@+id/editInfoTown"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="@dimen/normal_margin"
+            style="@style/CustomInputLayoutStyle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoHouseNoField">
+
+            <EditText
+                android:id="@+id/editInfoStreetEditText"
+                style="@style/CustomEditTextStyle"
+                android:hint="@string/street_hint_text"
+                android:textColorHint="@color/colorTextHint" />
+        </ss.anoop.awesometextinputlayout.AwesomeTextInputLayout>
+
+        <Spinner
+            android:id="@+id/editInfoStateSpinner"
+            style="@style/CustomEditTextStyle"
+            android:layout_height="55dp"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginRight="@dimen/normal_margin"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/spinner_backgrnd"
+            android:dropDownVerticalOffset="95dp"
+            android:gravity="start|center"
+            android:hint="@string/states"
+            android:padding="10dp"
+            android:popupTheme="@style/AppThemeActivity"
+            android:spinnerMode="dropdown"
+            android:textColor="@color/colorPrimaryDark"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoTown" />
+
+        <Spinner
+            android:id="@+id/editInfoLGASpinner"
+            style="@style/CustomEditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginRight="@dimen/normal_margin"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/spinner_backgrnd"
+            android:gravity="start|center"
+            android:hint="@string/lga"
+            android:padding="10dp"
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="@color/colorTextHint"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/editInfoStateSpinner" />
+
+
+
+        <Space
+            android:id="@+id/editProfiletTopSpace"
+            android:layout_width="0dp"
+            android:layout_height="10dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/editInfoLGASpinner" />
+
+        <include
+            android:id="@+id/editProfileBottomLayout"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="@dimen/normal_margin"
+            android:layout_marginEnd="@dimen/normal_margin"
+            app:layout_constraintTop_toBottomOf="@id/editProfiletTopSpace"
+            app:layout_constraintBottom_toBottomOf="parent"
+            layout="@layout/bottom_indicator"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

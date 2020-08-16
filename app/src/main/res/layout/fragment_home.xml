@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fillViewport="true"
+    android:background="@drawable/gradient_background"
+    android:paddingLeft="25dp"
+    android:paddingRight="25dp"
+    tools:context=".ui.HomeFragment"
+    >
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+       >
+
+        <ImageView
+            android:id="@+id/logo"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/homeProgressView1"
+            app:layout_constraintVertical_bias=".5"
+            android:adjustViewBounds="true"
+            app:srcCompat="@drawable/logo_white" />
+
+        <com.skydoves.progressview.ProgressView
+            android:id="@+id/homeProgressView1"
+            android:layout_width="match_parent"
+            android:layout_height="12dp"
+            app:progressView_colorBackground="@color/progressBackground"
+            app:progressView_colorProgress="@color/progressColor"
+            app:progressView_max="500"
+            app:progressView_min="0"
+            app:progressView_padding="0dp"
+            app:progressView_autoAnimate="true"
+            app:progressView_progress="500"
+            app:progressView_duration="5000"
+            app:progressView_radius="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="30dp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

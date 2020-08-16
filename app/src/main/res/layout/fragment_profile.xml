@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorNeutral"
+    tools:context=".ui.ProfileFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/profileAppBar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            app:elevation="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/profileToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="0dp"
+                app:menu="@menu/profile_menu"
+                app:titleTextColor="@android:color/black">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    >
+                    <ImageView
+                        android:id="@+id/profileBackBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:elevation="10dp"
+                        android:scaleType="fitXY"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:srcCompat="@drawable/ic_back_icon" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </androidx.appcompat.widget.Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/profileStack"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="23dp"
+            android:paddingEnd="23dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/profileAppBar">
+            <RelativeLayout
+                android:id="@+id/profileHeaderVG"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="@string/profile_text"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/colorPrimaryDark"
+                    android:textSize="@dimen/_24ssp"
+                    android:layout_marginBottom="10dp"
+                    android:textStyle="bold"
+                    />
+
+                <ImageView
+                    android:id="@+id/profileNotificationIcon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    app:srcCompat="@drawable/ic_notifications_prydark_24dp" />
+                <TextView
+                    android:id="@+id/profileNotificationCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:elevation="2dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/holo_red_dark"
+                    android:layout_alignRight="@id/profileNotificationIcon"
+                    android:layout_marginTop="8dp"
+
+                    android:textStyle="bold"/>
+            </RelativeLayout>
+
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:background="@drawable/shadow"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_person_primary_24dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileHeaderVG"
+                android:elevation="5dp"
+                app:layout_constraintVertical_bias="0.1" />
+
+            <TextView
+                android:id="@+id/profileName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/normal_margin"
+                android:text="@string/placeholder_dash"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/large_font_size"
+                app:layout_constraintStart_toStartOf="@id/profileImage"
+                app:layout_constraintTop_toBottomOf="@id/profileImage" />
+
+            <TextView
+                android:id="@+id/profileAddress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ems="9"
+                android:text="@string/placeholder_dash"
+                android:textColor="@color/colorPrimaryDark"
+                app:layout_constraintStart_toStartOf="@id/profileName"
+                app:layout_constraintTop_toBottomOf="@id/profileName"
+
+                />
+
+            <View
+                android:id="@+id/emailBulletPoint"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/rounded_border_with_backgrnd"
+                app:layout_constraintStart_toStartOf="@id/profileAddress"
+                app:layout_constraintTop_toBottomOf="@id/profileAddress" />
+
+            <TextView
+                android:id="@+id/profileEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="@string/placeholder_dash"
+                android:textColor="@color/colorPrimaryDark"
+                app:layout_constraintBottom_toBottomOf="@id/emailBulletPoint"
+                app:layout_constraintStart_toEndOf="@id/emailBulletPoint"
+                app:layout_constraintTop_toTopOf="@id/emailBulletPoint" />
+
+            <View
+                android:id="@+id/profileDivider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="20dp"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileEmail" />
+
+            <TextView
+                android:id="@+id/profileUploadNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/upload_number"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/large_font_size"
+                android:padding="0dp"
+                android:includeFontPadding="false"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="@id/profileDivider"
+                app:layout_constraintTop_toBottomOf="@id/profileDivider" />
+
+            <TextView
+                android:id="@+id/uploadedReportText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/uploaded_report_text"
+                android:includeFontPadding="false"
+                android:textColor="@color/colorPrimaryDark"
+
+                app:layout_constraintStart_toStartOf="@id/profileUploadNumber"
+                app:layout_constraintTop_toBottomOf="@id/profileUploadNumber" />
+
+            <View
+                android:id="@+id/profileBottomDivider"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="40dp"
+                android:background="@android:color/darker_gray"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/profileUploadNumber" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <Button
+            android:id="@+id/editProfileBtn"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/rounded_border_with_backgrnd"
+            android:text="@string/edit_profile_text"
+            android:textAllCaps="false"
+            android:textColor="@color/colorNeutral"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginLeft="@dimen/normal_margin"
+            android:layout_marginRight="@dimen/normal_margin"
+            android:layout_marginTop="50dp"
+            app:layout_constraintTop_toBottomOf="@id/profileStack"
+            app:layout_constraintVertical_bias="0" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>
